@@ -1,6 +1,8 @@
 <script lang="ts">
   import SparkButton from '$ui/SparkButton.svelte';
   import SparkHubDirectory from '$ui/SparkHubDirectory.svelte';
+  import SparkHubGatewayOverview from '$ui/SparkHubGatewayOverview.svelte';
+  import SparkHubMissionBoard from '$ui/SparkHubMissionBoard.svelte';
   import SparkPageHeader from '$ui/SparkPageHeader.svelte';
   import SparkSectionHeader from '$ui/SparkSectionHeader.svelte';
   import { getHubUrl } from '$lib/config/spark-topology';
@@ -20,6 +22,20 @@
 </SparkPageHeader>
 
 <section class="spark-section">
+  <SparkHubGatewayOverview />
+</section>
+
+<section class="spark-section">
+  <SparkSectionHeader
+    eyebrow="Hub missions"
+    title="Misi ringan sebelum eksplorasi lebih jauh."
+    copy="Misi Hub membantu pengguna tetap terarah setelah menyelesaikan fondasi awal."
+  />
+
+  <SparkHubMissionBoard />
+</section>
+
+<section class="spark-section" id="directory">
   <SparkSectionHeader
     eyebrow="Resource directory"
     title="Eksplorasi diberi label risiko dan readiness gate."
