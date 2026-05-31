@@ -12,6 +12,7 @@
   import '$lib/styles/pass-11-community-hub-recovery.css';
   import '$lib/styles/pass-12-home-lab-recovery.css';
   import '$lib/styles/pass-13ad-safe-advanced-guided-ux.css';
+  import '$lib/styles/pass-14-production-label-trust-cleanup.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();
