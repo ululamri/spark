@@ -9,6 +9,7 @@
   import SparkTopBar from './SparkTopBar.svelte';
   import { appState, markPersistenceReady } from '$lib/state/app-state.svelte';
   import { initTheme, themeState } from '$lib/state/theme-state.svelte';
+  import { betaSession, restoreBetaSession, saveBetaSession } from '$state/beta-session-state.svelte';
   import { learningState, restoreLearningSnapshot, saveLearningSnapshot } from '$state/learning-state.svelte';
   import { gatewayState, restoreGatewaySnapshot, saveGatewaySnapshot } from '$state/gateway-state.svelte';
 
@@ -20,9 +21,19 @@
 
   onMount(() => {
     initTheme();
+    restoreBetaSession();
     restoreLearningSnapshot();
     restoreGatewaySnapshot();
     markPersistenceReady();
+  });
+
+  $effect(() => {
+    if (!appState.persistenceReady) return;
+
+    betaSession.user?.id;
+    betaSession.user?.name;
+    betaSession.user?.handle;
+    saveBetaSession(betaSession.user);
   });
 
   $effect(() => {

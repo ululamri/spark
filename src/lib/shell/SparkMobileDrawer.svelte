@@ -2,23 +2,59 @@
   import { fade, fly } from 'svelte/transition';
   import { sparkNavItems } from '$lib/content/spark-navigation';
   import { appState } from '$state/app-state.svelte';
+  import { betaSession, getModeLabel, logoutBetaSession } from '$state/beta-session-state.svelte';
   import SparkIcon from '$ui/SparkIcon.svelte';
 
   const drawerLinks = sparkNavItems.filter((item) => item.key !== 'gateway');
+
+  function close() {
+    appState.mobileMenuOpen = false;
+  }
+
+  function logout() {
+    logoutBetaSession();
+    close();
+  }
 </script>
 
 {#if appState.mobileMenuOpen}
-  <button class="spark-mobile-scrim" transition:fade type="button" aria-label="Tutup menu" onclick={() => (appState.mobileMenuOpen = false)}></button>
+  <button class="spark-mobile-scrim" transition:fade type="button" aria-label="Tutup menu" onclick={close}></button>
   <aside class="spark-mobile-drawer" transition:fly={{ x: 28, duration: 180 }}>
     <div class="drawer-head">
       <strong>Menu Spark</strong>
-      <button type="button" aria-label="Tutup menu" onclick={() => (appState.mobileMenuOpen = false)}>
+      <button type="button" aria-label="Tutup menu" onclick={close}>
         <SparkIcon name="x" size={18} />
       </button>
     </div>
 
+    <div class="drawer-account-card">
+      {#if betaSession.user}
+        <span>{betaSession.user.name.slice(0, 1)}</span>
+        <div>
+          <strong>{betaSession.user.name}</strong>
+          <small>{betaSession.user.handle} · {getModeLabel(betaSession.user.mode)}</small>
+        </div>
+      {:else}
+        <span><SparkIcon name="login" size={18} /></span>
+        <div>
+          <strong>Belum masuk</strong>
+          <small>Gunakan akun contoh lokal untuk mencoba Spark.</small>
+        </div>
+      {/if}
+    </div>
+
+    {#if !betaSession.user}
+      <a href="/login" onclick={close}>
+        <span><SparkIcon name="login" size={18} /></span>
+        <div>
+          <strong>Masuk Beta</strong>
+          <small>Akses akun contoh lokal</small>
+        </div>
+      </a>
+    {/if}
+
     {#each drawerLinks as link}
-      <a href={link.href} onclick={() => (appState.mobileMenuOpen = false)}>
+      <a href={link.href} onclick={close}>
         <span><SparkIcon name={link.icon} size={18} /></span>
         <div>
           <strong>{link.label}</strong>
@@ -26,5 +62,15 @@
         </div>
       </a>
     {/each}
+
+    {#if betaSession.user}
+      <button class="drawer-logout" type="button" onclick={logout}>
+        <span><SparkIcon name="logout" size={18} /></span>
+        <div>
+          <strong>Keluar</strong>
+          <small>Bersihkan session lokal</small>
+        </div>
+      </button>
+    {/if}
   </aside>
 {/if}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import SparkPreviewToggle from './SparkPreviewToggle.svelte';
+  import SparkAccountMenu from '$ui/SparkAccountMenu.svelte';
   import SparkBrand from '$lib/ui/SparkBrand.svelte';
   import SparkIcon from '$ui/SparkIcon.svelte';
   import { appState } from '$lib/state/app-state.svelte';
@@ -14,10 +14,12 @@
   </div>
 
   <div class="spark-topbar-actions">
-    <SparkPreviewToggle />
     <a class="spark-icon-btn desktop-only" href="/settings" aria-label="Pengaturan">
       <SparkIcon name="settings" size={18} />
     </a>
+    <div class="desktop-only">
+      <SparkAccountMenu />
+    </div>
     <button class="spark-icon-btn mobile-only" type="button" aria-label="Menu" onclick={() => (appState.mobileMenuOpen = !appState.mobileMenuOpen)}>
       <SparkIcon name={appState.mobileMenuOpen ? 'x' : 'menu'} size={20} />
     </button>

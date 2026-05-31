@@ -2,6 +2,7 @@
   import SparkAvatarPicker from './SparkAvatarPicker.svelte';
   import SparkButton from './SparkButton.svelte';
   import SparkIcon from './SparkIcon.svelte';
+  import { betaSession } from '$state/beta-session-state.svelte';
   import { getHubAccessCopy, getLearnerStage, profileQuickLinks } from '$lib/profile/profile-model';
   import { gatewayState } from '$state/gateway-state.svelte';
   import {
@@ -11,6 +12,9 @@
     learningState,
     resetOnboarding
   } from '$state/learning-state.svelte';
+
+  const displayName = $derived(betaSession.user?.name ?? 'Karyra Learner');
+  const handle = $derived(betaSession.user?.handle ?? '@spark-learner');
 
   const modeLabel = $derived(
     learningState.experience === 'beginner'
@@ -45,13 +49,13 @@
     <div class="profile-title-row">
       <div>
         <span class="spark-eyebrow">Profil Learner</span>
-        <h1>Karyra Learner</h1>
+        <h1>{displayName}</h1>
       </div>
       <span class="profile-stage-chip">{stage}</span>
     </div>
 
     <p class="profile-subtitle">
-      Profil lokal · {modeLabel} · {getCompletedLessonCount()} lesson selesai · {gatewayState.savedHubResourceIds.length} resource Hub tersimpan
+      {handle} · {modeLabel} · {getCompletedLessonCount()} lesson selesai · {gatewayState.savedHubResourceIds.length} resource Hub tersimpan
     </p>
 
     <div class="profile-progress-row">
