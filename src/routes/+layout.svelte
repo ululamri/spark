@@ -8,6 +8,7 @@
   import '$lib/styles/pass-7-mobile-ux-production-cleanup.css';
   import '$lib/styles/pass-8-asset-nav-surface-unification.css';
   import '$lib/styles/pass-9-core-lesson-experience.css';
+  import '$lib/styles/pass-10-profile-navigation-recovery.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();
