@@ -55,6 +55,7 @@
       </div>
 
       <nav class="account-menu-links" aria-label="Menu akun">
+        <a href="/dashboard" onclick={close}><SparkIcon name="dashboard" size={16} /> Dashboard</a>
         <a href="/profile" onclick={close}><SparkIcon name="user-round" size={16} /> Profile & Passport</a>
         <a href="/settings" onclick={close}><SparkIcon name="settings" size={16} /> Settings</a>
         <button type="button" onclick={logout}><SparkIcon name="logout" size={16} /> Keluar</button>

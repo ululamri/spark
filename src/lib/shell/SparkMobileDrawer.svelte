@@ -51,6 +51,14 @@
           <small>Akses akun contoh lokal</small>
         </div>
       </a>
+    {:else}
+      <a href="/dashboard" onclick={close}>
+        <span><SparkIcon name="dashboard" size={18} /></span>
+        <div>
+          <strong>Dashboard</strong>
+          <small>Ringkasan aktivitas belajar</small>
+        </div>
+      </a>
     {/if}
 
     {#each drawerLinks as link}
