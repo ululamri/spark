@@ -10,6 +10,7 @@
     CircleHelp,
     ClipboardCheck,
     Clock,
+    Code2,
     Compass,
     FlaskConical,
     Home,
@@ -28,6 +29,7 @@
     Target,
     UserRound,
     Users,
+    Wallet,
     X,
     Zap
   } from '@lucide/svelte';
@@ -58,6 +60,7 @@
     check: CheckCircle2,
     'chevron-right': ChevronRight,
     clock: Clock,
+    code: Code2,
     compass: Compass,
     'flask-conical': FlaskConical,
     help: CircleHelp,
@@ -78,6 +81,7 @@
     user: UserRound,
     'user-round': UserRound,
     users: Users,
+    wallet: Wallet,
     x: X,
     zap: Zap,
     clipboard: ClipboardCheck

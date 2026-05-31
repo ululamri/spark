@@ -1,11 +1,12 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
   import { onMount } from 'svelte';
-  import SparkTopBar from './SparkTopBar.svelte';
-  import SparkSidebar from './SparkSidebar.svelte';
   import SparkBottomNav from './SparkBottomNav.svelte';
   import SparkMobileDrawer from './SparkMobileDrawer.svelte';
+  import SparkRouteProgress from '$ui/SparkRouteProgress.svelte';
+  import SparkSidebar from './SparkSidebar.svelte';
   import SparkToast from './SparkToast.svelte';
+  import SparkTopBar from './SparkTopBar.svelte';
   import { appState, markPersistenceReady } from '$lib/state/app-state.svelte';
   import { initTheme, themeState } from '$lib/state/theme-state.svelte';
   import { learningState, restoreLearningSnapshot, saveLearningSnapshot } from '$state/learning-state.svelte';
@@ -51,6 +52,7 @@
 </script>
 
 <div class="spark-app" data-theme={themeState.resolved} data-theme-preference={themeState.preference} data-preview={appState.previewMode}>
+  <SparkRouteProgress />
   <SparkTopBar />
 
   <div class="spark-shell">

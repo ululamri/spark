@@ -1,4 +1,5 @@
 <script lang="ts">
+  import SparkExplorerPlaceholder from '$ui/SparkExplorerPlaceholder.svelte';
   import SparkLabConsole from '$ui/SparkLabConsole.svelte';
   import SparkLabPositionCard from '$ui/SparkLabPositionCard.svelte';
   import SparkLabPrinciples from '$ui/SparkLabPrinciples.svelte';
@@ -7,6 +8,7 @@
   import SparkPracticeProofRoadmap from '$ui/SparkPracticeProofRoadmap.svelte';
   import SparkReadinessPanel from '$ui/SparkReadinessPanel.svelte';
   import SparkSectionHeader from '$ui/SparkSectionHeader.svelte';
+  import SparkWalletPlaceholder from '$ui/SparkWalletPlaceholder.svelte';
   import SparkWeeklyPracticeTargets from '$ui/SparkWeeklyPracticeTargets.svelte';
   import { sparkLabs } from '$content/spark-content';
 </script>
@@ -28,6 +30,19 @@
 
 <section class="spark-section">
   <SparkLabProgressCard />
+</section>
+
+<section class="spark-section">
+  <SparkWalletPlaceholder />
+</section>
+
+<section class="spark-section">
+  <SparkSectionHeader
+    eyebrow="Advanced workspace"
+    title="Mode Penjelajah mendapatkan ruang kerja yang terasa profesional."
+    copy="Saat ini masih placeholder aman. CodeMirror dan compiler Cairo disimpan untuk Pass 13B setelah grant lebih pasti."
+  />
+  <SparkExplorerPlaceholder />
 </section>
 
 <section class="spark-section">

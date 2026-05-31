@@ -2,6 +2,7 @@
   import SparkButton from './SparkButton.svelte';
   import SparkCard from './SparkCard.svelte';
   import SparkIcon from './SparkIcon.svelte';
+  import SparkPassportGauge from './SparkPassportGauge.svelte';
   import { getHubAccessCopy } from '$lib/profile/profile-model';
   import { gatewayState } from '$state/gateway-state.svelte';
   import { getCompletedLessonCount, getReadinessScore, getTotalLessonCount, learningState } from '$state/learning-state.svelte';
@@ -40,7 +41,7 @@
 <section class="spark-passport-access">
   <SparkCard class="passport-access-main">
     <div class="passport-access-score">
-      <div class="spark-ring large" style={`--value: ${readiness}`}>{readiness}%</div>
+      <SparkPassportGauge value={readiness} label="Passport" copy="Readiness Score" />
       <div>
         <span class="spark-eyebrow">Spark Passport</span>
         <h2>Kesiapan pengguna dibangun dari banyak sinyal.</h2>

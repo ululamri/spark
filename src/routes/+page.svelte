@@ -1,5 +1,6 @@
 <script lang="ts">
   import SparkButton from '$ui/SparkButton.svelte';
+  import SparkGuidedTourLite from '$ui/SparkGuidedTourLite.svelte';
   import SparkHeroVisual from '$ui/SparkHeroVisual.svelte';
   import SparkHomeFeatureGrid from '$ui/SparkHomeFeatureGrid.svelte';
   import SparkHomeHubPreview from '$ui/SparkHomeHubPreview.svelte';
@@ -35,6 +36,10 @@
 
 <section class="spark-section">
   <SparkHomeNextAction />
+</section>
+
+<section class="spark-section">
+  <SparkGuidedTourLite />
 </section>
 
 <section class="spark-section">
