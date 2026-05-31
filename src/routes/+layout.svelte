@@ -5,6 +5,7 @@
   import '$lib/styles/pass-4-gateway-surfaces.css';
   import '$lib/styles/pass-5-starknet-theme.css';
   import '$lib/styles/pass-6-natural-production-flow.css';
+  import '$lib/styles/pass-7-mobile-ux-production-cleanup.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();

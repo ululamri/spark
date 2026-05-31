@@ -4,6 +4,22 @@
   import SparkSyncStatus from '$ui/SparkSyncStatus.svelte';
   import { learningState, resetOnboarding } from '$state/learning-state.svelte';
   import { gatewayState } from '$state/gateway-state.svelte';
+
+  const modeLabel = $derived(
+    learningState.experience === 'beginner'
+      ? 'Baru mulai'
+      : learningState.experience === 'guided'
+        ? 'Sudah ada dasar'
+        : learningState.experience === 'explorer'
+          ? 'Siap teknis'
+          : 'Belum dipilih'
+  );
+
+  const onboardingCopy = $derived(
+    learningState.onboardingComplete
+      ? 'Onboarding awal selesai. Mode bisa diubah kapan saja dari Settings.'
+      : 'Mulai dari Home atau Core untuk memilih mode belajar awal.'
+  );
 </script>
 
 <svelte:head>
@@ -14,15 +30,15 @@
   <div>
     <span class="spark-eyebrow">Profile + Passport</span>
     <h1>Identitas belajar dan bukti readiness.</h1>
-    <p>Passport menjadi bagian dari profil learner: progress, checkpoint, bookmark, praktik, partisipasi workshop, dan resource Hub tersimpan.</p>
+    <p>Passport merangkum progress belajar, checkpoint, praktik, partisipasi workshop, dan resource Hub tersimpan.</p>
     <div class="spark-hero-actions">
       <button class="text-action" type="button" onclick={resetOnboarding}>Ulangi onboarding</button>
     </div>
   </div>
   <aside class="spark-hero-panel profile-summary">
-    <span>Mode</span>
-    <strong>{learningState.experience}</strong>
-    <p>{learningState.onboardingComplete ? 'Onboarding selesai' : 'Onboarding belum selesai'}</p>
+    <span>Mode belajar</span>
+    <strong>{modeLabel}</strong>
+    <p>{onboardingCopy}</p>
   </aside>
 </section>
 
@@ -54,7 +70,7 @@
       <p>Resource yang disimpan untuk eksplorasi lanjutan.</p>
     </SparkCard>
     <SparkCard>
-      <span>Bridge dismissed</span>
+      <span>Bridge teknis</span>
       <strong class="big">{gatewayState.dismissedBridgeIds.length}</strong>
       <p>Catatan interaksi dengan bagian teknis.</p>
     </SparkCard>

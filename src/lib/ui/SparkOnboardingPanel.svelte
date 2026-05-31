@@ -1,23 +1,23 @@
 <script lang="ts">
   import SparkButton from './SparkButton.svelte';
-  import { completeOnboarding, learningState, setExperience } from '$state/learning-state.svelte';
+  import { completeOnboarding, learningState, resetOnboarding, setExperience } from '$state/learning-state.svelte';
   import { pushToast } from '$state/app-state.svelte';
 
   const modes = [
     {
       key: 'beginner',
-      title: 'Saya benar-benar baru',
-      copy: 'Spark akan memakai bahasa sederhana, contoh lokal, glossary, dan jembatan sebelum praktik.'
+      title: 'Baru mulai',
+      copy: 'Bahasa sederhana, contoh lokal, glossary, dan jembatan sebelum praktik.'
     },
     {
       key: 'guided',
-      title: 'Saya sudah punya sedikit dasar',
-      copy: 'Spark akan memberi jalur lebih ringkas tetapi tetap menjaga checklist keamanan.'
+      title: 'Sudah ada dasar',
+      copy: 'Jalur lebih ringkas, tetap dengan checklist keamanan.'
     },
     {
       key: 'explorer',
-      title: 'Saya ingin menjelajah teknis',
-      copy: 'Spark akan membuka konteks Starknet, testnet, dan Cairo dengan peringatan sebelum bagian teknis.'
+      title: 'Siap teknis',
+      copy: 'Starknet, testnet, Cairo, dan bagian teknis dengan peringatan.'
     }
   ] as const;
 
@@ -26,21 +26,42 @@
     completeOnboarding();
     pushToast({
       title: 'Mode belajar disimpan',
-      copy: `${mode.title} dipakai sebagai estimasi awal. Ini bisa berubah dari perilaku belajar.`,
+      copy: `${mode.title} dipakai sebagai estimasi awal. Kamu tetap bisa mengubahnya nanti.`,
       tone: 'success'
     });
   }
+
+  const selectedLabel = $derived(
+    learningState.experience === 'beginner'
+      ? 'Baru mulai'
+      : learningState.experience === 'guided'
+        ? 'Sudah ada dasar'
+        : learningState.experience === 'explorer'
+          ? 'Siap teknis'
+          : 'Belum dipilih'
+  );
 </script>
 
-{#if !learningState.onboardingComplete}
-  <section class="spark-onboarding">
-    <div>
-      <span class="spark-eyebrow">Mulai dari level yang nyaman</span>
-      <h2>Seberapa familiar kamu dengan blockchain?</h2>
-      <p>
-        Pilihan ini hanya estimasi awal, bukan jalur permanen. Spark tetap memakai satu jalur belajar utama
-        dan menyesuaikan rekomendasi dari progress, checkpoint, dan praktik.
-      </p>
+<section class:complete={learningState.onboardingComplete} class="spark-onboarding">
+  {#if learningState.onboardingComplete}
+    <div class="onboarding-complete-row">
+      <div>
+        <span class="spark-eyebrow">Mode belajar</span>
+        <strong>{selectedLabel}</strong>
+        <p>Mode ini membantu rekomendasi Spark, bukan mengunci jalur belajar.</p>
+      </div>
+      <SparkButton variant="ghost" onclick={resetOnboarding}>Ubah</SparkButton>
+    </div>
+  {:else}
+    <div class="onboarding-intro">
+      <div>
+        <span class="spark-eyebrow">Mulai dari level yang nyaman</span>
+        <h2>Seberapa familiar kamu dengan blockchain?</h2>
+        <p>Pilih estimasi awal. Spark tetap memakai satu jalur utama dan menyesuaikan rekomendasi dari progress.</p>
+      </div>
+      <SparkButton variant="ghost" onclick={() => { completeOnboarding(); pushToast({ title: 'Onboarding dilewati', copy: 'Spark akan memulai dari Fondasi Blockchain.', tone: 'info' }); }}>
+        Lewati
+      </SparkButton>
     </div>
 
     <div class="spark-onboarding-grid">
@@ -51,9 +72,5 @@
         </button>
       {/each}
     </div>
-
-    <SparkButton variant="ghost" onclick={() => { completeOnboarding(); pushToast({ title: 'Onboarding dilewati', copy: 'Spark akan memulai dari Fondasi Blockchain.', tone: 'info' }); }}>
-      Lewati dulu
-    </SparkButton>
-  </section>
-{/if}
+  {/if}
+</section>

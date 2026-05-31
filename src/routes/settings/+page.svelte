@@ -1,19 +1,19 @@
 <script lang="ts">
-  import SparkPreviewToggle from '$shell/SparkPreviewToggle.svelte';
-  import SparkPalettePreview from '$ui/SparkPalettePreview.svelte';
+  import SparkPreferencePanel from '$ui/SparkPreferencePanel.svelte';
 </script>
 
 <svelte:head>
   <title>Settings — Karyra Spark</title>
 </svelte:head>
 
-<section class="spark-section">
+<section class="spark-section settings-hero">
   <span class="spark-eyebrow">Settings</span>
-  <h1>Pengaturan tampilan dan mode preview.</h1>
-  <p class="spark-lead">Gunakan toggle untuk menguji desktop/mobile, light/dark/system, dan arah visual Spark yang terinspirasi dari nuansa Starknet.</p>
-  <SparkPreviewToggle />
+  <h1>Pengaturan Spark.</h1>
+  <p class="spark-lead">
+    Atur tampilan, tema, mode belajar, dan data lokal. Bagian ini hanya berisi pengaturan yang relevan untuk pengguna.
+  </p>
 </section>
 
 <section class="spark-section">
-  <SparkPalettePreview />
+  <SparkPreferencePanel />
 </section>

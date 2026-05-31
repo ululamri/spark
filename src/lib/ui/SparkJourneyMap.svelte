@@ -3,35 +3,35 @@
     {
       label: '01',
       title: 'Learn',
-      copy: 'Mulai dari Core: jalur belajar, lesson, checkpoint, glossary, notes, dan bookmark.',
+      copy: 'Core, lesson, checkpoint, glossary, notes.',
       href: '/core',
       focus: 'learn'
     },
     {
       label: '02',
       title: 'Practice',
-      copy: 'Masuk ke Lab: simulasi aman, bridge warning, loading state, dan proof of practice.',
+      copy: 'Lab aman, bridge warning, proof of practice.',
       href: '/lab',
       focus: 'practice'
     },
     {
       label: '03',
       title: 'Community',
-      copy: 'Ikut workshop, cohort, atau sesi lokal agar belajar tidak berhenti di layar.',
+      copy: 'Workshop, cohort, fasilitator lokal.',
       href: '/community',
       focus: 'community'
     },
     {
       label: '04',
       title: 'Passport',
-      copy: 'Lihat readiness, progress, checkpoint, praktik, workshop, dan resource tersimpan di Profile.',
+      copy: 'Progress, readiness, bukti perjalanan.',
       href: '/profile',
       focus: 'passport'
     },
     {
       label: '05',
       title: 'Hub',
-      copy: 'Lanjutkan eksplorasi resource, apps, tools, komunitas, dan ekosistem setelah cukup siap.',
+      copy: 'Resource, apps, tools, komunitas.',
       href: '/hub',
       focus: 'hub'
     }
@@ -41,8 +41,8 @@
 <section class="spark-journey-map">
   <div class="journey-head">
     <span class="spark-eyebrow">Perjalanan Spark</span>
-    <h2>Satu alur natural dari belajar sampai eksplorasi ekosistem.</h2>
-    <p>Pengguna tidak perlu masuk halaman demo. Spark diarahkan secara natural dari Core, Lab, Community, Passport, lalu Hub.</p>
+    <h2>Belajar sampai siap menjelajah ekosistem.</h2>
+    <p>Alur natural Spark: Core, Lab, Community, Passport, lalu Hub.</p>
   </div>
 
   <div class="journey-rail">
