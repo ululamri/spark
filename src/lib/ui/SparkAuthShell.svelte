@@ -22,7 +22,7 @@
   const title = $derived(mode === 'login' ? 'Masuk ke Karyra Spark' : 'Daftar Beta Karyra Spark');
   const copy = $derived(
     mode === 'login'
-      ? 'Gunakan akun contoh lokal untuk mencoba flow frontend sampai backend auth siap.'
+      ? 'Gunakan akun contoh lokal untuk mencoba flow aplikasi sampai backend auth siap.'
       : 'Form beta ini menyiapkan struktur registrasi. Penyimpanan akun produksi akan masuk saat backend siap.'
   );
 
@@ -36,7 +36,7 @@
       tone: 'success'
     });
 
-    await goto('/profile');
+    await goto('/dashboard');
   }
 
   async function submitLocalForm() {
@@ -58,11 +58,11 @@
 
     pushToast({
       title: mode === 'login' ? 'Masuk lokal berhasil' : 'Pendaftaran beta tersimpan lokal',
-      copy: 'Ini belum membuat akun backend. Session frontend disiapkan untuk alur UI.',
+      copy: 'Ini belum membuat akun backend. Session frontend disiapkan untuk alur aplikasi.',
       tone: 'success'
     });
 
-    await goto('/profile');
+    await goto('/dashboard');
   }
 </script>
 
@@ -79,6 +79,13 @@
     </div>
 
     <div class="auth-path-list">
+      <article>
+        <SparkIcon name="dashboard" size={18} />
+        <div>
+          <strong>Dashboard</strong>
+          <small>Setelah masuk, pengguna diarahkan ke ringkasan aktivitas.</small>
+        </div>
+      </article>
       <article>
         <SparkIcon name="book-open" size={18} />
         <div>

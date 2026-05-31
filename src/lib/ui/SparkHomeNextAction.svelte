@@ -2,10 +2,21 @@
   import SparkButton from './SparkButton.svelte';
   import SparkCard from './SparkCard.svelte';
   import SparkIcon from './SparkIcon.svelte';
+  import { betaSession } from '$state/beta-session-state.svelte';
   import { gatewayState } from '$state/gateway-state.svelte';
   import { getCompletedLessonCount, getReadinessScore, learningState } from '$state/learning-state.svelte';
 
   const nextAction = $derived.by(() => {
+    if (!betaSession.user) {
+      return {
+        href: '/login',
+        label: 'Masuk dengan akun contoh',
+        copy: 'Coba pengalaman aplikasi nyata: dashboard, belajar, praktik, Passport, komunitas, dan Hub.',
+        icon: 'login',
+        tone: 'blue'
+      };
+    }
+
     if (getCompletedLessonCount() === 0) {
       return {
         href: '/core',

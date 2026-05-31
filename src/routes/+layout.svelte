@@ -15,6 +15,7 @@
   import '$lib/styles/pass-14-production-label-trust-cleanup.css';
   import '$lib/styles/pass-15-public-navigation-beta-access.css';
   import '$lib/styles/pass-16-user-dashboard-real-app-flow.css';
+  import '$lib/styles/pass-17-app-navigation-flow-polish.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();
