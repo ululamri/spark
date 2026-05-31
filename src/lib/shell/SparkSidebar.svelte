@@ -1,21 +1,9 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import { getLearningProgressPercent, getReadinessScore } from '$state/learning-state.svelte';
   import { getHubUrl } from '$lib/config/spark-topology';
-
-  const nav = [
-    { href: '/', label: 'Gateway', copy: 'Ringkasan Spark', icon: '⌂' },
-    { href: '/core', label: 'Learn', copy: 'Jalur Belajar Spark', icon: '◆' },
-    { href: '/lab', label: 'Practice', copy: 'Lab dan simulasi', icon: '⌁' },
-    { href: '/community', label: 'Community', copy: 'Workshop dan cohort', icon: '●' },
-    { href: '/profile', label: 'Profile', copy: 'Passport & progress', icon: '◉' },
-    { href: '/hub', label: 'Hub', copy: 'Eksplorasi ekosistem', icon: '✦' }
-  ];
-
-  function isActive(href: string) {
-    if (href === '/') return page.url.pathname === '/';
-    return page.url.pathname === href || page.url.pathname.startsWith(`${href}/`);
-  }
+  import { isNavActive, sparkNavItems } from '$lib/content/spark-navigation';
+  import { getLearningProgressPercent, getReadinessScore } from '$state/learning-state.svelte';
+  import SparkIcon from '$ui/SparkIcon.svelte';
 </script>
 
 <aside class="spark-sidebar">
@@ -26,9 +14,9 @@
   </div>
 
   <nav class="spark-sidebar-nav" aria-label="Navigasi utama">
-    {#each nav as item}
-      <a href={item.href} class:active={isActive(item.href)}>
-        <span>{item.icon}</span>
+    {#each sparkNavItems.filter((item) => item.key !== 'settings') as item}
+      <a href={item.href} class:active={isNavActive(page.url.pathname, item.href)}>
+        <span><SparkIcon name={item.icon} size={19} /></span>
         <div>
           <strong>{item.label}</strong>
           <small>{item.copy}</small>
@@ -46,10 +34,15 @@
   </a>
 
   <a class="spark-sidebar-hub" href={getHubUrl('/')}>
-    <span>✦</span>
+    <span><SparkIcon name="compass" size={18} /></span>
     <span>
       <strong>Hub Gateway</strong>
       <small>Resource, apps, tools, dan komunitas setelah siap.</small>
     </span>
+  </a>
+
+  <a class="spark-sidebar-settings" href="/settings" class:active={isNavActive(page.url.pathname, '/settings')}>
+    <SparkIcon name="settings" size={17} />
+    <span>Settings</span>
   </a>
 </aside>

@@ -1,7 +1,8 @@
 <script lang="ts">
-  import SparkHeroVisual from '$ui/SparkHeroVisual.svelte';
   import SparkLabConsole from '$ui/SparkLabConsole.svelte';
+  import SparkPageHeader from '$ui/SparkPageHeader.svelte';
   import SparkReadinessPanel from '$ui/SparkReadinessPanel.svelte';
+  import SparkSectionHeader from '$ui/SparkSectionHeader.svelte';
   import { sparkLabs } from '$content/spark-content';
 </script>
 
@@ -9,26 +10,21 @@
   <title>Practice Lab — Karyra Spark</title>
 </svelte:head>
 
-<section class="spark-hero practice">
-  <div>
-    <span class="spark-eyebrow">Practice Lab</span>
-    <h1>Praktik aman sebelum masuk Web3 sungguhan.</h1>
-    <p>Setiap aksi punya loading state, feedback, dan jembatan agar pengguna pemula tidak panik saat berinteraksi dengan proses jaringan.</p>
-  </div>
-  <aside class="spark-hero-panel">
-    <SparkHeroVisual mode="practice" />
-  </aside>
-</section>
+<SparkPageHeader
+  eyebrow="Practice Lab"
+  title="Praktik aman sebelum masuk Web3 sungguhan."
+  copy="Setiap aksi punya loading state, feedback, dan jembatan agar pengguna pemula tidak panik saat berinteraksi dengan proses jaringan."
+  mode="practice"
+/>
 
 <section class="spark-section">
-  <div class="spark-section-head">
-    <div>
-      <span class="spark-eyebrow">Safe practice</span>
-      <h2>Lab dibuat bertahap: simulasi → readiness → teknis.</h2>
-    </div>
-  </div>
+  <SparkSectionHeader
+    eyebrow="Safe practice"
+    title="Simulasi, readiness, dan teknis dalam satu jalur."
+    copy="Lab dibuat bertahap agar pengguna belajar praktik tanpa langsung masuk ke risiko teknis."
+  />
 
-  <div class="spark-lab-grid">
+  <div class="spark-lab-grid surface-grid">
     {#each sparkLabs as lab}
       <SparkLabConsole {lab} />
     {/each}

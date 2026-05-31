@@ -1,6 +1,8 @@
 <script lang="ts">
   import SparkCard from '$ui/SparkCard.svelte';
+  import SparkPageHeader from '$ui/SparkPageHeader.svelte';
   import SparkReadinessPanel from '$ui/SparkReadinessPanel.svelte';
+  import SparkSectionHeader from '$ui/SparkSectionHeader.svelte';
   import SparkSyncStatus from '$ui/SparkSyncStatus.svelte';
   import { learningState, resetOnboarding } from '$state/learning-state.svelte';
   import { gatewayState } from '$state/gateway-state.svelte';
@@ -26,20 +28,21 @@
   <title>Profile & Passport — Karyra Spark</title>
 </svelte:head>
 
-<section class="spark-hero profile">
-  <div>
-    <span class="spark-eyebrow">Profile + Passport</span>
-    <h1>Identitas belajar dan bukti readiness.</h1>
-    <p>Passport merangkum progress belajar, checkpoint, praktik, partisipasi workshop, dan resource Hub tersimpan.</p>
-    <div class="spark-hero-actions">
-      <button class="text-action" type="button" onclick={resetOnboarding}>Ulangi onboarding</button>
-    </div>
-  </div>
-  <aside class="spark-hero-panel profile-summary">
-    <span>Mode belajar</span>
+<SparkPageHeader
+  eyebrow="Profile + Passport"
+  title="Identitas belajar dan bukti readiness."
+  copy="Passport merangkum progress belajar, checkpoint, praktik, partisipasi workshop, dan resource Hub tersimpan."
+  mode="profile"
+>
+  <button class="text-action" type="button" onclick={resetOnboarding}>Ulangi onboarding</button>
+</SparkPageHeader>
+
+<section class="spark-section profile-mode-surface">
+  <SparkCard class="profile-mode-card">
+    <span class="spark-eyebrow">Mode belajar</span>
     <strong>{modeLabel}</strong>
     <p>{onboardingCopy}</p>
-  </aside>
+  </SparkCard>
 </section>
 
 <section class="spark-section">
@@ -51,14 +54,13 @@
 </section>
 
 <section class="spark-section">
-  <div class="spark-section-head">
-    <div>
-      <span class="spark-eyebrow">Saved gateway</span>
-      <h2>Workshop dan Hub tersimpan.</h2>
-    </div>
-  </div>
+  <SparkSectionHeader
+    eyebrow="Saved gateway"
+    title="Workshop dan Hub tersimpan."
+    copy="Sinyal partisipasi komunitas dan eksplorasi ekosistem ditampilkan sebagai bagian dari Passport."
+  />
 
-  <div class="spark-profile-grid">
+  <div class="spark-profile-grid surface-grid">
     <SparkCard>
       <span>Workshop tersimpan</span>
       <strong class="big">{gatewayState.registeredWorkshopIds.length}</strong>
