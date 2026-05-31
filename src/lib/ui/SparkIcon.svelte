@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Component } from 'svelte';
   import {
+    BadgeCheck,
     BookOpen,
     Bookmark,
     Calendar,
@@ -13,6 +14,7 @@
     FlaskConical,
     Home,
     Layers3,
+    LockKeyhole,
     Menu,
     MessageCircle,
     Moon,
@@ -23,6 +25,7 @@
     ShieldCheck,
     Sparkles,
     Sun,
+    Target,
     UserRound,
     Users,
     X,
@@ -48,6 +51,7 @@
   let { name, size = 18, strokeWidth = 2, class: className = '' }: Props = $props();
 
   const icons: Record<string, IconComponent> = {
+    badge: BadgeCheck,
     'book-open': BookOpen,
     bookmark: Bookmark,
     calendar: Calendar,
@@ -59,6 +63,7 @@
     help: CircleHelp,
     home: Home,
     layers: Layers3,
+    lock: LockKeyhole,
     menu: Menu,
     messages: MessageCircle,
     moon: Moon,
@@ -69,6 +74,7 @@
     shield: ShieldCheck,
     sparkles: Sparkles,
     sun: Sun,
+    target: Target,
     user: UserRound,
     'user-round': UserRound,
     users: Users,
