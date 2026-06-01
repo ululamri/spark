@@ -2,7 +2,6 @@
   import SparkButton from './SparkButton.svelte';
   import SparkCard from './SparkCard.svelte';
   import SparkIcon from './SparkIcon.svelte';
-  import SparkPassportGauge from './SparkPassportGauge.svelte';
   import SparkTrustBadge from './SparkTrustBadge.svelte';
   import { dashboardActions, dashboardModes } from '$lib/dashboard/dashboard-model';
   import { getHubAccessCopy } from '$lib/profile/profile-model';
@@ -30,6 +29,7 @@
   const modeLabel = $derived(getModeLabel(safeMode));
   const readiness = $derived(getReadinessScore());
   const hubAccess = $derived(getHubAccessCopy(readiness));
+  const recommendedLesson = $derived(getRecommendedLessonSlug());
 
   const nextAction = $derived.by(() => {
     if (getCompletedLessonCount() === 0) {
@@ -37,25 +37,38 @@
         href: '/core',
         title: 'Mulai lesson pertama',
         copy: 'Bangun fondasi blockchain sebelum masuk Practice Lab.',
-        cta: 'Mulai Core'
+        cta: 'Mulai Core',
+        icon: 'book-open'
       };
     }
 
     if (learningState.completedLabIds.length === 0) {
       return {
         href: '/lab',
-        title: 'Lanjut ke Practice Lab',
+        title: 'Buka Practice Lab',
         copy: 'Ubah pemahaman menjadi simulasi dan proof-of-practice.',
-        cta: 'Buka Lab'
+        cta: 'Buka Lab',
+        icon: 'flask-conical'
+      };
+    }
+
+    if (gatewayState.registeredWorkshopIds.length === 0) {
+      return {
+        href: '/community',
+        title: 'Masuk komunitas',
+        copy: 'Hubungkan belajar dengan workshop, cohort, dan fasilitator lokal.',
+        cta: 'Buka Komunitas',
+        icon: 'users'
       };
     }
 
     if (readiness < 75) {
       return {
         href: '/profile',
-        title: 'Lengkapi Passport',
-        copy: 'Naikkan readiness lewat lesson, lab, dan komunitas.',
-        cta: 'Lihat Passport'
+        title: 'Cek Passport',
+        copy: 'Lihat detail readiness dan sinyal belajar di halaman Profile & Passport.',
+        cta: 'Lihat Passport',
+        icon: 'badge'
       };
     }
 
@@ -63,45 +76,51 @@
       href: '/hub',
       title: 'Jelajahi Hub',
       copy: 'Readiness cukup untuk masuk gateway resource dan ekosistem.',
-      cta: 'Buka Hub'
+      cta: 'Buka Hub',
+      icon: 'compass'
     };
   });
 </script>
 
-<section class="spark-dashboard-hero">
+<section class="spark-dashboard-hero action-first">
   <div class="dashboard-identity">
     <div class="dashboard-avatar">{userName.slice(0, 1)}</div>
     <div>
       <span class="spark-eyebrow">Dashboard</span>
       <h1>Halo, {userName}</h1>
-      <p>{userHandle} · {modeLabel} · progress lokal tersimpan di perangkat ini</p>
+      <p>{userHandle} · {modeLabel} · ini ruang kerja harian untuk lanjut belajar dan praktik.</p>
       <div class="dashboard-badges">
-        <SparkTrustBadge label="Beta tertutup" tone="beta" />
+        <SparkTrustBadge label="Ruang kerja harian" tone="beta" />
         <SparkTrustBadge label="Data lokal" tone="local" />
         <SparkTrustBadge label={hubAccess.unlocked ? 'Hub siap' : 'Hub bertahap'} tone={hubAccess.unlocked ? 'safe' : 'target'} />
       </div>
     </div>
   </div>
 
-  <aside class="dashboard-passport-preview">
-    <SparkPassportGauge value={readiness} label="Passport" copy="Readiness" />
+  <aside class="dashboard-quick-status">
     <div>
-      <strong>{readiness}% readiness</strong>
-      <small>{getLearningProgressPercent()}% belajar · {getCompletedLessonCount()}/{getTotalLessonCount()} lesson</small>
+      <strong>{getLearningProgressPercent()}%</strong>
+      <span>Belajar</span>
     </div>
+    <div>
+      <strong>{readiness}%</strong>
+      <span>Readiness</span>
+    </div>
+    <SparkButton href="/profile" variant="secondary">Detail Passport</SparkButton>
   </aside>
 </section>
 
 <section class="spark-dashboard-next">
-  <SparkCard class="dashboard-next-card">
+  <SparkCard class="dashboard-next-card focus-action">
+    <span class="dashboard-next-icon"><SparkIcon name={nextAction.icon} size={24} /></span>
     <div>
-      <span class="spark-eyebrow">Langkah berikutnya</span>
+      <span class="spark-eyebrow">Yang perlu dilakukan sekarang</span>
       <h2>{nextAction.title}</h2>
       <p>{nextAction.copy}</p>
     </div>
     <div class="dashboard-next-actions">
       <SparkButton href={nextAction.href}>{nextAction.cta}</SparkButton>
-      <SparkButton href={`/lesson/${getRecommendedLessonSlug()}`} variant="secondary">Lesson Rekomendasi</SparkButton>
+      <SparkButton href={`/lesson/${recommendedLesson}`} variant="secondary">Lesson Rekomendasi</SparkButton>
     </div>
   </SparkCard>
 </section>
@@ -119,36 +138,44 @@
   {/each}
 </section>
 
-<section class="spark-dashboard-activity">
-  <SparkCard class="dashboard-activity-card">
-    <span class="spark-eyebrow">Aktivitas belajar</span>
-    <h2>Ringkasan perjalananmu.</h2>
+<section class="spark-dashboard-workflow">
+  <SparkCard class="dashboard-resume-card">
+    <span class="spark-eyebrow">Resume cepat</span>
+    <h2>Lanjutkan dari titik terakhir tanpa membuka Profile.</h2>
 
-    <div class="dashboard-stat-grid">
-      <div>
-        <strong>{getCompletedLessonCount()}</strong>
-        <span>Lesson selesai</span>
-      </div>
-      <div>
-        <strong>{learningState.completedLabIds.length}</strong>
-        <span>Lab selesai</span>
-      </div>
-      <div>
-        <strong>{gatewayState.registeredWorkshopIds.length}</strong>
-        <span>Workshop tersimpan</span>
-      </div>
-      <div>
-        <strong>{gatewayState.savedHubResourceIds.length}</strong>
-        <span>Resource Hub</span>
-      </div>
+    <div class="dashboard-resume-list">
+      <a href={`/lesson/${recommendedLesson}`}>
+        <span><SparkIcon name="book-open" size={16} /></span>
+        <div>
+          <strong>Lesson berikutnya</strong>
+          <small>Lanjutkan jalur belajar utama</small>
+        </div>
+        <em>›</em>
+      </a>
+      <a href="/lab">
+        <span><SparkIcon name="flask-conical" size={16} /></span>
+        <div>
+          <strong>Practice Lab</strong>
+          <small>{learningState.completedLabIds.length} lab selesai</small>
+        </div>
+        <em>›</em>
+      </a>
+      <a href="/community">
+        <span><SparkIcon name="users" size={16} /></span>
+        <div>
+          <strong>Workshop & cohort</strong>
+          <small>{gatewayState.registeredWorkshopIds.length} workshop tersimpan</small>
+        </div>
+        <em>›</em>
+      </a>
     </div>
   </SparkCard>
 
-  <SparkCard class="dashboard-mode-card">
-    <span class="spark-eyebrow">Mode belajar</span>
-    <h2>Sesuaikan jalur tanpa membuat pengguna tersesat.</h2>
+  <SparkCard class="dashboard-mode-card compact">
+    <span class="spark-eyebrow">Mode hari ini</span>
+    <h2>Ubah mode jika alur terasa terlalu lambat atau terlalu teknis.</h2>
 
-    <div class="dashboard-mode-list">
+    <div class="dashboard-mode-list compact">
       {#each dashboardModes as mode}
         <button type="button" class:active={learningState.experience === mode.key} onclick={() => setExperience(mode.key)}>
           <SparkIcon name={mode.icon} size={17} />
@@ -160,4 +187,12 @@
       {/each}
     </div>
   </SparkCard>
+</section>
+
+<section class="dashboard-passport-strip">
+  <div>
+    <strong>Passport detail ada di Profile.</strong>
+    <span>{getCompletedLessonCount()}/{getTotalLessonCount()} lesson · {learningState.completedLabIds.length} lab · {gatewayState.savedHubResourceIds.length} resource Hub</span>
+  </div>
+  <SparkButton href="/profile" variant="secondary">Buka Profile & Passport</SparkButton>
 </section>

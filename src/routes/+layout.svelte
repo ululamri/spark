@@ -17,6 +17,7 @@
   import '$lib/styles/pass-16-user-dashboard-real-app-flow.css';
   import '$lib/styles/pass-17-app-navigation-flow-polish.css';
   import '$lib/styles/pass-18-learning-flow-completion-polish.css';
+  import '$lib/styles/pass-19-dashboard-profile-separation.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();

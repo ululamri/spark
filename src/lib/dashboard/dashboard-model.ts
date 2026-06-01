@@ -9,24 +9,17 @@ export type DashboardAction = {
 export const dashboardActions: DashboardAction[] = [
   {
     href: '/core',
-    title: 'Lanjut Belajar',
-    copy: 'Masuk ke Spark Core dan lanjutkan lesson berikutnya.',
+    title: 'Lanjut Core',
+    copy: 'Masuk ke jalur belajar utama dan lanjutkan lesson berikutnya.',
     icon: 'book-open',
     tone: 'blue'
   },
   {
     href: '/lab',
     title: 'Practice Lab',
-    copy: 'Coba simulasi dan bangun proof-of-practice secara aman.',
+    copy: 'Ubah pemahaman menjadi latihan aman dan proof-of-practice.',
     icon: 'flask-conical',
     tone: 'purple'
-  },
-  {
-    href: '/profile',
-    title: 'Passport',
-    copy: 'Lihat readiness, progress, mode belajar, dan akses Hub.',
-    icon: 'badge',
-    tone: 'green'
   },
   {
     href: '/community',
@@ -34,6 +27,13 @@ export const dashboardActions: DashboardAction[] = [
     copy: 'Ikut workshop, cohort, dan aktivitas komunitas lokal.',
     icon: 'users',
     tone: 'pink'
+  },
+  {
+    href: '/hub',
+    title: 'Spark Hub',
+    copy: 'Jelajahi resource dan ekosistem setelah readiness cukup.',
+    icon: 'compass',
+    tone: 'green'
   }
 ];
 
@@ -41,19 +41,19 @@ export const dashboardModes = [
   {
     key: 'beginner',
     title: 'Pemula',
-    copy: 'Mulai dengan bahasa sederhana dan konteks sehari-hari.',
+    copy: 'Bahasa sederhana dan konteks sehari-hari.',
     icon: 'shield'
   },
   {
     key: 'guided',
     title: 'Terarah',
-    copy: 'Belajar lebih ringkas, tetap dengan guardrail yang jelas.',
+    copy: 'Lebih ringkas dengan guardrail yang jelas.',
     icon: 'layers'
   },
   {
     key: 'explorer',
     title: 'Penjelajah',
-    copy: 'Lihat jalur teknis, Lab advanced, dan preview Starknet.',
+    copy: 'Jalur teknis, Lab advanced, dan preview Starknet.',
     icon: 'zap'
   }
 ] as const;
