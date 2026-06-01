@@ -4,6 +4,6 @@
 
 <SparkTrustNotice
   type="localData"
-  title="Progress beta tersimpan lokal."
-  copy="Sampai akun contoh dan backend aktif, progress belajar di halaman ini disimpan di perangkat/browser sebagai simulasi aman."
+  title="Progress sementara tersimpan di perangkat ini."
+  copy="Selama mode beta, progress belajar, Passport, Inbox, dan resource tersimpan aman di browser. Saat backend aktif, alur ini bisa disinkronkan ke akun."
 />

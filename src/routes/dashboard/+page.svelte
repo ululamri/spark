@@ -1,5 +1,6 @@
 <script lang="ts">
   import SparkAppFlowChecklist from '$ui/SparkAppFlowChecklist.svelte';
+  import SparkDashboardCommandDeck from '$ui/SparkDashboardCommandDeck.svelte';
   import SparkUserDashboard from '$ui/SparkUserDashboard.svelte';
 </script>
 
@@ -7,7 +8,11 @@
   <title>Dashboard — Karyra Spark</title>
 </svelte:head>
 
-<SparkUserDashboard />
+<SparkDashboardCommandDeck />
+
+<section class="spark-section dashboard-user-summary-section">
+  <SparkUserDashboard />
+</section>
 
 <section class="spark-section">
   <SparkAppFlowChecklist />

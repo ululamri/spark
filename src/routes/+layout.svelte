@@ -21,6 +21,8 @@
   import '$lib/styles/pass-20-frontend-readiness-qa-polish.css';
   import '$lib/styles/pass-21-visual-parity-notifications-messaging.css';
   import '$lib/styles/pass-22-lab-community-profile-richness.css';
+  import '$lib/styles/pass-23-hub-dashboard-settings-richness.css';
+  import '$lib/styles/pass-24-mobile-density-product-feel.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();
