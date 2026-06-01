@@ -1,36 +1,17 @@
 <script lang="ts">
   import SparkExplorerPlaceholder from '$ui/SparkExplorerPlaceholder.svelte';
-  import SparkLabConsole from '$ui/SparkLabConsole.svelte';
-  import SparkLabPositionCard from '$ui/SparkLabPositionCard.svelte';
-  import SparkLabPrinciples from '$ui/SparkLabPrinciples.svelte';
-  import SparkLabProgressCard from '$ui/SparkLabProgressCard.svelte';
-  import SparkPageHeader from '$ui/SparkPageHeader.svelte';
-  import SparkPracticeProofRoadmap from '$ui/SparkPracticeProofRoadmap.svelte';
-  import SparkReadinessPanel from '$ui/SparkReadinessPanel.svelte';
+  import SparkLabCommandCenter from '$ui/SparkLabCommandCenter.svelte';
+  import SparkLabProofRoadmapRich from '$ui/SparkLabProofRoadmapRich.svelte';
+  import SparkLabRichGrid from '$ui/SparkLabRichGrid.svelte';
   import SparkSectionHeader from '$ui/SparkSectionHeader.svelte';
   import SparkWalletPlaceholder from '$ui/SparkWalletPlaceholder.svelte';
-  import SparkWeeklyPracticeTargets from '$ui/SparkWeeklyPracticeTargets.svelte';
-  import { sparkLabs } from '$content/spark-content';
 </script>
 
 <svelte:head>
   <title>Practice Lab — Karyra Spark</title>
 </svelte:head>
 
-<SparkPageHeader
-  eyebrow="Practice Lab"
-  title="Ruang latihan aman setelah Core."
-  copy="Pengguna mencoba simulasi wallet, membaca transaksi, mengenali risiko, dan menyiapkan praktik testnet-first tanpa aset sungguhan."
-  mode="practice"
-/>
-
-<section class="spark-section">
-  <SparkLabPositionCard />
-</section>
-
-<section class="spark-section">
-  <SparkLabProgressCard />
-</section>
+<SparkLabCommandCenter />
 
 <section class="spark-section">
   <SparkWalletPlaceholder />
@@ -39,58 +20,22 @@
 <section class="spark-section">
   <SparkSectionHeader
     eyebrow="Advanced workspace"
-    title="Mode Penjelajah mendapatkan ruang kerja yang terasa profesional."
-    copy="Saat ini masih placeholder aman. CodeMirror dan compiler Cairo disimpan untuk Pass 13B setelah grant lebih pasti."
+    title="Mode Penjelajah tetap punya ruang kerja teknis."
+    copy="CodeMirror dan StarknetKit disimpan untuk tahap setelah grant/backend lebih pasti, tetapi arah teknisnya sudah terlihat."
   />
   <SparkExplorerPlaceholder />
 </section>
 
-<section class="spark-section">
-  <SparkSectionHeader
-    eyebrow="Formula Lab"
-    title="Eksperimen harus punya konteks, guardrail, dan outcome."
-    copy="Lab bukan playground kosong. Setiap latihan dirancang untuk membuktikan pemahaman secara bertahap."
-  />
-  <SparkLabPrinciples />
-</section>
-
 <section class="spark-section" id="lab-modules">
   <SparkSectionHeader
-    eyebrow="Modul eksperimen terarah"
-    title="Simulasi, readiness, dan teknis dalam satu jalur."
-    copy="Lab dibuat bertahap agar pengguna belajar praktik tanpa langsung masuk ke risiko teknis."
+    eyebrow="Modul praktik"
+    title="Latihan dibuat seperti flow produk, bukan kartu statis."
+    copy="Setiap lab punya outcome, guardrail, step, status, dan aksi yang masuk ke Passport."
   />
 
-  <div class="spark-lab-grid surface-grid">
-    {#each sparkLabs as lab}
-      <SparkLabConsole {lab} />
-    {/each}
-  </div>
+  <SparkLabRichGrid />
 </section>
 
 <section class="spark-section">
-  <SparkSectionHeader
-    eyebrow="Zona aman"
-    title="Tidak memakai aset sungguhan."
-    copy="Aktivitas lab dirancang sebagai simulasi dan latihan readiness. Belum masuk reward sungguhan dan belum masuk claim onchain."
-  />
-  <SparkReadinessPanel />
-</section>
-
-<section class="spark-section">
-  <SparkSectionHeader
-    eyebrow="Proof roadmap"
-    title="Bukti belajar berkembang bertahap."
-    copy="Spark memandang bukti belajar sebagai proses: paham, praktik, ikut komunitas, lalu siap menjelajah."
-  />
-  <SparkPracticeProofRoadmap />
-</section>
-
-<section class="spark-section">
-  <SparkSectionHeader
-    eyebrow="Target praktik"
-    title="Target praktik minggu ini."
-    copy="Target ringan membuat pengguna tahu langkah berikutnya tanpa merasa tersesat."
-  />
-  <SparkWeeklyPracticeTargets />
+  <SparkLabProofRoadmapRich />
 </section>
