@@ -1,25 +1,15 @@
 <script lang="ts">
   import SparkLocalDataNotice from '$ui/SparkLocalDataNotice.svelte';
-  import SparkProfilePassportRich from '$ui/SparkProfilePassportRich.svelte';
-  import SparkReadinessPanel from '$ui/SparkReadinessPanel.svelte';
-  import SparkSectionHeader from '$ui/SparkSectionHeader.svelte';
+  import SparkProfileAccountCenter from '$ui/SparkProfileAccountCenter.svelte';
 </script>
 
 <svelte:head>
   <title>Profile & Passport — Karyra Spark</title>
+  <meta name="description" content="Pusat identitas Karyra Spark: Profile, Passport readiness, aktivitas belajar, teman komunitas, badge, dan pengaturan akun." />
 </svelte:head>
 
-<SparkProfilePassportRich />
+<SparkProfileAccountCenter />
 
-<section class="spark-section trust-compact-section">
+<section class="spark-section trust-compact-section profile-local-note">
   <SparkLocalDataNotice />
-</section>
-
-<section class="spark-section">
-  <SparkSectionHeader
-    eyebrow="Readiness detail"
-    title="Passport membaca beberapa sinyal, bukan hanya angka."
-    copy="Lesson, checkpoint, Lab, workshop, Hub resource, dan status wallet placeholder membentuk readiness bertahap."
-  />
-  <SparkReadinessPanel />
 </section>

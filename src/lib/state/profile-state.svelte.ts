@@ -1,0 +1,109 @@
+export type SparkProfileAvatarPreset = 'spark' | 'trophy' | 'coffee' | 'explorer' | 'mentor';
+export type SparkProfileVisibility = 'private' | 'community' | 'public';
+
+const STORAGE_KEY = 'karyra-spark-profile-state-v1';
+
+export const profileState = $state({
+  displayName: '',
+  handle: '',
+  bio: '',
+  location: '',
+  avatarPreset: 'spark' as SparkProfileAvatarPreset,
+  avatarImageData: '',
+  visibility: 'community' as SparkProfileVisibility,
+  friendIds: ['mentor-spark'] as string[],
+  friendRequestIds: ['facilitator-ayu'] as string[],
+  lastSavedAt: ''
+});
+
+export function restoreProfileState() {
+  if (typeof window === 'undefined') return;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const snapshot = JSON.parse(raw) as Partial<typeof profileState>;
+    if (typeof snapshot.displayName === 'string') profileState.displayName = snapshot.displayName;
+    if (typeof snapshot.handle === 'string') profileState.handle = snapshot.handle;
+    if (typeof snapshot.bio === 'string') profileState.bio = snapshot.bio;
+    if (typeof snapshot.location === 'string') profileState.location = snapshot.location;
+    if (snapshot.avatarPreset) profileState.avatarPreset = snapshot.avatarPreset;
+    if (typeof snapshot.avatarImageData === 'string') profileState.avatarImageData = snapshot.avatarImageData;
+    if (snapshot.visibility) profileState.visibility = snapshot.visibility;
+    if (Array.isArray(snapshot.friendIds)) profileState.friendIds = snapshot.friendIds;
+    if (Array.isArray(snapshot.friendRequestIds)) profileState.friendRequestIds = snapshot.friendRequestIds;
+    if (typeof snapshot.lastSavedAt === 'string') profileState.lastSavedAt = snapshot.lastSavedAt;
+  } catch {
+    // Ignore corrupted local profile state.
+  }
+}
+
+export function saveProfileState() {
+  if (typeof window === 'undefined') return;
+  profileState.lastSavedAt = new Date().toISOString();
+  window.localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      displayName: profileState.displayName,
+      handle: profileState.handle,
+      bio: profileState.bio,
+      location: profileState.location,
+      avatarPreset: profileState.avatarPreset,
+      avatarImageData: profileState.avatarImageData,
+      visibility: profileState.visibility,
+      friendIds: profileState.friendIds,
+      friendRequestIds: profileState.friendRequestIds,
+      lastSavedAt: profileState.lastSavedAt
+    })
+  );
+}
+
+export function updateProfileIdentity(input: {
+  displayName?: string;
+  handle?: string;
+  bio?: string;
+  location?: string;
+  visibility?: SparkProfileVisibility;
+}) {
+  if (typeof input.displayName === 'string') profileState.displayName = input.displayName.trim();
+  if (typeof input.handle === 'string') {
+    const normalized = input.handle.trim();
+    profileState.handle = normalized.startsWith('@') ? normalized : `@${normalized}`;
+  }
+  if (typeof input.bio === 'string') profileState.bio = input.bio.trim();
+  if (typeof input.location === 'string') profileState.location = input.location.trim();
+  if (input.visibility) profileState.visibility = input.visibility;
+  saveProfileState();
+}
+
+export function setAvatarPreset(preset: SparkProfileAvatarPreset) {
+  profileState.avatarPreset = preset;
+  profileState.avatarImageData = '';
+  saveProfileState();
+}
+
+export function setAvatarImageData(data: string) {
+  profileState.avatarImageData = data;
+  saveProfileState();
+}
+
+export function toggleFriend(friendId: string) {
+  if (profileState.friendIds.includes(friendId)) {
+    profileState.friendIds = profileState.friendIds.filter((id) => id !== friendId);
+  } else {
+    profileState.friendIds = [...profileState.friendIds, friendId];
+  }
+  saveProfileState();
+}
+
+export function acceptFriendRequest(friendId: string) {
+  profileState.friendRequestIds = profileState.friendRequestIds.filter((id) => id !== friendId);
+  if (!profileState.friendIds.includes(friendId)) {
+    profileState.friendIds = [...profileState.friendIds, friendId];
+  }
+  saveProfileState();
+}
+
+export function declineFriendRequest(friendId: string) {
+  profileState.friendRequestIds = profileState.friendRequestIds.filter((id) => id !== friendId);
+  saveProfileState();
+}

@@ -26,6 +26,7 @@
   import '$lib/styles/pass-25-aggressive-product-composition.css';
   import '$lib/styles/pass-26-home-landing-identity-footer.css';
   import '$lib/styles/pass-27-core-learn-learning-center.css';
+  import '$lib/styles/pass-28-profile-passport-account-center.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();
