@@ -1,19 +1,14 @@
 <script lang="ts">
   import SparkAppFlowChecklist from '$ui/SparkAppFlowChecklist.svelte';
-  import SparkDashboardCommandDeck from '$ui/SparkDashboardCommandDeck.svelte';
-  import SparkUserDashboard from '$ui/SparkUserDashboard.svelte';
+  import SparkDashboardOperatingBoard from '$ui/SparkDashboardOperatingBoard.svelte';
 </script>
 
 <svelte:head>
   <title>Dashboard — Karyra Spark</title>
 </svelte:head>
 
-<SparkDashboardCommandDeck />
+<SparkDashboardOperatingBoard />
 
-<section class="spark-section dashboard-user-summary-section">
-  <SparkUserDashboard />
-</section>
-
-<section class="spark-section">
+<section class="spark-section compact-flow-section">
   <SparkAppFlowChecklist />
 </section>

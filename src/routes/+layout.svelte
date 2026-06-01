@@ -23,6 +23,7 @@
   import '$lib/styles/pass-22-lab-community-profile-richness.css';
   import '$lib/styles/pass-23-hub-dashboard-settings-richness.css';
   import '$lib/styles/pass-24-mobile-density-product-feel.css';
+  import '$lib/styles/pass-25-aggressive-product-composition.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();
