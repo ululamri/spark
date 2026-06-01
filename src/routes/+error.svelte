@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { page } from '$app/stores';
-  import SparkButton from '$ui/SparkButton.svelte';
+  import { page } from '$app/state';
+  import SparkAppFallback from '$ui/SparkAppFallback.svelte';
+
+  const status = $derived(page.status);
+  const message = $derived(page.error?.message ?? 'Halaman tidak tersedia.');
 </script>
 
-<section class="spark-section error">
-  <span class="spark-eyebrow">Error</span>
-  <h1>{$page.status}</h1>
-  <p>{$page.error?.message ?? 'Halaman tidak tersedia.'}</p>
-  <SparkButton href="/">Kembali ke Gateway</SparkButton>
-</section>
+<svelte:head>
+  <title>{status} — Karyra Spark</title>
+</svelte:head>
+
+<SparkAppFallback {status} {message} />

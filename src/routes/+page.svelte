@@ -1,5 +1,6 @@
 <script lang="ts">
   import SparkButton from '$ui/SparkButton.svelte';
+  import SparkGuestStartPanel from '$ui/SparkGuestStartPanel.svelte';
   import SparkGuidedTourLite from '$ui/SparkGuidedTourLite.svelte';
   import SparkHeroVisual from '$ui/SparkHeroVisual.svelte';
   import SparkHomeFeatureGrid from '$ui/SparkHomeFeatureGrid.svelte';
@@ -23,8 +24,8 @@
     <h1>Percikan awal memahami blockchain dan Starknet.</h1>
     <p>Karyra Spark memandu komunitas lokal dari pemahaman dasar blockchain menuju praktik aman, readiness, dan eksplorasi Starknet secara bertahap.</p>
     <div class="spark-hero-actions">
-      <SparkButton href="/core">Mulai dari Core</SparkButton>
-      <SparkButton href="/profile" variant="secondary">Lihat Passport</SparkButton>
+      <SparkButton href="/login">Coba Akun Contoh</SparkButton>
+      <SparkButton href="/core" variant="secondary">Lihat Core</SparkButton>
     </div>
   </div>
   <aside class="spark-hero-panel">
@@ -39,20 +40,42 @@
   <SparkLocalDataNotice />
 </section>
 
-<section class="spark-section"><SparkHomeNextAction /></section>
-<section class="spark-section"><SparkGuidedTourLite /></section>
-<section class="spark-section"><SparkHomeReadinessMap /></section>
+<section class="spark-section">
+  <SparkGuestStartPanel />
+</section>
+
+<section class="spark-section">
+  <SparkHomeNextAction />
+</section>
+
+<section class="spark-section">
+  <SparkGuidedTourLite />
+</section>
+
+<section class="spark-section">
+  <SparkHomeReadinessMap />
+</section>
 
 <SparkOnboardingPanel />
 
 <section class="spark-section">
-  <SparkSectionHeader eyebrow="Jalur awal" title="Pilih jalur yang paling aman untukmu." copy="Jalur membantu rekomendasi awal. Spark tetap menjaga satu alur utama agar pengguna tidak bingung." />
+  <SparkSectionHeader
+    eyebrow="Jalur awal"
+    title="Pilih jalur yang paling aman untukmu."
+    copy="Jalur membantu rekomendasi awal. Spark tetap menjaga satu alur utama agar pengguna tidak bingung."
+  />
   <SparkHomePathGrid />
 </section>
 
 <section class="spark-section">
-  <SparkSectionHeader eyebrow="Ruang utama" title="Tempat utama untuk mulai siap." copy="Spark menggabungkan belajar, praktik, komunitas, Passport, dan Hub dalam satu ekosistem." />
+  <SparkSectionHeader
+    eyebrow="Ruang utama"
+    title="Tempat utama untuk mulai siap."
+    copy="Spark menggabungkan belajar, praktik, komunitas, Passport, dan Hub dalam satu ekosistem."
+  />
   <SparkHomeFeatureGrid />
 </section>
 
-<section class="spark-section"><SparkHomeHubPreview /></section>
+<section class="spark-section">
+  <SparkHomeHubPreview />
+</section>
