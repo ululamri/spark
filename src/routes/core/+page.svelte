@@ -1,44 +1,16 @@
 <script lang="ts">
-  import SparkCoreOverview from '$ui/SparkCoreOverview.svelte';
+  import SparkCoreCommandCenter from '$ui/SparkCoreCommandCenter.svelte';
+  import SparkCoreCurriculumGrid from '$ui/SparkCoreCurriculumGrid.svelte';
+  import SparkCoreSupportPanel from '$ui/SparkCoreSupportPanel.svelte';
   import SparkLearningModeStrip from '$ui/SparkLearningModeStrip.svelte';
   import SparkModuleAccordion from '$ui/SparkModuleAccordion.svelte';
   import SparkOnboardingPanel from '$ui/SparkOnboardingPanel.svelte';
-  import SparkPageHeader from '$ui/SparkPageHeader.svelte';
   import SparkSectionHeader from '$ui/SparkSectionHeader.svelte';
-  import SparkButton from '$ui/SparkButton.svelte';
-  import { getRecommendedLessonSlug } from '$state/learning-state.svelte';
 </script>
-
-<svelte:head>
-  <title>Spark Core — Jalur Belajar Spark</title>
-</svelte:head>
-
-<SparkPageHeader
-  eyebrow="Spark Core"
-  title="Pusat pembelajaran Karyra Spark."
-  copy="Core adalah tempat pengguna mulai memahami blockchain, cryptocurrency, Web3, dan Starknet melalui jalur yang sederhana, bertahap, dan aman untuk pemula."
-  mode="learn"
->
-  <SparkButton href={`/lesson/${getRecommendedLessonSlug()}`}>Lanjut Belajar</SparkButton>
-  <SparkButton href="#modules" variant="secondary">Lihat Modul</SparkButton>
-</SparkPageHeader>
-
-<SparkOnboardingPanel />
-
-<section class="spark-section">
-  <SparkCoreOverview />
-</section>
-
-<section class="spark-section">
-  <SparkLearningModeStrip />
-</section>
-
-<section class="spark-section" id="modules">
-  <SparkSectionHeader
-    eyebrow="Learning path"
-    title="Modul belajar dibuat collapsible dan bertahap."
-    copy="Jalur ini dapat tumbuh menjadi banyak lesson tanpa membuat halaman Core terlalu panjang atau melelahkan."
-  />
-
-  <SparkModuleAccordion />
-</section>
+<svelte:head><title>Spark Core — Karyra Spark</title></svelte:head>
+<SparkCoreCommandCenter />
+<section class="spark-section"><SparkOnboardingPanel /></section>
+<section class="spark-section"><SparkLearningModeStrip /></section>
+<section class="spark-section" id="curriculum"><SparkSectionHeader eyebrow="Kurikulum utama" title="7 level menuju readiness blockchain dan Starknet." copy="Core kembali menjadi pusat kurikulum besar: fondasi, cryptocurrency, wallet safety, Web3, Starknet, Practice Lab, dan Passport." /><SparkCoreCurriculumGrid /></section>
+<section class="spark-section"><SparkCoreSupportPanel /></section>
+<section class="spark-section"><SparkSectionHeader eyebrow="Accordion detail" title="Buka detail lesson sesuai kebutuhan." copy="Grid memberi gambaran besar. Accordion tetap tersedia untuk membaca lesson secara terstruktur." /><SparkModuleAccordion /></section>
