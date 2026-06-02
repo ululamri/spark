@@ -8,22 +8,59 @@
   import { gatewayState } from '$state/gateway-state.svelte';
   import { getCompletedLessonCount, getLearningProgressPercent, getReadinessScore, learningState } from '$state/learning-state.svelte';
   import { pushToast } from '$state/app-state.svelte';
+
   let open = $state(false);
-  const notifications = $derived(createSparkNotifications({ readiness:getReadinessScore(), learningProgress:getLearningProgressPercent(), completedLessons:getCompletedLessonCount(), completedLabs:learningState.completedLabIds.length, registeredWorkshops:gatewayState.registeredWorkshopIds.length, userName:betaSession.user?.name }));
-  const unreadCount = $derived(notifications.filter((item)=>!messageState.readNotificationIds.includes(item.id)).length);
-  function readAll(){ markAllNotificationsRead(notifications.map((item)=>item.id)); pushToast({ title:'Pemberitahuan dibaca', copy:'Semua item notifikasi sudah ditandai dibaca.', tone:'success' }); }
+
+  const notifications = $derived(
+    createSparkNotifications({
+      readiness: getReadinessScore(),
+      learningProgress: getLearningProgressPercent(),
+      completedLessons: getCompletedLessonCount(),
+      completedLabs: learningState.completedLabIds.length,
+      registeredWorkshops: gatewayState.registeredWorkshopIds.length,
+      userName: betaSession.user?.name
+    })
+  );
+
+  const unreadCount = $derived(notifications.filter((item) => !messageState.readNotificationIds.includes(item.id)).length);
+
+  function readAll() {
+    markAllNotificationsRead(notifications.map((item) => item.id));
+    pushToast({ title: 'Pesan dibaca', copy: 'Semua pemberitahuan Spark sudah ditandai dibaca.', tone: 'success' });
+  }
 </script>
+
 <div class="spark-notification-center">
   <button class="spark-icon-btn notification-trigger" type="button" aria-label="Pemberitahuan" aria-expanded={open} onclick={() => (open = !open)}>
     <SparkIcon name="bell" size={18} />
     {#if unreadCount > 0}<span class="notification-count">{unreadCount}</span>{:else}<span class="notification-dot"></span>{/if}
   </button>
+
   {#if open}
-    <button class="notification-scrim" transition:fade type="button" aria-label="Tutup pemberitahuan" onclick={() => (open=false)}></button>
+    <button class="notification-scrim" transition:fade type="button" aria-label="Tutup pemberitahuan" onclick={() => (open = false)}></button>
     <section class="notification-panel" transition:fly={{ y: 8, duration: 160 }} aria-label="Panel pemberitahuan">
-      <div class="notification-panel-head"><div><span class="spark-eyebrow">Pemberitahuan</span><h2>Update dan pesan Spark</h2><p>{unreadCount > 0 ? `${unreadCount} belum dibaca` : 'Semua pemberitahuan sudah dibaca'}</p></div><button type="button" aria-label="Tutup pemberitahuan" onclick={() => (open=false)}><SparkIcon name="x" size={18} /></button></div>
-      <div class="notification-score-card"><div class="mini-readiness-ring" style={`--value: ${getReadinessScore()}`}>{getReadinessScore()}%</div><div><strong>{getReadinessScore() >= 75 ? 'Hub readiness terbuka' : 'Readiness masih berjalan'}</strong><p>{getCompletedLessonCount()} lesson selesai. Fokus berikutnya bisa dilihat dari Dashboard.</p></div></div>
-      <div class="notification-tools"><SparkTrustBadge label={`${notifications.length} total`} tone="beta" /><button type="button" onclick={readAll} disabled={unreadCount === 0}>Tandai semua dibaca</button></div>
+      <div class="notification-panel-head">
+        <div>
+          <span class="spark-eyebrow">Pesan Spark</span>
+          <h2>Arahan untuk langkah berikutnya</h2>
+          <p>{unreadCount > 0 ? `${unreadCount} belum dibaca` : 'Semua pesan sudah dibaca'}</p>
+        </div>
+        <button type="button" aria-label="Tutup pemberitahuan" onclick={() => (open = false)}><SparkIcon name="x" size={18} /></button>
+      </div>
+
+      <div class="notification-score-card">
+        <div class="mini-readiness-ring" style={`--value: ${getReadinessScore()}`}>{getReadinessScore()}%</div>
+        <div>
+          <strong>{getReadinessScore() >= 75 ? 'Kamu mulai siap menjelajah Hub' : 'Perjalananmu masih bertahap'}</strong>
+          <p>{getCompletedLessonCount()} lesson selesai. Lihat Dashboard untuk langkah yang paling aman hari ini.</p>
+        </div>
+      </div>
+
+      <div class="notification-tools">
+        <SparkTrustBadge label={`${notifications.length} pesan`} tone="safe" />
+        <button type="button" onclick={readAll} disabled={unreadCount === 0}>Tandai dibaca</button>
+      </div>
+
       <div class="notification-feed">
         {#each notifications as item}
           {@const read = messageState.readNotificationIds.includes(item.id)}

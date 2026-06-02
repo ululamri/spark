@@ -189,7 +189,7 @@
 
 {#if confirmResetOpen}
   <button class="settings-modal-scrim" type="button" aria-label="Tutup dialog" onclick={() => (confirmResetOpen = false)}></button>
-  <div class="settings-confirm-dialog" role="dialog" aria-modal="true" aria-label="Pulihkan pengaturan">
+  <section class="settings-confirm-dialog" role="dialog" aria-modal="true" aria-label="Pulihkan pengaturan">
     <span><SparkIcon name="shield" size={22} /></span>
     <h2>Pulihkan pengaturan?</h2>
     <p>Tampilan, cara belajar, dan arahan Spark akan kembali ke pilihan awal yang aman untuk pemula.</p>
@@ -197,7 +197,7 @@
       <SparkButton variant="ghost" onclick={() => (confirmResetOpen = false)}>Batal</SparkButton>
       <SparkButton onclick={resetPreferences}>Pulihkan</SparkButton>
     </div>
-  </div>
+  </section>
 {/if}
 
 <style>
@@ -215,7 +215,7 @@
     box-shadow: var(--spark-shadow);
   }
 
-  :global([data-theme='dark'] .settings-learn-style-hero) {
+  [data-theme='dark'] .settings-learn-style-hero {
     background:
       radial-gradient(circle at 82% 20%, rgba(31,117,255,.18), transparent 28%),
       linear-gradient(135deg, rgba(9,14,48,.96), rgba(7,10,34,.92));
@@ -231,7 +231,7 @@
     font-weight: 950;
   }
 
-  :global([data-theme='dark'] .settings-learn-style-hero h1) { color: #fff; }
+  [data-theme='dark'] .settings-learn-style-hero h1 { color: #fff; }
 
   .settings-learn-style-hero p {
     max-width: 760px;
@@ -294,7 +294,7 @@
     align-content: start;
   }
 
-  :global(.settings-section-card) h2 {
+  .settings-section-card h2 {
     margin: 8px 0 0;
     color: var(--spark-navy);
     font-size: clamp(26px, 2.2vw, 38px);
@@ -302,9 +302,9 @@
     letter-spacing: -.06em;
   }
 
-  :global([data-theme='dark'] .settings-section-card h2) { color: #fff; }
+  [data-theme='dark'] .settings-section-card h2 { color: #fff; }
 
-  :global(.settings-section-card) p {
+  .settings-section-card p {
     color: var(--spark-muted);
     line-height: 1.6;
     font-weight: 650;
@@ -329,9 +329,9 @@
     box-shadow: 0 10px 24px rgba(5,9,78,.05);
   }
 
-  :global([data-theme='dark']) .settings-choice-grid button,
-  :global([data-theme='dark']) .settings-mode-grid button,
-  :global([data-theme='dark']) .settings-toggle-list button {
+  [data-theme='dark'] .settings-choice-grid button,
+  [data-theme='dark'] .settings-mode-grid button,
+  [data-theme='dark'] .settings-toggle-list button {
     background: rgba(255,255,255,.055);
   }
 
@@ -372,7 +372,7 @@
     background: rgba(239,246,255,.62);
   }
 
-  :global([data-theme='dark'] .settings-preview-row) { background: rgba(255,255,255,.05); }
+  [data-theme='dark'] .settings-preview-row { background: rgba(255,255,255,.05); }
 
   .settings-preview-row small {
     display: block;
@@ -409,9 +409,9 @@
     font-weight: 850;
   }
 
-  :global([data-theme='dark'] .settings-link-list a) { background: rgba(255,255,255,.06); }
+  [data-theme='dark'] .settings-link-list a { background: rgba(255,255,255,.06); }
 
-  :global(.reset-card) {
+  .reset-card {
     border-color: rgba(255,128,0,.22);
   }
 
@@ -437,7 +437,7 @@
     box-shadow: 0 30px 80px rgba(5,9,78,.24);
   }
 
-  :global([data-theme='dark'] .settings-confirm-dialog) { background: #07102f; }
+  [data-theme='dark'] .settings-confirm-dialog { background: #07102f; }
 
   .settings-confirm-dialog > span {
     display: grid;
@@ -457,7 +457,7 @@
     letter-spacing: -.06em;
   }
 
-  :global([data-theme='dark'] .settings-confirm-dialog h2) { color: #fff; }
+  [data-theme='dark'] .settings-confirm-dialog h2 { color: #fff; }
 
   .settings-confirm-dialog p {
     color: var(--spark-muted);

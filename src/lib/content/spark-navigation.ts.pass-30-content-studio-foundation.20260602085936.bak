@@ -14,9 +14,9 @@ export const sparkNavItems: SparkNavItem[] = [
   {
     key: 'gateway',
     href: '/',
-    label: 'Home',
+    label: 'Gateway',
     shortLabel: 'Home',
-    copy: 'Mulai mengenal Spark',
+    copy: 'Ringkasan ekosistem Spark',
     icon: 'home',
     primary: true
   },
@@ -32,9 +32,9 @@ export const sparkNavItems: SparkNavItem[] = [
   {
     key: 'lab',
     href: '/lab',
-    label: 'Lab',
+    label: 'Practice',
     shortLabel: 'Lab',
-    copy: 'Latihan aman sebelum menjelajah lebih jauh',
+    copy: 'Simulasi, readiness, dan praktik aman',
     icon: 'flask-conical',
     primary: true
   },
@@ -52,7 +52,7 @@ export const sparkNavItems: SparkNavItem[] = [
     href: '/profile',
     label: 'Profile',
     shortLabel: 'Profil',
-    copy: 'Ruang saya, Passport, dan perjalanan belajar',
+    copy: 'Passport, progress, dan readiness',
     icon: 'user-round',
     primary: true
   },
@@ -61,7 +61,7 @@ export const sparkNavItems: SparkNavItem[] = [
     href: '/hub',
     label: 'Hub',
     shortLabel: 'Hub',
-    copy: 'Resource dan jalur eksplorasi Starknet',
+    copy: 'Resource, apps, tools, dan ekosistem',
     icon: 'compass',
     primary: false
   },
@@ -70,7 +70,7 @@ export const sparkNavItems: SparkNavItem[] = [
     href: '/settings',
     label: 'Settings',
     shortLabel: 'Settings',
-    copy: 'Tampilan, cara belajar, dan arahan Spark',
+    copy: 'Tema, tampilan, dan preferensi',
     icon: 'settings',
     primary: false
   }
