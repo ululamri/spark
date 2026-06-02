@@ -15,7 +15,7 @@
 
   <div class="spark-topbar-center">
     <SparkIcon name="search" size={17} />
-    <span>Cari pelajaran, latihan, pesan, atau resource</span>
+    <span>Cari pelajaran, lab, pesan, atau resource Starknet</span>
   </div>
 
   <div class="spark-topbar-actions">

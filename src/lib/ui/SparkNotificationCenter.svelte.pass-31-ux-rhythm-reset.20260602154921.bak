@@ -26,7 +26,7 @@
 
   function readAll() {
     markAllNotificationsRead(notifications.map((item) => item.id));
-    pushToast({ title: 'Pesan dibaca', copy: 'Semua arahan sudah ditandai dibaca.', tone: 'success' });
+    pushToast({ title: 'Pesan dibaca', copy: 'Semua pemberitahuan Spark sudah ditandai dibaca.', tone: 'success' });
   }
 </script>
 
@@ -42,8 +42,8 @@
       <div class="notification-panel-head">
         <div>
           <span class="spark-eyebrow">Pesan Spark</span>
-          <h2>Langkah kecil berikutnya</h2>
-          <p>{unreadCount > 0 ? `${unreadCount} pesan baru` : 'Tidak ada pesan baru'}</p>
+          <h2>Arahan untuk langkah berikutnya</h2>
+          <p>{unreadCount > 0 ? `${unreadCount} belum dibaca` : 'Semua pesan sudah dibaca'}</p>
         </div>
         <button type="button" aria-label="Tutup pemberitahuan" onclick={() => (open = false)}><SparkIcon name="x" size={18} /></button>
       </div>
@@ -51,8 +51,8 @@
       <div class="notification-score-card">
         <div class="mini-readiness-ring" style={`--value: ${getReadinessScore()}`}>{getReadinessScore()}%</div>
         <div>
-          <strong>{getReadinessScore() >= 75 ? 'Hub mulai cocok untukmu' : 'Tetap pelan dan aman'}</strong>
-          <p>{getCompletedLessonCount()} pelajaran selesai. Buka Dashboard untuk melihat langkah hari ini.</p>
+          <strong>{getReadinessScore() >= 75 ? 'Kamu mulai siap menjelajah Hub' : 'Perjalananmu masih bertahap'}</strong>
+          <p>{getCompletedLessonCount()} lesson selesai. Lihat Dashboard untuk langkah yang paling aman hari ini.</p>
         </div>
       </div>
 

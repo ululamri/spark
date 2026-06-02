@@ -32,16 +32,12 @@
   function saveToggle(message: SparkMessage) {
     const wasSaved = messageState.savedMessageIds.includes(message.id);
     toggleSavedMessage(message.id);
-    pushToast({
-      title: wasSaved ? 'Pesan dilepas' : 'Pesan disimpan',
-      copy: wasSaved ? 'Pesan ini tidak lagi ada di simpanan.' : 'Kamu bisa membukanya lagi nanti.',
-      tone: 'info'
-    });
+    pushToast({ title: wasSaved ? 'Pesan dihapus dari simpanan' : 'Pesan disimpan', copy: message.title, tone: 'info' });
   }
 
   function readAll() {
     markAllMessagesRead(sparkMessages.map((message) => message.id));
-    pushToast({ title: 'Semua pesan dibaca', copy: 'Inbox sudah rapi.', tone: 'success' });
+    pushToast({ title: 'Inbox dibaca', copy: 'Semua pesan Spark sudah ditandai dibaca.', tone: 'success' });
   }
 </script>
 
@@ -49,7 +45,7 @@
   <div>
     <span class="spark-eyebrow">Pesan</span>
     <h1>Pesan dari Spark.</h1>
-    <p>Arahan belajar, keamanan, workshop, Hub, dan Passport dikumpulkan di sini agar kamu tahu langkah berikutnya.</p>
+    <p>Arahan belajar, keamanan, workshop, Hub, dan Passport dikumpulkan di sini agar kamu tidak kehilangan langkah berikutnya.</p>
     <div class="inbox-hero-actions">
       <SparkButton href="#messages">Lihat pesan</SparkButton>
       <SparkButton href="/dashboard" variant="secondary">Buka Dashboard</SparkButton>
@@ -57,9 +53,9 @@
   </div>
 
   <aside class="inbox-summary-card">
-    <div><strong>{sparkMessages.length}</strong><span>Total</span></div>
-    <div><strong>{unreadCount}</strong><span>Baru</span></div>
-    <div><strong>{savedCount}</strong><span>Disimpan</span></div>
+    <div><strong>{sparkMessages.length}</strong><span>Total pesan</span></div>
+    <div><strong>{unreadCount}</strong><span>Belum dibaca</span></div>
+    <div><strong>{savedCount}</strong><span>Tersimpan</span></div>
   </aside>
 </section>
 
@@ -67,8 +63,8 @@
   <SparkCard class="inbox-sync-strip">
     <span><SparkIcon name="shield" size={18} /></span>
     <div>
-      <strong>Pesan dibuat singkat dan aman.</strong>
-      <p>Tidak ada ajakan spekulasi. Spark hanya membantu kamu belajar, latihan, dan menjaga keamanan.</p>
+      <strong>Bahasa pesan dibuat sederhana</strong>
+      <p>Pesan Spark harus membantu pengguna memahami langkah berikutnya tanpa istilah teknis yang tidak perlu.</p>
     </div>
     <SparkTrustBadge label="Safety-first" tone="safe" />
   </SparkCard>
@@ -77,7 +73,7 @@
 <section id="messages" class="spark-section">
   <SparkCard class="spark-inbox-shell">
     <div class="inbox-tools">
-      <label><span>Cari pesan</span><input bind:value={search} type="search" placeholder="Belajar, dompet, workshop, Hub..." /></label>
+      <label><span>Cari pesan</span><input bind:value={search} type="search" placeholder="Contoh: belajar, wallet, workshop, hub..." /></label>
       <button type="button" onclick={readAll} disabled={unreadCount === 0}>Tandai dibaca</button>
     </div>
 
@@ -87,7 +83,7 @@
       {/each}
     </div>
 
-    <div class="inbox-summary-line"><span>{sparkMessages.length} pesan</span><span>{unreadCount} baru</span><span>{savedCount} disimpan</span></div>
+    <div class="inbox-summary-line"><span>{sparkMessages.length} pesan</span><span>{unreadCount} belum dibaca</span><span>{savedCount} tersimpan</span></div>
 
     <div class="inbox-layout">
       <div class="message-list" aria-label="Daftar pesan">
@@ -102,7 +98,7 @@
             </button>
           {/each}
         {:else}
-          <div class="message-empty-state"><SparkIcon name="messages" size={26} /><h3>Pesan tidak ditemukan</h3><p>Coba kata lain atau kembali ke Semua.</p></div>
+          <div class="message-empty-state"><SparkIcon name="messages" size={26} /><h3>Pesan tidak ditemukan</h3><p>Coba kata lain atau kembali ke filter Semua.</p></div>
         {/if}
       </div>
 
