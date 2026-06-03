@@ -29,7 +29,6 @@
   import '$lib/styles/pass-28-profile-passport-account-center.css';
   import '$lib/styles/pass-31-ux-rhythm-reset.css';
   import '$lib/styles/pass-31a-ux-density-overlay-repair.css';
-  import '$lib/styles/pass-32-profile-passport-notification-repair.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();

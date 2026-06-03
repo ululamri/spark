@@ -4,9 +4,9 @@ export type SparkProfileTab = 'passport' | 'activity' | 'friends' | 'badges' | '
 
 export const profileTabs: { key: SparkProfileTab; label: string; icon: string }[] = [
   { key: 'passport', label: 'Passport', icon: 'badge' },
-  { key: 'activity', label: 'Aktivitas', icon: 'clock' },
-  { key: 'friends', label: 'Teman', icon: 'users' },
-  { key: 'badges', label: 'Badge', icon: 'trophy' },
+  { key: 'activity', label: 'Perjalanan', icon: 'clock' },
+  { key: 'badges', label: 'Tanda', icon: 'trophy' },
+  { key: 'friends', label: 'Komunitas', icon: 'users' },
   { key: 'account', label: 'Akun', icon: 'settings' }
 ];
 
@@ -18,43 +18,43 @@ export const profileAvatarPresets: {
   gradientB: string;
 }[] = [
   { id: 'spark', label: 'Spark', icon: 'sparkles', gradientA: '#6c4df6', gradientB: '#ff7a3d' },
-  { id: 'trophy', label: 'Trophy', icon: 'trophy', gradientA: '#ffb703', gradientB: '#6c4df6' },
-  { id: 'coffee', label: 'Focus', icon: 'flask-conical', gradientA: '#8ecae6', gradientB: '#6c4df6' },
-  { id: 'explorer', label: 'Explorer', icon: 'compass', gradientA: '#21c997', gradientB: '#4c6fff' },
-  { id: 'mentor', label: 'Mentor', icon: 'users', gradientA: '#ff4d8d', gradientB: '#ff7a3d' }
+  { id: 'trophy', label: 'Tanda', icon: 'trophy', gradientA: '#ffb703', gradientB: '#6c4df6' },
+  { id: 'coffee', label: 'Fokus', icon: 'flask-conical', gradientA: '#8ecae6', gradientB: '#6c4df6' },
+  { id: 'explorer', label: 'Jelajah', icon: 'compass', gradientA: '#21c997', gradientB: '#4c6fff' },
+  { id: 'mentor', label: 'Teman', icon: 'users', gradientA: '#ff4d8d', gradientB: '#ff7a3d' }
 ];
 
 export const profileFriendSuggestions = [
-  { id: 'mentor-spark', name: 'Spark Mentor', handle: '@spark-mentor', role: 'Learning guide', copy: 'Membantu pengguna memilih jalur belajar yang aman.', icon: 'shield' },
-  { id: 'facilitator-ayu', name: 'Ayu Facilitator', handle: '@facilitator-ayu', role: 'Community facilitator', copy: 'Menghubungkan learner dengan workshop dan cohort lokal.', icon: 'users' },
-  { id: 'starknet-guide', name: 'Starknet Guide', handle: '@starknet-guide', role: 'Explorer guide', copy: 'Membantu pengguna lanjut ke Hub dan resource teknis.', icon: 'compass' }
+  { id: 'mentor-spark', name: 'Spark Mentor', handle: '@spark-mentor', role: 'Pemandu belajar', copy: 'Membantu memilih langkah belajar yang aman dan tidak terburu-buru.', icon: 'shield' },
+  { id: 'facilitator-ayu', name: 'Ayu Facilitator', handle: '@facilitator-ayu', role: 'Fasilitator lokal', copy: 'Menghubungkan learner dengan workshop dan cohort di komunitas lokal.', icon: 'users' },
+  { id: 'starknet-guide', name: 'Starknet Guide', handle: '@starknet-guide', role: 'Pemandu ekosistem', copy: 'Membantu membuka Hub dan resource Starknet saat fondasi sudah cukup.', icon: 'compass' }
 ];
 
 export function createProfileActivities(input: { completedLessons: number; completedLabs: number; workshops: number; resources: number; bookmarks: number }) {
   const activities = [
-    { id: 'profile-ready', title: 'Profile & Passport aktif', copy: 'Identitas belajar dan readiness digabung dalam satu pusat akun.', icon: 'user-round', tone: 'blue', href: '/profile' }
+    { id: 'profile-ready', title: 'Ruang Saya aktif', copy: 'Profil dan Passport siap mengikuti perjalanan belajarmu.', icon: 'user-round', tone: 'blue', href: '/profile' }
   ];
 
-  if (input.completedLessons > 0) activities.push({ id: 'lessons', title: `${input.completedLessons} lesson selesai`, copy: 'Learning signal sudah mulai terbentuk dari Core.', icon: 'book-open', tone: 'purple', href: '/core' });
-  else activities.push({ id: 'start-core', title: 'Belum ada lesson selesai', copy: 'Mulai dari Core untuk membangun learning signal pertama.', icon: 'book-open', tone: 'purple', href: '/core' });
+  if (input.completedLessons > 0) activities.push({ id: 'lessons', title: `${input.completedLessons} pelajaran selesai`, copy: 'Fondasi blockchain mulai terbentuk dari Learn.', icon: 'book-open', tone: 'purple', href: '/core' });
+  else activities.push({ id: 'start-core', title: 'Mulai dari pelajaran pertama', copy: 'Ambil satu materi dasar untuk membangun fondasi awal.', icon: 'book-open', tone: 'purple', href: '/core' });
 
-  if (input.completedLabs > 0) activities.push({ id: 'labs', title: `${input.completedLabs} Lab selesai`, copy: 'Practice signal masuk ke Passport.', icon: 'flask-conical', tone: 'orange', href: '/lab' });
-  else activities.push({ id: 'try-lab', title: 'Practice Lab belum dicoba', copy: 'Coba simulasi wallet safety setelah fondasi Core cukup.', icon: 'flask-conical', tone: 'orange', href: '/lab' });
+  if (input.completedLabs > 0) activities.push({ id: 'labs', title: `${input.completedLabs} latihan Lab selesai`, copy: 'Latihan aman mulai masuk ke Passport.', icon: 'flask-conical', tone: 'orange', href: '/lab' });
+  else activities.push({ id: 'try-lab', title: 'Lab belum dicoba', copy: 'Coba latihan dompet atau transaksi saat fondasi sudah cukup.', icon: 'flask-conical', tone: 'orange', href: '/lab' });
 
-  if (input.workshops > 0) activities.push({ id: 'workshop', title: `${input.workshops} workshop tersimpan`, copy: 'Community signal mulai terbentuk.', icon: 'users', tone: 'pink', href: '/community' });
-  if (input.resources > 0) activities.push({ id: 'hub-resource', title: `${input.resources} resource Hub tersimpan`, copy: 'Pengguna mulai menjelajahi ekosistem dengan arah.', icon: 'compass', tone: 'green', href: '/hub' });
-  if (input.bookmarks > 0) activities.push({ id: 'bookmarks', title: `${input.bookmarks} lesson disimpan`, copy: 'Bookmark membantu pengguna kembali ke materi penting.', icon: 'bookmark', tone: 'blue', href: '/core' });
+  if (input.workshops > 0) activities.push({ id: 'workshop', title: `${input.workshops} workshop tersimpan`, copy: 'Belajar bersama komunitas mulai tercatat.', icon: 'users', tone: 'pink', href: '/community' });
+  if (input.resources > 0) activities.push({ id: 'hub-resource', title: `${input.resources} resource Hub disimpan`, copy: 'Eksplorasi ekosistem Starknet mulai terarah.', icon: 'compass', tone: 'green', href: '/hub' });
+  if (input.bookmarks > 0) activities.push({ id: 'bookmarks', title: `${input.bookmarks} pelajaran disimpan`, copy: 'Kamu punya materi yang bisa dibuka kembali.', icon: 'bookmark', tone: 'blue', href: '/core' });
 
   return activities;
 }
 
 export function createBadgeRows(input: { completedLessons: number; completedLabs: number; workshops: number; resources: number; readiness: number }) {
   return [
-    { id: 'starter', title: 'Spark Starter', copy: 'Mulai membangun identitas belajar.', icon: 'sparkles', unlocked: true },
-    { id: 'core-learner', title: 'Core Learner', copy: 'Selesaikan minimal satu lesson Core.', icon: 'book-open', unlocked: input.completedLessons > 0 },
-    { id: 'safe-practice', title: 'Safe Practice', copy: 'Selesaikan minimal satu simulasi Lab.', icon: 'flask-conical', unlocked: input.completedLabs > 0 },
-    { id: 'community-ready', title: 'Community Ready', copy: 'Simpan workshop atau cohort.', icon: 'users', unlocked: input.workshops > 0 },
-    { id: 'hub-ready', title: 'Hub Ready', copy: 'Capai readiness 75% atau simpan resource Hub.', icon: 'compass', unlocked: input.readiness >= 75 || input.resources > 0 }
+    { id: 'starter', title: 'Mulai Belajar', copy: 'Ruang Saya sudah aktif sebagai awal perjalanan.', icon: 'sparkles', unlocked: true },
+    { id: 'core-learner', title: 'Fondasi Awal', copy: 'Selesaikan minimal satu pelajaran Learn.', icon: 'book-open', unlocked: input.completedLessons > 0 },
+    { id: 'safe-practice', title: 'Latihan Aman', copy: 'Selesaikan minimal satu latihan Lab.', icon: 'flask-conical', unlocked: input.completedLabs > 0 },
+    { id: 'community-ready', title: 'Belajar Bersama', copy: 'Simpan workshop atau cohort komunitas.', icon: 'users', unlocked: input.workshops > 0 },
+    { id: 'hub-ready', title: 'Siap Jelajah', copy: 'Capai kesiapan 75% atau simpan resource Hub.', icon: 'compass', unlocked: input.readiness >= 75 || input.resources > 0 }
   ];
 }
 
