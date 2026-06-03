@@ -2,6 +2,15 @@ import type { SparkProfileAvatarPreset } from '$state/profile-state.svelte';
 
 export type SparkProfileTab = 'passport' | 'activity' | 'friends' | 'badges' | 'account';
 
+export type ProfileConnectionSuggestion = {
+  id: string;
+  name: string;
+  handle: string;
+  role: string;
+  copy: string;
+  icon: string;
+};
+
 export const profileTabs: { key: SparkProfileTab; label: string; icon: string }[] = [
   { key: 'passport', label: 'Passport', icon: 'badge' },
   { key: 'activity', label: 'Perjalanan', icon: 'clock' },
@@ -24,11 +33,7 @@ export const profileAvatarPresets: {
   { id: 'mentor', label: 'Teman', icon: 'users', gradientA: '#ff4d8d', gradientB: '#ff7a3d' }
 ];
 
-export const profileFriendSuggestions = [
-  { id: 'mentor-spark', name: 'Spark Mentor', handle: '@spark-mentor', role: 'Pemandu belajar', copy: 'Membantu memilih langkah belajar yang aman dan tidak terburu-buru.', icon: 'shield' },
-  { id: 'facilitator-ayu', name: 'Ayu Facilitator', handle: '@facilitator-ayu', role: 'Fasilitator lokal', copy: 'Menghubungkan learner dengan workshop dan cohort di komunitas lokal.', icon: 'users' },
-  { id: 'starknet-guide', name: 'Starknet Guide', handle: '@starknet-guide', role: 'Pemandu ekosistem', copy: 'Membantu membuka Hub dan resource Starknet saat fondasi sudah cukup.', icon: 'compass' }
-];
+export const profileFriendSuggestions: ProfileConnectionSuggestion[] = [];
 
 export function createProfileActivities(input: { completedLessons: number; completedLabs: number; workshops: number; resources: number; bookmarks: number }) {
   const activities = [

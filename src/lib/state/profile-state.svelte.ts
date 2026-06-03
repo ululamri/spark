@@ -2,6 +2,7 @@ export type SparkProfileAvatarPreset = 'spark' | 'trophy' | 'coffee' | 'explorer
 export type SparkProfileVisibility = 'private' | 'community' | 'public';
 
 const STORAGE_KEY = 'karyra-spark-profile-state-v1';
+const LEGACY_CONNECTION_IDS = new Set(['mentor-spark', 'facilitator-ayu', 'starknet-guide']);
 
 export const profileState = $state({
   displayName: '',
@@ -11,10 +12,15 @@ export const profileState = $state({
   avatarPreset: 'spark' as SparkProfileAvatarPreset,
   avatarImageData: '',
   visibility: 'community' as SparkProfileVisibility,
-  friendIds: ['mentor-spark'] as string[],
-  friendRequestIds: ['facilitator-ayu'] as string[],
+  friendIds: [] as string[],
+  friendRequestIds: [] as string[],
   lastSavedAt: ''
 });
+
+function sanitizeConnectionIds(ids: unknown) {
+  if (!Array.isArray(ids)) return [];
+  return ids.filter((id): id is string => typeof id === 'string' && !LEGACY_CONNECTION_IDS.has(id));
+}
 
 export function restoreProfileState() {
   if (typeof window === 'undefined') return;
@@ -29,8 +35,8 @@ export function restoreProfileState() {
     if (snapshot.avatarPreset) profileState.avatarPreset = snapshot.avatarPreset;
     if (typeof snapshot.avatarImageData === 'string') profileState.avatarImageData = snapshot.avatarImageData;
     if (snapshot.visibility) profileState.visibility = snapshot.visibility;
-    if (Array.isArray(snapshot.friendIds)) profileState.friendIds = snapshot.friendIds;
-    if (Array.isArray(snapshot.friendRequestIds)) profileState.friendRequestIds = snapshot.friendRequestIds;
+    profileState.friendIds = sanitizeConnectionIds(snapshot.friendIds);
+    profileState.friendRequestIds = sanitizeConnectionIds(snapshot.friendRequestIds);
     if (typeof snapshot.lastSavedAt === 'string') profileState.lastSavedAt = snapshot.lastSavedAt;
   } catch {
     // Ignore corrupted local profile state.

@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-  <title>Daftar Beta — Karyra Spark</title>
+  <title>Daftar — Karyra Spark</title>
 </svelte:head>
 
 <SparkAuthShell mode="register" />

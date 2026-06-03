@@ -5,7 +5,7 @@ export type ExperienceLevel = 'unknown' | 'beginner' | 'guided' | 'explorer';
 const STORAGE_KEY = 'karyra-spark-learning-state-v3';
 
 export const learningState = $state({
-  learnerId: 'local-learner',
+  learnerId: '',
   onboardingComplete: false,
   experience: 'unknown' as ExperienceLevel,
   activeLessonSlug: sparkModules[0].lessons[0].slug,
@@ -21,6 +21,10 @@ export const learningState = $state({
 });
 
 export type LearningSnapshot = typeof learningState;
+
+export function setLearnerIdentity(learnerId: string) {
+  learningState.learnerId = learnerId;
+}
 
 export function setExperience(level: ExperienceLevel) {
   learningState.experience = level;
@@ -143,7 +147,7 @@ export function restoreLearningSnapshot() {
     if (!raw) return;
     const snapshot = JSON.parse(raw) as Partial<ReturnType<typeof createLearningSnapshot>>;
 
-    if (snapshot.learnerId) learningState.learnerId = snapshot.learnerId;
+    if (snapshot.learnerId && snapshot.learnerId !== 'local-learner') learningState.learnerId = snapshot.learnerId;
     if (typeof snapshot.onboardingComplete === 'boolean') learningState.onboardingComplete = snapshot.onboardingComplete;
     if (snapshot.experience) learningState.experience = snapshot.experience;
     if (snapshot.activeLessonSlug) learningState.activeLessonSlug = snapshot.activeLessonSlug;

@@ -52,8 +52,8 @@
     restoreProfileState();
   });
 
-  const displayName = $derived(profileState.displayName || betaSession.user?.name || 'Karyra Learner');
-  const handle = $derived(profileState.handle || betaSession.user?.handle || '@spark-learner');
+  const displayName = $derived(profileState.displayName || betaSession.user?.name || 'Pengguna Karyra');
+  const handle = $derived(profileState.handle || betaSession.user?.handle || '@karyra');
   const bio = $derived(profileState.bio || 'Belajar blockchain dan Starknet pelan-pelan, mulai dari keamanan, praktik, lalu eksplorasi.');
   const location = $derived(profileState.location || 'Komunitas lokal');
   const readiness = $derived(getReadinessScore());
@@ -254,7 +254,7 @@
         <SparkCard class="my-community-card">
           <span class="spark-eyebrow">Komunitas</span>
           <h2>{profileState.friendRequestIds.length} permintaan baru</h2>
-          <p>Gunakan ini sebagai gambaran awal untuk belajar bersama fasilitator dan teman lokal.</p>
+          <p>Koneksi komunitas akan muncul di sini saat fitur sosial aktif untuk akun kamu.</p>
           <div class="my-request-list">
             {#each profileFriendSuggestions.filter((friend) => profileState.friendRequestIds.includes(friend.id)) as friend}
               <div>
@@ -317,7 +317,7 @@
       </div>
       <div class="my-form-grid">
         <label><span>Nama tampil</span><input bind:value={editName} type="text" maxlength="40" placeholder="Nama kamu" /></label>
-        <label><span>Handle</span><input bind:value={editHandle} type="text" maxlength="32" placeholder="@spark-learner" /></label>
+        <label><span>Handle</span><input bind:value={editHandle} type="text" maxlength="32" placeholder="@karyra" /></label>
         <label><span>Lokasi / komunitas</span><input bind:value={editLocation} type="text" maxlength="48" placeholder="Komunitas lokal" /></label>
         <label><span>Visibilitas</span><select bind:value={editVisibility}><option value="private">Privat</option><option value="community">Komunitas</option><option value="public">Publik</option></select></label>
         <label class="my-form-wide"><span>Bio singkat</span><textarea bind:value={editBio} maxlength="160" rows="3" placeholder="Ceritakan perjalanan belajar kamu."></textarea></label>

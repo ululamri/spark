@@ -48,7 +48,7 @@
 
   {#if open}
     <button class="production-notification-scrim" transition:fade type="button" aria-label="Tutup pemberitahuan" onclick={closePanel}></button>
-    <section class="production-notification-panel" role="dialog" aria-label="Pemberitahuan" transition:fly={{ y: -6, duration: 150 }}>
+    <div class="production-notification-panel" role="dialog" aria-label="Pemberitahuan" transition:fly={{ y: -6, duration: 150 }}>
       <div class="production-notification-head">
         <div>
           <span class="spark-eyebrow">Pemberitahuan</span>
@@ -93,6 +93,6 @@
         Buka Inbox untuk membaca pesan lengkap
         <SparkIcon name="chevron-right" size={15} />
       </a>
-    </section>
+    </div>
   {/if}
 </div>

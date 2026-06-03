@@ -1,4 +1,5 @@
 <script lang="ts">
+  import SparkGuestLandingRedirect from '$ui/SparkGuestLandingRedirect.svelte';
   import SparkLandingAudience from '$ui/SparkLandingAudience.svelte';
   import SparkLandingCTA from '$ui/SparkLandingCTA.svelte';
   import SparkLandingDifference from '$ui/SparkLandingDifference.svelte';
@@ -10,14 +11,16 @@
 </script>
 
 <svelte:head>
-  <title>Karyra Spark — Local Blockchain & Starknet Readiness Gateway</title>
+  <title>Karyra Spark — Belajar blockchain dan Starknet dengan aman</title>
   <meta
     name="description"
-    content="Karyra Spark membantu komunitas lokal belajar blockchain, praktik aman, membangun readiness Passport, dan menjelajahi Starknet secara bertahap."
+    content="Karyra Spark membantu komunitas lokal belajar blockchain, praktik aman, membangun Passport, dan menjelajahi Starknet secara bertahap."
   />
 </svelte:head>
 
-<div class="landing-page-v26">
+<SparkGuestLandingRedirect />
+
+<div class="landing-page-v26 pass35-public-home">
   <SparkLandingHero />
   <SparkLandingProblem />
   <SparkLandingFlow />
