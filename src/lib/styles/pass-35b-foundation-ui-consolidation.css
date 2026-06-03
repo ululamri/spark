@@ -1510,3 +1510,33 @@
 }
 /* PASS 35B PATCH 7 — NOTIFICATION EMPTY STATE END */
 
+/* Pass 35B Patch 8 — Icon System Audit
+   One shared visual rhythm for Lucide icons. Keep icons outline-based,
+   theme-aware via currentColor, and avoid component-by-component overrides. */
+svg.spark-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  color: currentColor;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: -0.16em;
+}
+
+.spark-icon-btn svg.spark-icon,
+.spark-bottom-nav svg.spark-icon,
+.production-notification-center svg.spark-icon,
+.pass35b2-drawer svg.spark-icon {
+  opacity: 0.96;
+}
+
+.production-notification-empty svg.spark-icon,
+.notification-empty svg.spark-icon,
+.empty-state svg.spark-icon {
+  color: var(--spark-muted);
+}
+
+[data-theme='dark'] svg.spark-icon {
+  color: currentColor;
+  stroke: currentColor;
+}
