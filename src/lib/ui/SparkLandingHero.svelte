@@ -3,50 +3,57 @@
   import SparkIcon from './SparkIcon.svelte';
   import SparkTrustBadge from './SparkTrustBadge.svelte';
   import { betaSession } from '$state/beta-session-state.svelte';
+
   const primaryHref = $derived(betaSession.user ? '/dashboard' : '/login');
-  const primaryLabel = $derived(betaSession.user ? 'Buka Dashboard' : 'Coba Spark');
+  const primaryLabel = $derived(betaSession.user ? 'Lanjutkan belajar' : 'Masuk dan mulai belajar');
 </script>
 
-<section class="landing-hero-v26">
-  <div class="landing-hero-copy">
-    <div class="landing-kicker-row">
-      <SparkTrustBadge label="Local Blockchain Readiness" tone="beta" />
-      <span>Core · Lab · Passport · Community · Hub</span>
+<section class="landing-hero-v26 landing-hero-v35b1">
+  <div class="landing-hero-copy landing-hero-copy-v35b1">
+    <div class="landing-kicker-row landing-kicker-v35b1">
+      <SparkTrustBadge label="Safety-first Starknet readiness" tone="beta" />
+      <span>Fondasi · Simulasi · Passport · Hub</span>
     </div>
 
-    <h1>Belajar blockchain dari dasar, praktik aman, lalu siap menjelajah Starknet.</h1>
+    <h1>Belajar blockchain tanpa langsung masuk transaksi.</h1>
 
-    <p>Karyra Spark adalah gateway belajar untuk komunitas lokal: membantu pengguna memahami blockchain, cryptocurrency, Web3, wallet safety, dan Starknet secara bertahap tanpa langsung dipaksa masuk transaksi.</p>
+    <p>
+      Karyra Spark memandu pemula dari konsep dasar, latihan aman, lalu menuju Starknet saat fondasinya sudah cukup.
+      Tidak meminta seed phrase dan tidak mendorong spekulasi.
+    </p>
 
-    <div class="landing-hero-actions">
+    <div class="landing-hero-actions landing-hero-actions-v35b1">
       <SparkButton href={primaryHref}>{primaryLabel}</SparkButton>
-      <SparkButton href="/core" variant="secondary">Mulai dari Core</SparkButton>
+      <SparkButton href="/core" variant="secondary">Lihat jalur belajar</SparkButton>
     </div>
 
-    <div class="landing-hero-trust">
-      <span><SparkIcon name="shield" size={15} /> No seed phrase</span>
-      <span><SparkIcon name="flask-conical" size={15} /> Simulasi aman</span>
-      <span><SparkIcon name="users" size={15} /> Komunitas lokal</span>
+    <div class="landing-trust-chips-v35b1" aria-label="Keamanan Spark">
+      <span><SparkIcon name="shield" size={14} /> Tanpa seed phrase</span>
+      <span><SparkIcon name="flask-conical" size={14} /> Simulasi aman</span>
+      <span><SparkIcon name="users" size={14} /> Komunitas lokal</span>
     </div>
   </div>
 
-  <aside class="landing-journey-visual" aria-label="Alur utama Karyra Spark">
-    <div class="journey-orbit">
-      <div class="journey-center">
-        <SparkIcon name="sparkles" size={28} />
-        <strong>Spark</strong>
-        <span>Readiness Gateway</span>
+  <aside class="landing-proof-panel-v35b1" aria-label="Preview pengalaman belajar Spark">
+    <div class="proof-card-v35b1 primary">
+      <span><SparkIcon name="book-open" size={18} /></span>
+      <div>
+        <small>Lesson pertama</small>
+        <strong>Apa itu blockchain?</strong>
+        <p>Mulai dari bahasa sederhana sebelum wallet, transaksi, atau coding.</p>
       </div>
-      <a class="orbit-node core" href="/core"><SparkIcon name="book-open" size={18} /><span>Core</span></a>
-      <a class="orbit-node lab" href="/lab"><SparkIcon name="flask-conical" size={18} /><span>Lab</span></a>
-      <a class="orbit-node passport" href="/profile"><SparkIcon name="badge" size={18} /><span>Passport</span></a>
-      <a class="orbit-node community" href="/community"><SparkIcon name="users" size={18} /><span>Community</span></a>
-      <a class="orbit-node hub" href="/hub"><SparkIcon name="compass" size={18} /><span>Hub</span></a>
     </div>
 
-    <div class="journey-caption">
-      <strong>Belajar → Praktik → Terbukti → Jelajah</strong>
-      <p>Satu alur produk, bukan dashboard pribadi di halaman depan.</p>
+    <div class="proof-steps-v35b1">
+      <a href="/core"><SparkIcon name="book-open" size={16} /><span>Belajar dasar</span></a>
+      <a href="/lab"><SparkIcon name="flask-conical" size={16} /><span>Latihan aman</span></a>
+      <a href="/profile"><SparkIcon name="badge" size={16} /><span>Cek Passport</span></a>
+      <a href="/hub"><SparkIcon name="compass" size={16} /><span>Jelajah Hub</span></a>
+    </div>
+
+    <div class="proof-footer-v35b1">
+      <strong>Fondasi → Praktik → Siap jelajah</strong>
+      <p>Satu jalur bertahap untuk pengguna lokal yang baru mengenal Web3 dan Starknet.</p>
     </div>
   </aside>
 </section>

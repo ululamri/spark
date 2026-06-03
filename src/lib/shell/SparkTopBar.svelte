@@ -11,7 +11,7 @@
   const unreadMessages = $derived(sparkMessages.filter((message) => !messageState.readMessageIds.includes(message.id)).length);
 </script>
 
-<header class="spark-topbar production-topbar">
+<header class="spark-topbar production-topbar topbar-v35b1">
   <SparkBrand />
 
   <div class="spark-topbar-center production-search-hint">
@@ -28,8 +28,8 @@
     <div class="desktop-only"><SparkThemeToggle compact /></div>
     <a class="spark-icon-btn desktop-only" href="/settings" aria-label="Pengaturan"><SparkIcon name="settings" size={18} /></a>
     <div class="desktop-only"><SparkAccountMenu /></div>
-    <button class="spark-icon-btn mobile-only" type="button" aria-label="Menu" onclick={() => (appState.mobileMenuOpen = !appState.mobileMenuOpen)}>
-      <SparkIcon name={appState.mobileMenuOpen ? 'x' : 'menu'} size={20} />
+    <button class="spark-icon-btn mobile-only" type="button" aria-label="Menu" aria-expanded={appState.mobileMenuOpen} onclick={() => (appState.mobileMenuOpen = !appState.mobileMenuOpen)}>
+      <SparkIcon name="menu" size={20} />
     </button>
   </div>
 </header>

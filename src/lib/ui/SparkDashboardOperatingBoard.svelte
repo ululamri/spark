@@ -16,62 +16,117 @@
 
   const userName = $derived(betaSession.user?.name ?? 'Karyra');
   const unreadMessages = $derived(sparkMessages.filter((message) => !messageState.readMessageIds.includes(message.id)).length);
+  const readiness = $derived(getReadinessScore());
+  const progress = $derived(getLearningProgressPercent());
 
   const daily = $derived.by(() => {
-    if (getCompletedLessonCount() === 0) return { title: 'Mulai dari fondasi', copy: 'Ambil satu lesson pendek sebelum masuk ke Lab atau Hub.', href: '/core', cta: 'Buka Core', icon: 'book-open' };
-    if (learningState.completedLabIds.length === 0) return { title: 'Coba latihan aman', copy: 'Ubah pemahaman menjadi praktik ringan tanpa risiko.', href: '/lab', cta: 'Buka Lab', icon: 'flask-conical' };
-    if (gatewayState.registeredWorkshopIds.length === 0) return { title: 'Temukan komunitas', copy: 'Workshop dan cohort membantu belajar lebih terarah.', href: '/community', cta: 'Buka Komunitas', icon: 'users' };
-    return { title: 'Jelajahi Hub', copy: 'Simpan resource ekosistem yang sesuai dengan kesiapanmu.', href: '/hub', cta: 'Buka Hub', icon: 'compass' };
+    if (getCompletedLessonCount() === 0) {
+      return {
+        title: 'Mulai dari fondasi',
+        copy: 'Ambil satu lesson pendek untuk membangun dasar sebelum masuk Lab atau Hub.',
+        href: '/core',
+        cta: 'Buka Core',
+        icon: 'book-open'
+      };
+    }
+    if (learningState.completedLabIds.length === 0) {
+      return {
+        title: 'Coba latihan aman',
+        copy: 'Ubah pemahaman menjadi praktik ringan tanpa risiko transaksi nyata.',
+        href: '/lab',
+        cta: 'Buka Lab',
+        icon: 'flask-conical'
+      };
+    }
+    if (gatewayState.registeredWorkshopIds.length === 0) {
+      return {
+        title: 'Temukan komunitas',
+        copy: 'Workshop dan cohort membantu belajar lebih terarah bersama orang lain.',
+        href: '/community',
+        cta: 'Komunitas',
+        icon: 'users'
+      };
+    }
+    return {
+      title: 'Jelajahi Hub',
+      copy: 'Simpan resource ekosistem yang sesuai dengan kesiapanmu.',
+      href: '/hub',
+      cta: 'Buka Hub',
+      icon: 'compass'
+    };
   });
 
-  const lanes = $derived([
-    { title: 'Lesson', value: `${getCompletedLessonCount()}`, href: `/lesson/${getRecommendedLessonSlug()}`, icon: 'book-open' },
-    { title: 'Lab', value: `${learningState.completedLabIds.length}`, href: '/lab', icon: 'flask-conical' },
-    { title: 'Inbox', value: `${unreadMessages}`, href: '/inbox', icon: 'messages' },
-    { title: 'Hub', value: `${gatewayState.savedHubResourceIds.length}`, href: '/hub', icon: 'compass' }
+  const stats = $derived([
+    { label: 'Belajar', value: `${getCompletedLessonCount()}`, href: `/lesson/${getRecommendedLessonSlug()}`, icon: 'book-open' },
+    { label: 'Lab', value: `${learningState.completedLabIds.length}`, href: '/lab', icon: 'flask-conical' },
+    { label: 'Pesan', value: `${unreadMessages}`, href: '/inbox', icon: 'messages' },
+    { label: 'Hub', value: `${gatewayState.savedHubResourceIds.length}`, href: '/hub', icon: 'compass' }
   ]);
+
+  const routes = [
+    { title: 'Core', copy: 'Lesson utama', href: '/core', icon: 'book-open' },
+    { title: 'Lab', copy: 'Simulasi aman', href: '/lab', icon: 'flask-conical' },
+    { title: 'Komunitas', copy: 'Workshop lokal', href: '/community', icon: 'users' },
+    { title: 'Hub', copy: 'Resource pilihan', href: '/hub', icon: 'compass' }
+  ];
 </script>
 
-<section class="ops-board pass35b-ops-board">
-  <div class="ops-main-card">
-    <div class="ops-user-line">
+<section class="dashboard-surface-v35b1" aria-label="Dashboard harian Spark">
+  <div class="dashboard-summary-v35b1">
+    <div class="dashboard-user-v35b1">
       <span>{userName.slice(0, 1)}</span>
-      <div><strong>{userName}</strong><small>{getLearningProgressPercent()}% progress belajar</small></div>
-      <SparkTrustBadge label={`${getReadinessScore()}%`} tone={getReadinessScore() >= 75 ? 'safe' : 'beta'} />
+      <div>
+        <small>Hari ini</small>
+        <strong>{userName}</strong>
+      </div>
     </div>
 
-    <div class="ops-focus">
-      <span><SparkIcon name={daily.icon} size={22} /></span>
-      <div><span class="spark-eyebrow">Fokus hari ini</span><h1>{daily.title}</h1><p>{daily.copy}</p></div>
+    <div class="dashboard-focus-v35b1">
+      <span><SparkIcon name={daily.icon} size={18} /></span>
+      <div>
+        <small>Fokus berikutnya</small>
+        <h1>{daily.title}</h1>
+        <p>{daily.copy}</p>
+      </div>
     </div>
 
-    <div class="ops-actions">
+    <div class="dashboard-status-v35b1" aria-label="Status belajar">
+      <div>
+        <strong>{readiness}%</strong>
+        <span>Passport</span>
+      </div>
+      <div>
+        <strong>{progress}%</strong>
+        <span>Belajar</span>
+      </div>
+      <SparkTrustBadge label={readiness >= 75 ? 'Siap jelajah' : 'Bertahap'} tone={readiness >= 75 ? 'safe' : 'beta'} />
+    </div>
+
+    <div class="dashboard-actions-v35b1">
       <SparkButton href={daily.href} size="sm">{daily.cta}</SparkButton>
       <SparkButton href="/profile" variant="secondary" size="sm">Passport</SparkButton>
     </div>
   </div>
 
-  <aside class="ops-right-rail">
-    <div class="ops-readiness-card">
-      <div class="ops-ring" style={`--value:${getReadinessScore()}`}><strong>{getReadinessScore()}%</strong><span>Passport</span></div>
-      <p>Readiness dibaca dari belajar, Lab, komunitas, dan Hub.</p>
-    </div>
+  <nav class="dashboard-stat-strip-v35b1" aria-label="Ringkasan cepat">
+    {#each stats as item}
+      <a href={item.href}>
+        <SparkIcon name={item.icon} size={15} />
+        <strong>{item.value}</strong>
+        <span>{item.label}</span>
+      </a>
+    {/each}
+  </nav>
 
-    <div class="ops-lane-grid pass35b-metric-grid">
-      {#each lanes as lane}
-        <a href={lane.href}>
-          <SparkIcon name={lane.icon} size={16} />
-          <strong>{lane.value}</strong>
-          <span>{lane.title}</span>
-        </a>
-      {/each}
-    </div>
-  </aside>
-</section>
-
-<section class="ops-action-strip pass35b-action-strip" aria-label="Jalur utama Spark">
-  <a href="/core"><SparkIcon name="book-open" size={17} /><strong>Core</strong><span>Belajar</span></a>
-  <a href="/lab"><SparkIcon name="flask-conical" size={17} /><strong>Lab</strong><span>Praktik</span></a>
-  <a href="/community"><SparkIcon name="users" size={17} /><strong>Komunitas</strong><span>Bersama</span></a>
-  <a href="/hub"><SparkIcon name="compass" size={17} /><strong>Hub</strong><span>Resource</span></a>
+  <nav class="dashboard-route-strip-v35b1" aria-label="Jalur utama Spark">
+    {#each routes as route}
+      <a href={route.href}>
+        <span><SparkIcon name={route.icon} size={16} /></span>
+        <div>
+          <strong>{route.title}</strong>
+          <small>{route.copy}</small>
+        </div>
+      </a>
+    {/each}
+  </nav>
 </section>
