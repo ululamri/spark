@@ -1,21 +1,17 @@
 <script lang="ts">
   import SparkButton from './SparkButton.svelte';
   import SparkIcon from './SparkIcon.svelte';
-  import { betaSession } from '$state/beta-session-state.svelte';
-
-  const primaryHref = $derived(betaSession.user ? '/dashboard' : '/login');
-  const primaryLabel = $derived(betaSession.user ? 'Buka dashboard' : 'Masuk dan mulai');
 </script>
 
-<section class="landing-cta-v26 landing-cta-v35b1">
+<section class="landing-cta-v26 pass35b2-cta">
   <div>
-    <span class="spark-eyebrow">Mulai bertahap</span>
-    <h2>Ambil satu langkah kecil: pahami dasar, lalu praktik aman.</h2>
-    <p>Spark dibuat untuk belajar pelan-pelan. Kamu bisa melihat materi awal dulu atau masuk untuk menyimpan perjalanan.</p>
+    <span class="spark-eyebrow">Mulai</span>
+    <h2>Ambil satu langkah kecil dulu.</h2>
+    <p>Pilih jalur belajar yang paling ringan, lalu lanjutkan saat sudah siap.</p>
   </div>
 
-  <div class="landing-cta-actions landing-cta-actions-v35b1">
-    <SparkButton href={primaryHref}><SparkIcon name="login" size={16} />{primaryLabel}</SparkButton>
-    <SparkButton href="/core" variant="secondary"><SparkIcon name="book-open" size={16} />Lihat Core</SparkButton>
+  <div class="landing-cta-actions pass35b2-cta-actions">
+    <SparkButton href="/core"><SparkIcon name="book-open" size={15} />Mulai Core</SparkButton>
+    <SparkButton href="/login" variant="secondary"><SparkIcon name="login" size={15} />Masuk</SparkButton>
   </div>
 </section>

@@ -1,0 +1,515 @@
+/* Pass 35B — Foundation UI Consolidation
+   Purpose: start reducing late CSS stacking, normalize mobile density, compact cards,
+   keep one public footer, and make the bottom nav hide while scrolling. */
+
+:root {
+  --spark-ui-radius-xs: 12px;
+  --spark-ui-radius-sm: 15px;
+  --spark-ui-radius-md: 18px;
+  --spark-ui-radius-lg: 24px;
+  --spark-ui-gap-xs: 6px;
+  --spark-ui-gap-sm: 10px;
+  --spark-ui-gap-md: 14px;
+  --spark-ui-pad-card: 14px;
+  --spark-ui-shadow-soft: 0 8px 22px rgba(5, 9, 78, 0.06);
+}
+
+.spark-app {
+  --spark-card: rgba(255, 255, 255, 0.88);
+}
+
+[data-theme='dark'] .spark-app {
+  --spark-card: rgba(8, 13, 45, 0.84);
+}
+
+/* Global density foundation. This pass intentionally replaces the late 31/33 density overrides. */
+.spark-main {
+  container-type: inline-size;
+}
+
+.spark-main :where(h1, h2, h3, p) {
+  text-wrap: balance;
+}
+
+.spark-main :where(strong, h1, h2, h3, h4) {
+  font-weight: 680;
+}
+
+.spark-main :where(p, li, small, span, em) {
+  overflow-wrap: anywhere;
+}
+
+.spark-card,
+[data-spark-card],
+.ops-main-card,
+.ops-readiness-card,
+.pass35-auth-card,
+.pass35-auth-intro,
+.production-notification-panel,
+.production-message-card,
+.my-space-profile-card,
+.my-space-passport-card,
+.my-space-next-card,
+.spark-simple-footer {
+  border-color: rgba(126, 144, 190, 0.17);
+  box-shadow: var(--spark-ui-shadow-soft);
+}
+
+.spark-card,
+[data-spark-card] {
+  padding: var(--spark-ui-pad-card);
+  border-radius: var(--spark-ui-radius-md);
+}
+
+.spark-card :where(h2, h3),
+[data-spark-card] :where(h2, h3) {
+  margin-top: 6px;
+}
+
+.spark-card :where(p),
+[data-spark-card] :where(p) {
+  margin-top: 5px;
+}
+
+.spark-card :where(small),
+[data-spark-card] :where(small) {
+  letter-spacing: -0.005em;
+}
+
+/* Dashboard compact system. */
+.pass35b-ops-board.ops-board {
+  gap: 14px;
+}
+
+.pass35b-ops-board .ops-main-card,
+.pass35b-ops-board .ops-readiness-card {
+  border-radius: 22px;
+  padding: 16px;
+}
+
+.pass35b-ops-board .ops-user-line {
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.pass35b-ops-board .ops-user-line > span {
+  width: 36px;
+  height: 36px;
+  border-radius: 14px;
+  font-size: 15px;
+}
+
+.pass35b-ops-board .ops-focus {
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.pass35b-ops-board .ops-focus > span {
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+}
+
+.pass35b-ops-board .ops-focus h1 {
+  margin-top: 5px;
+  font-size: clamp(25px, 3vw, 42px);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+}
+
+.pass35b-ops-board .ops-focus p,
+.pass35b-ops-board .ops-readiness-card p {
+  max-width: 52ch;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 420;
+}
+
+.pass35b-ops-board .ops-actions {
+  margin-top: 14px;
+  gap: 8px;
+}
+
+.pass35b-metric-grid.ops-lane-grid {
+  gap: 8px;
+}
+
+.pass35b-metric-grid.ops-lane-grid a {
+  min-height: 86px;
+  padding: 12px 8px;
+  border-radius: 18px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+}
+
+.pass35b-metric-grid.ops-lane-grid a strong {
+  font-size: clamp(24px, 8vw, 36px);
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+}
+
+.pass35b-metric-grid.ops-lane-grid a span {
+  font-size: 11.5px;
+  line-height: 1.15;
+  font-weight: 610;
+}
+
+.pass35b-action-strip.ops-action-strip {
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.pass35b-action-strip.ops-action-strip a {
+  min-height: 92px;
+  padding: 13px;
+  border-radius: 20px;
+  gap: 8px;
+  align-content: start;
+}
+
+.pass35b-action-strip.ops-action-strip a > svg,
+.pass35b-action-strip.ops-action-strip a > span:first-child {
+  flex: 0 0 auto;
+}
+
+.pass35b-action-strip.ops-action-strip strong {
+  font-size: 14px;
+  line-height: 1.15;
+}
+
+.pass35b-action-strip.ops-action-strip span {
+  font-size: 11.5px;
+  line-height: 1.35;
+  font-weight: 430;
+}
+
+.pass35b-flow-checklist.spark-app-flow-checklist {
+  margin-top: 0;
+}
+
+.pass35b-flow-checklist .flow-checklist-head {
+  gap: 12px;
+  align-items: center;
+}
+
+.pass35b-flow-checklist .flow-checklist-head h2 {
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.08;
+}
+
+.pass35b-flow-checklist .flow-checklist-head p {
+  max-width: 62ch;
+  font-size: 13.5px;
+  line-height: 1.55;
+  font-weight: 420;
+}
+
+.pass35b-flow-checklist .flow-checklist-grid {
+  gap: 8px;
+}
+
+.pass35b-flow-checklist .flow-checklist-grid a {
+  min-height: 58px;
+  padding: 10px;
+  border-radius: 16px;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+}
+
+.pass35b-flow-checklist .flow-checklist-grid a > span:first-child {
+  width: 34px;
+  height: 34px;
+  border-radius: 13px;
+}
+
+/* Footer consolidation: public pages use only SparkSimpleFooter. */
+.pass35b-public-home + .spark-landing-footer,
+.spark-landing-footer:empty {
+  display: none;
+}
+
+.pass35b-simple-footer.spark-simple-footer {
+  width: min(1080px, calc(100% - 28px));
+  margin: clamp(18px, 4vw, 34px) auto calc(86px + env(safe-area-inset-bottom, 0px));
+  padding: 18px;
+  border-radius: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) auto;
+  gap: 14px 24px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(14px);
+}
+
+[data-theme='dark'] .pass35b-simple-footer.spark-simple-footer {
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.pass35b-simple-footer .simple-footer-brandline {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.pass35b-simple-footer p {
+  margin: 0;
+  max-width: 64ch;
+  color: var(--spark-muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+  font-weight: 430;
+}
+
+.pass35b-simple-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.pass35b-simple-footer nav a {
+  color: var(--spark-muted);
+  font-size: 12px;
+  font-weight: 610;
+}
+
+.pass35b-simple-footer nav a:hover {
+  color: var(--spark-blue-strong);
+}
+
+.pass35b-simple-footer small {
+  grid-column: 1 / -1;
+  color: var(--spark-muted);
+  font-size: 11px;
+  font-weight: 420;
+}
+
+/* Bottom nav auto-hide. */
+.pass35b-bottom-nav.spark-bottom-nav {
+  transition: transform 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease;
+  will-change: transform;
+}
+
+.pass35b-bottom-nav.spark-bottom-nav.hidden {
+  transform: translateY(calc(100% + 18px));
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pass35b-bottom-nav.spark-bottom-nav {
+    transition: none;
+  }
+}
+
+/* Mobile foundation. */
+@media (max-width: 760px) {
+  .spark-app {
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .spark-topbar {
+    height: 68px;
+    padding: 9px 12px;
+  }
+
+  .spark-main {
+    padding: 10px 10px 96px !important;
+  }
+
+  .spark-main :where(h1) {
+    font-size: clamp(25px, 7.6vw, 34px) !important;
+    line-height: 1.07 !important;
+    letter-spacing: -0.038em !important;
+    font-weight: 650 !important;
+  }
+
+  .spark-main :where(h2) {
+    font-size: clamp(19px, 5.4vw, 25px) !important;
+    line-height: 1.13 !important;
+    letter-spacing: -0.028em !important;
+    font-weight: 640 !important;
+  }
+
+  .spark-main :where(h3) {
+    font-size: 15.25px !important;
+    line-height: 1.18 !important;
+    font-weight: 610 !important;
+  }
+
+  .spark-main :where(p, li, input, textarea, select) {
+    font-size: 13.25px !important;
+    line-height: 1.52 !important;
+    font-weight: 390 !important;
+  }
+
+  .spark-main :where(small, em, label span) {
+    font-size: 11.25px !important;
+    line-height: 1.35 !important;
+    font-weight: 390 !important;
+  }
+
+  .spark-main :where(strong) {
+    font-weight: 620 !important;
+  }
+
+  .spark-eyebrow,
+  .spark-sidebar-head span {
+    font-size: 10px !important;
+    letter-spacing: 0.1em !important;
+    font-weight: 650 !important;
+  }
+
+  .spark-card,
+  [data-spark-card],
+  .ops-main-card,
+  .ops-readiness-card,
+  .my-space-profile-card,
+  .my-space-passport-card,
+  .my-space-next-card,
+  .production-message-card {
+    padding: 12px !important;
+    border-radius: 16px !important;
+    box-shadow: 0 6px 16px rgba(5, 9, 78, 0.055) !important;
+  }
+
+  .pass35b-ops-board.ops-board {
+    gap: 10px !important;
+  }
+
+  .pass35b-ops-board .ops-focus {
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .pass35b-ops-board .ops-focus > span {
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
+  }
+
+  .pass35b-metric-grid.ops-lane-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+
+  .pass35b-metric-grid.ops-lane-grid a {
+    min-height: 64px !important;
+    padding: 8px 4px !important;
+    border-radius: 15px !important;
+    gap: 2px !important;
+  }
+
+  .pass35b-metric-grid.ops-lane-grid a strong {
+    font-size: 23px !important;
+  }
+
+  .pass35b-metric-grid.ops-lane-grid a span {
+    font-size: 10.5px !important;
+  }
+
+  .pass35b-action-strip.ops-action-strip {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+
+  .pass35b-action-strip.ops-action-strip a {
+    min-height: 68px !important;
+    padding: 9px 6px !important;
+    border-radius: 16px !important;
+    justify-items: center;
+    text-align: center;
+    gap: 4px !important;
+  }
+
+  .pass35b-action-strip.ops-action-strip strong {
+    font-size: 12px !important;
+  }
+
+  .pass35b-action-strip.ops-action-strip span {
+    font-size: 10.5px !important;
+  }
+
+  .pass35b-flow-checklist .flow-checklist-head {
+    display: grid !important;
+  }
+
+  .pass35b-flow-checklist .flow-checklist-grid a {
+    min-height: 52px !important;
+    padding: 9px !important;
+  }
+
+  .spark-bottom-nav {
+    left: 10px !important;
+    right: 10px !important;
+    bottom: max(8px, env(safe-area-inset-bottom, 0px)) !important;
+    padding: 6px !important;
+    border-radius: 21px !important;
+  }
+
+  .spark-bottom-nav a {
+    min-height: 46px !important;
+    border-radius: 16px !important;
+    font-size: 10.25px !important;
+    font-weight: 610 !important;
+  }
+
+  .pass35b-simple-footer.spark-simple-footer {
+    width: calc(100% - 20px);
+    margin: 18px auto 92px;
+    padding: 14px;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .pass35b-simple-footer .simple-footer-brandline {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .pass35b-simple-footer nav {
+    justify-content: flex-start;
+  }
+}
+
+@media (min-width: 981px) {
+  .spark-app[data-preview='mobile'] .spark-main {
+    padding: 10px 10px 96px !important;
+  }
+
+  .spark-app[data-preview='mobile'] .pass35b-metric-grid.ops-lane-grid,
+  .spark-app[data-preview='mobile'] .pass35b-action-strip.ops-action-strip {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Keep brand visible but not dominant. */
+.production-brand-logo {
+  width: clamp(42px, 8vw, 58px);
+  height: clamp(42px, 8vw, 58px);
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.production-brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: transparent !important;
+}
+
+@media (max-width: 760px) {
+  .production-brand-logo {
+    width: 46px;
+    height: 46px;
+  }
+
+  .spark-brand.compact .production-brand-logo {
+    width: 38px;
+    height: 38px;
+  }
+}
