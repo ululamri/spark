@@ -32,7 +32,6 @@
   import '$lib/styles/pass-32-profile-passport-notification-repair.css';
   import '$lib/styles/pass-33-spark-test-global-rhythm-density.css';
   import '$lib/styles/pass-33a-mainstream-mobile-typography-system.css';
-  import '$lib/styles/pass-34-production-surface-foundation.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();

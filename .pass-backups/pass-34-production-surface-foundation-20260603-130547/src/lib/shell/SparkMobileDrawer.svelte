@@ -6,7 +6,6 @@
   import { betaSession, getModeLabel, logoutBetaSession } from '$state/beta-session-state.svelte';
   import { messageState } from '$state/message-state.svelte';
   import SparkIcon from '$ui/SparkIcon.svelte';
-  import SparkThemeToggle from '$ui/SparkThemeToggle.svelte';
 
   const drawerLinks = sparkNavItems.filter((item) => !['gateway', 'core', 'lab', 'profile'].includes(item.key));
   const unreadMessages = $derived(sparkMessages.filter((message) => !messageState.readMessageIds.includes(message.id)).length);
@@ -24,16 +23,16 @@
 {#if appState.mobileMenuOpen}
   <button class="spark-mobile-scrim" transition:fade type="button" aria-label="Tutup menu" onclick={close}></button>
 
-  <aside class="spark-mobile-drawer production-drawer" transition:fly={{ x: 24, duration: 160 }} aria-label="Menu Spark">
-    <div class="drawer-head production-drawer-head">
+  <aside class="spark-mobile-drawer" transition:fly={{ x: 24, duration: 160 }} aria-label="Menu Spark">
+    <div class="drawer-head">
       <div>
         <strong>Menu</strong>
-        <small>Pilih halaman atau atur tampilan.</small>
+        <small>Lanjut dari mana?</small>
       </div>
       <button type="button" aria-label="Tutup menu" onclick={close}><SparkIcon name="x" size={17} /></button>
     </div>
 
-    <div class="drawer-account-card production-drawer-account">
+    <div class="drawer-account-card">
       {#if betaSession.user}
         <span>{betaSession.user.name.slice(0, 1)}</span>
         <div>
@@ -44,14 +43,9 @@
         <span><SparkIcon name="sparkles" size={17} /></span>
         <div>
           <strong>Mulai dari Spark</strong>
-          <small>Belajar Starknet dengan ritme aman.</small>
+          <small>Belajar Starknet dengan aman.</small>
         </div>
       {/if}
-    </div>
-
-    <div class="production-drawer-theme">
-      <span>Tampilan</span>
-      <SparkThemeToggle />
     </div>
 
     <div class="drawer-quick-actions" aria-label="Aksi cepat">
@@ -60,11 +54,11 @@
       <a href="/profile" onclick={close}><SparkIcon name="user-round" size={15} /> Passport</a>
     </div>
 
-    <div class="drawer-link-stack production-drawer-links">
+    <div class="drawer-link-stack">
       {#if !betaSession.user}
         <a href="/login" onclick={close}>
           <span><SparkIcon name="login" size={17} /></span>
-          <div><strong>Masuk</strong><small>Simpan perjalanan di perangkat ini.</small></div>
+          <div><strong>Masuk</strong><small>Lanjutkan perjalanan belajar.</small></div>
         </a>
       {:else}
         <a href="/dashboard" onclick={close}>
@@ -84,11 +78,6 @@
           <div><strong>{link.shortLabel}</strong><small>{link.copy}</small></div>
         </a>
       {/each}
-
-      <a href="/help" onclick={close}>
-        <span><SparkIcon name="help" size={17} /></span>
-        <div><strong>Bantuan</strong><small>FAQ, panduan, dan dokumentasi.</small></div>
-      </a>
 
       {#if betaSession.user}
         <button class="drawer-logout" type="button" onclick={logout}>

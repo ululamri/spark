@@ -19,11 +19,11 @@
   let password = $state('');
   let selectedExample = $state(exampleUsers[0].id);
 
-  const title = $derived(mode === 'login' ? 'Masuk ke Karyra Spark' : 'Buat ruang belajar kamu');
+  const title = $derived(mode === 'login' ? 'Masuk ke Karyra Spark' : 'Daftar Beta Karyra Spark');
   const copy = $derived(
     mode === 'login'
-      ? 'Lanjutkan perjalanan belajar di perangkat ini. Kamu juga bisa mulai cepat dengan ritme belajar yang tersedia.'
-      : 'Buat ruang belajar ringan untuk menyimpan preferensi, progress, dan Passport di perangkat ini.'
+      ? 'Gunakan akun contoh lokal untuk mencoba flow aplikasi sampai backend auth siap.'
+      : 'Form beta ini menyiapkan struktur registrasi. Penyimpanan akun produksi akan masuk saat backend siap.'
   );
 
   async function useExampleAccount() {
@@ -31,8 +31,8 @@
     setExperience(user.mode);
 
     pushToast({
-      title: 'Ruang belajar aktif',
-      copy: `Kamu masuk dengan ritme ${getModeLabel(user.mode)}.`,
+      title: 'Akun contoh aktif',
+      copy: `${user.name} masuk secara lokal di perangkat ini.`,
       tone: 'success'
     });
 
@@ -45,8 +45,8 @@
 
     if (!trimmedName || !trimmedEmail || password.length < 6) {
       pushToast({
-        title: 'Lengkapi data masuk',
-        copy: 'Isi nama, email, dan password minimal 6 karakter.',
+        title: 'Lengkapi form beta',
+        copy: 'Nama, email, dan password minimal 6 karakter diperlukan untuk simulasi frontend.',
         tone: 'warning'
       });
       return;
@@ -57,8 +57,8 @@
     user.handle = `@${trimmedEmail.split('@')[0] || 'spark-user'}`;
 
     pushToast({
-      title: mode === 'login' ? 'Masuk berhasil' : 'Ruang belajar dibuat',
-      copy: 'Perjalanan belajar tersimpan di perangkat ini.',
+      title: mode === 'login' ? 'Masuk lokal berhasil' : 'Pendaftaran beta tersimpan lokal',
+      copy: 'Ini belum membuat akun backend. Session frontend disiapkan untuk alur aplikasi.',
       tone: 'success'
     });
 
@@ -66,34 +66,46 @@
   }
 </script>
 
-<section class="spark-auth-shell production-auth-shell">
+<section class="spark-auth-shell">
   <div class="auth-hero-panel">
-    <span class="spark-eyebrow">Akses belajar</span>
+    <span class="spark-eyebrow">Beta Access</span>
     <h1>{title}</h1>
     <p>{copy}</p>
 
     <div class="auth-trust-row">
-      <SparkTrustBadge label="Data lokal" tone="local" />
-      <SparkTrustBadge label="Safety-first" tone="safe" />
-      <SparkTrustBadge label="Ritme bertahap" tone="target" />
+      <SparkTrustBadge label="Beta tertutup" tone="beta" />
+      <SparkTrustBadge label="Akun contoh lokal" tone="local" />
+      <SparkTrustBadge label="Backend-ready" tone="safe" />
     </div>
 
     <div class="auth-path-list">
       <article>
         <SparkIcon name="dashboard" size={18} />
-        <div><strong>Dashboard</strong><small>Lihat fokus belajar hari ini.</small></div>
+        <div>
+          <strong>Dashboard</strong>
+          <small>Setelah masuk, pengguna diarahkan ke ringkasan aktivitas.</small>
+        </div>
       </article>
       <article>
         <SparkIcon name="book-open" size={18} />
-        <div><strong>Belajar</strong><small>Mulai dari dasar sebelum teknis.</small></div>
+        <div>
+          <strong>Belajar</strong>
+          <small>Core dan lesson path tetap bisa dicoba tanpa backend.</small>
+        </div>
       </article>
       <article>
         <SparkIcon name="badge" size={18} />
-        <div><strong>Passport</strong><small>Ikuti perkembangan dan kesiapanmu.</small></div>
+        <div>
+          <strong>Passport</strong>
+          <small>Progress lokal memberi gambaran readiness user.</small>
+        </div>
       </article>
       <article>
         <SparkIcon name="compass" size={18} />
-        <div><strong>Hub</strong><small>Jelajahi resource saat sudah siap.</small></div>
+        <div>
+          <strong>Hub</strong>
+          <small>Gateway disiapkan untuk resource dan eksplorasi setelah siap.</small>
+        </div>
       </article>
     </div>
   </div>
@@ -102,20 +114,20 @@
     <div class="auth-form-head">
       <span><SparkIcon name={mode === 'login' ? 'login' : 'key'} size={20} /></span>
       <div>
-        <h2>{mode === 'login' ? 'Masuk' : 'Daftar'}</h2>
-        <p>{mode === 'login' ? 'Gunakan data yang nyaman untuk melanjutkan.' : 'Buat ruang belajar baru di perangkat ini.'}</p>
+        <h2>{mode === 'login' ? 'Akses akun' : 'Buat akses beta'}</h2>
+        <p>{mode === 'login' ? 'Masuk sebagai akun contoh atau isi form lokal.' : 'Form ini masih frontend-only untuk mematangkan UX.'}</p>
       </div>
     </div>
 
     <div class="auth-input-grid">
       <label>
         <span>Nama</span>
-        <input bind:value={name} type="text" placeholder="Nama kamu" autocomplete="name" />
+        <input bind:value={name} type="text" placeholder="Karyra Learner" autocomplete="name" />
       </label>
 
       <label>
         <span>Email</span>
-        <input bind:value={email} type="email" placeholder="nama@email.com" autocomplete="email" />
+        <input bind:value={email} type="email" placeholder="learner@karyra.local" autocomplete="email" />
       </label>
 
       <label>
@@ -125,24 +137,24 @@
     </div>
 
     <div class="auth-actions">
-      <SparkButton onclick={submitLocalForm}>{mode === 'login' ? 'Masuk' : 'Daftar'}</SparkButton>
+      <SparkButton onclick={submitLocalForm}>{mode === 'login' ? 'Masuk Lokal' : 'Daftar Beta'}</SparkButton>
       <SparkButton href={mode === 'login' ? '/register' : '/login'} variant="ghost">
-        {mode === 'login' ? 'Buat ruang belajar' : 'Sudah punya ruang?'}
+        {mode === 'login' ? 'Belum punya akses?' : 'Sudah punya akses?'}
       </SparkButton>
     </div>
 
-    <div class="auth-divider"><span>atau mulai cepat</span></div>
+    <div class="auth-divider"><span>atau gunakan akun contoh</span></div>
 
-    <div class="example-account-grid production-pace-grid">
+    <div class="example-account-grid">
       {#each exampleUsers as user}
         <button type="button" class:selected={selectedExample === user.id} onclick={() => (selectedExample = user.id)}>
-          <strong>{getModeLabel(user.mode)}</strong>
-          <span>{user.mode === 'beginner' ? 'Bahasa sederhana' : user.mode === 'guided' ? 'Jalur terarah' : 'Eksplorasi lanjut'}</span>
-          <small>{user.mode === 'beginner' ? 'Untuk pemula' : user.mode === 'guided' ? 'Untuk belajar rapi' : 'Untuk yang siap teknis'}</small>
+          <strong>{user.name}</strong>
+          <span>{user.handle}</span>
+          <small>{getModeLabel(user.mode)}</small>
         </button>
       {/each}
     </div>
 
-    <SparkButton onclick={useExampleAccount} variant="secondary">Mulai cepat</SparkButton>
+    <SparkButton onclick={useExampleAccount} variant="secondary">Masuk sebagai akun contoh</SparkButton>
   </SparkCard>
 </section>

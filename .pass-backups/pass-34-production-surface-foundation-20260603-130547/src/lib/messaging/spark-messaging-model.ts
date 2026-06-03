@@ -48,7 +48,7 @@ export const sparkMessages: SparkMessage[] = [
     title: 'Mulai dari belajar dasar',
     preview: 'Bangun fondasi sebelum masuk Lab, Passport, dan Hub.',
     body:
-      'Mulai dari dasar blockchain, lalu lanjut ke keamanan dompet, Starknet, latihan aman, dan Passport. Tidak perlu terburu-buru. Spark membantu kamu membaca langkah berikutnya tanpa harus menebak halaman mana yang harus dibuka.',
+      'Mulai dari dasar blockchain, lalu lanjut ke keamanan dompet, Starknet, latihan aman, dan Passport. Tidak perlu terburu-buru.',
     time: 'Hari ini',
     href: '/core',
     cta: 'Mulai belajar',
@@ -64,7 +64,7 @@ export const sparkMessages: SparkMessage[] = [
     title: 'Lanjutkan pelajaran berikutnya',
     preview: 'Spark membantumu memilih langkah yang paling aman.',
     body:
-      'Setiap pelajaran punya arahan lanjut. Selesaikan satu langkah kecil, catat hal yang belum jelas, lalu lanjutkan saat kamu siap. Progress ini juga membantu Passport membaca kesiapanmu secara bertahap.',
+      'Setiap pelajaran punya arahan lanjut. Selesaikan satu langkah kecil, lalu lanjutkan saat kamu siap.',
     time: 'Update',
     href: '/lesson/why-blockchain',
     cta: 'Lanjutkan',
@@ -80,7 +80,7 @@ export const sparkMessages: SparkMessage[] = [
     title: 'Belajar bersama komunitas',
     preview: 'Workshop membantu pemula bertanya dan belajar dengan ritme yang tenang.',
     body:
-      'Community menghubungkan belajar mandiri dengan cohort, fasilitator lokal, dan ruang tanya jawab yang aman. Kamu bisa menyimpan workshop yang relevan, lalu kembali saat waktunya cocok.',
+      'Community menghubungkan belajar mandiri dengan cohort, fasilitator lokal, dan ruang tanya jawab yang aman.',
     time: 'Komunitas',
     href: '/community',
     cta: 'Lihat workshop',
@@ -96,7 +96,7 @@ export const sparkMessages: SparkMessage[] = [
     title: 'Hub untuk eksplorasi lanjutan',
     preview: 'Buka Hub setelah dasar belajar dan keamanan mulai terbentuk.',
     body:
-      'Hub berisi resource, aplikasi, tools, komunitas, dan jalur lanjutan. Untuk pemula, Hub paling aman dibuka setelah memahami Learn dan mencoba Lab. Spark tetap memberi konteks agar eksplorasi tidak terasa lepas arah.',
+      'Hub berisi resource, aplikasi, tools, komunitas, dan jalur lanjutan. Untuk pemula, Hub paling aman dibuka setelah memahami Learn dan mencoba Lab.',
     time: 'Hub',
     href: '/hub',
     cta: 'Buka Hub',
@@ -112,7 +112,7 @@ export const sparkMessages: SparkMessage[] = [
     title: 'Catatan fasilitator',
     preview: 'Pilih cara belajar yang sesuai. Tidak perlu masuk teknis terlalu cepat.',
     body:
-      'Jalur pemula tetap paling aman untuk orang yang baru mengenal blockchain. Mode Penjelajah bisa dipakai setelah dasar dompet dan keamanan lebih dipahami. Kamu selalu bisa mengubah ritme belajar dari Settings.',
+      'Jalur pemula tetap paling aman untuk orang yang baru mengenal blockchain. Mode Penjelajah bisa dipakai setelah dasar dompet dan keamanan lebih dipahami.',
     time: 'Pesan',
     href: '/profile',
     cta: 'Buka Passport',
@@ -128,7 +128,7 @@ export const sparkMessages: SparkMessage[] = [
     title: 'Jaga keamanan belajarmu',
     preview: 'Spark tidak meminta seed phrase, private key, atau kode pemulihan.',
     body:
-      'Belajar blockchain harus dimulai dari keamanan. Jangan pernah membagikan seed phrase, private key, atau kode pemulihan kepada siapa pun. Spark dirancang untuk edukasi, bukan untuk meminta akses ke aset pribadi.',
+      'Belajar blockchain harus dimulai dari keamanan. Jangan pernah membagikan seed phrase, private key, atau kode pemulihan kepada siapa pun.',
     time: 'Akun',
     href: '/settings',
     cta: 'Atur Spark',
@@ -144,10 +144,10 @@ export const sparkMessages: SparkMessage[] = [
     title: 'Bingung mulai dari mana?',
     preview: 'Buka Dashboard, lalu lanjutkan dari fokus belajar hari ini.',
     body:
-      'Dashboard adalah ruang belajar harian. Mulai dari satu fokus utama, lanjutkan belajar, coba Lab saat siap, lalu cek Passport untuk melihat perkembanganmu. Kamu juga bisa membuka Help untuk panduan singkat.',
+      'Dashboard adalah ruang belajar harian. Mulai dari satu fokus utama, lanjutkan belajar, coba Lab saat siap, lalu cek Passport untuk melihat perkembanganmu.',
     time: 'Bantuan',
-    href: '/help',
-    cta: 'Buka Bantuan',
+    href: '/dashboard',
+    cta: 'Buka Dashboard',
     tone: 'purple',
     icon: 'help',
     priority: 'normal',

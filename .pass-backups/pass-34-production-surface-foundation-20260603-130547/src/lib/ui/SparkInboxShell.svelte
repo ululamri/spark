@@ -44,14 +44,14 @@
   }
 </script>
 
-<section class="spark-inbox-hero compact-inbox-hero production-inbox-hero">
+<section class="spark-inbox-hero compact-inbox-hero">
   <div>
-    <span class="spark-eyebrow">Inbox</span>
-    <h1>Pesan yang bisa kamu baca pelan-pelan.</h1>
-    <p>Inbox berisi catatan lengkap: belajar, keamanan, workshop, Hub, dan bantuan. Pemberitahuan di lonceng hanya untuk update singkat.</p>
+    <span class="spark-eyebrow">Pesan</span>
+    <h1>Pesan dari Spark.</h1>
+    <p>Arahan belajar, keamanan, workshop, Hub, dan Passport dikumpulkan di sini agar kamu tahu langkah berikutnya.</p>
     <div class="inbox-hero-actions">
-      <SparkButton href="#messages">Baca pesan</SparkButton>
-      <SparkButton href="/help" variant="secondary">Butuh bantuan?</SparkButton>
+      <SparkButton href="#messages">Lihat pesan</SparkButton>
+      <SparkButton href="/dashboard" variant="secondary">Dashboard</SparkButton>
     </div>
   </div>
 
@@ -63,7 +63,7 @@
 </section>
 
 <section id="messages" class="spark-section compact-message-section">
-  <SparkCard class="spark-inbox-shell compact-inbox-shell production-inbox-shell">
+  <SparkCard class="spark-inbox-shell compact-inbox-shell">
     <div class="inbox-tools">
       <label><span>Cari pesan</span><input bind:value={search} type="search" placeholder="Belajar, dompet, workshop, Hub..." /></label>
       <button type="button" onclick={readAll} disabled={unreadCount === 0}>Tandai dibaca</button>

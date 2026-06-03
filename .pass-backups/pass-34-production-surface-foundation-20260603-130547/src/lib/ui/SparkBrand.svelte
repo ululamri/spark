@@ -11,16 +11,17 @@
 
   const asset = $derived(getSparkAsset(themeState.resolved === 'dark' ? 'logo-main-dark' : 'logo-main-light'));
   const homeHref = $derived(betaSession.user ? '/dashboard' : '/');
+
   let imageFailed = $state(false);
 </script>
 
-<a class={`spark-brand ${compact ? 'compact' : ''} production-brand`} href={homeHref} aria-label="Karyra Spark">
+<a class={`spark-brand ${compact ? 'compact' : ''}`} href={homeHref} aria-label="Karyra Spark" data-spark-brand>
   {#if asset && !imageFailed}
-    <span class="production-brand-logo">
+    <span class="spark-brand-logo">
       <img src={asset.src} alt={asset.alt} onerror={() => (imageFailed = true)} />
     </span>
   {:else}
     <span class="spark-mark">✦</span>
-    <span class="spark-brand-wordmark">Karyra<br />Spark</span>
+    <span class="spark-brand-wordmark">KARYRA<br />SPARK</span>
   {/if}
 </a>

@@ -20,23 +20,23 @@ export const exampleUsers: BetaUser[] = [
   {
     id: 'spark-local-learner',
     name: 'Karyra Learner',
-    handle: '@karyra-learner',
+    handle: '@spark-learner',
     role: 'learner',
     mode: 'beginner',
     status: 'local-example'
   },
   {
-    id: 'spark-guided-learner',
-    name: 'Guided Learner',
-    handle: '@guided-learner',
+    id: 'spark-guided-builder',
+    name: 'Guided Builder',
+    handle: '@guided-builder',
     role: 'learner',
     mode: 'guided',
     status: 'local-example'
   },
   {
-    id: 'spark-explorer-learner',
-    name: 'Explorer Learner',
-    handle: '@explorer-learner',
+    id: 'spark-explorer',
+    name: 'Starknet Explorer',
+    handle: '@spark-explorer',
     role: 'explorer',
     mode: 'explorer',
     status: 'local-example'
@@ -74,7 +74,7 @@ export function saveBetaSession(user: BetaUser | null) {
 }
 
 export function loginAsExample(userId = 'spark-local-learner') {
-  const user = { ...(exampleUsers.find((item) => item.id === userId) ?? exampleUsers[0]) };
+  const user = exampleUsers.find((item) => item.id === userId) ?? exampleUsers[0];
   betaSession.user = user;
   betaSession.ready = true;
   saveBetaSession(user);
