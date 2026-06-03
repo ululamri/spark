@@ -88,7 +88,7 @@
       {#if betaSession.user}
         <button class="drawer-logout" type="button" onclick={logout}>
           <span><SparkIcon name="logout" size={17} /></span>
-          <div><strong>Keluar</strong><small>Selesai di perangkat ini</small></div>
+          <div><strong>Keluar</strong></div>
           <SparkIcon name="chevron-right" size={14} />
         </button>
       {/if}

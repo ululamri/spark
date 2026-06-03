@@ -1540,3 +1540,157 @@ svg.spark-icon {
   color: currentColor;
   stroke: currentColor;
 }
+
+/* Pass 35B Patch 9 — drawer logout + dark toast readability start */
+.pass35b2-drawer-links .drawer-logout > div {
+  min-width: 0;
+}
+
+.pass35b2-drawer-links .drawer-logout > div strong {
+  display: block;
+  line-height: 1.12;
+}
+
+.pass35b2-drawer-links .drawer-logout > div small:empty,
+.pass35b2-drawer-links .drawer-logout > div small[hidden] {
+  display: none !important;
+}
+
+.spark-toast {
+  display: grid !important;
+  grid-template-columns: 36px minmax(0, 1fr) 30px !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: min(380px, calc(100vw - 28px)) !important;
+  padding: 12px !important;
+  border-radius: 18px !important;
+  background: rgba(255, 255, 255, 0.97) !important;
+  color: var(--spark-ink) !important;
+  border: 1px solid rgba(126, 144, 190, 0.22) !important;
+  box-shadow: 0 22px 54px rgba(5, 9, 78, 0.16) !important;
+  backdrop-filter: blur(16px) !important;
+}
+
+.spark-toast-icon {
+  display: grid !important;
+  place-items: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 14px !important;
+  color: var(--spark-blue-strong) !important;
+  background: rgba(92, 63, 255, 0.1) !important;
+}
+
+.spark-toast-copy {
+  min-width: 0 !important;
+}
+
+.spark-toast-copy strong,
+.spark-toast strong {
+  display: block !important;
+  margin: 0 !important;
+  color: var(--spark-navy) !important;
+  font-size: 13.5px !important;
+  line-height: 1.18 !important;
+  font-weight: 670 !important;
+  letter-spacing: -0.015em !important;
+}
+
+.spark-toast-copy p,
+.spark-toast p {
+  margin: 3px 0 0 !important;
+  color: var(--spark-muted) !important;
+  font-size: 12.25px !important;
+  line-height: 1.42 !important;
+  font-weight: 430 !important;
+}
+
+.spark-toast button {
+  position: static !important;
+  inset: auto !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 11px !important;
+  background: transparent !important;
+  color: var(--spark-muted) !important;
+  font-size: 0 !important;
+}
+
+.spark-toast button:hover {
+  background: rgba(92, 63, 255, 0.1) !important;
+  color: var(--spark-blue-strong) !important;
+}
+
+.spark-app[data-theme='dark'] .spark-toast {
+  background: rgba(8, 13, 45, 0.985) !important;
+  color: #edf3ff !important;
+  border-color: rgba(160, 174, 210, 0.26) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48) !important;
+}
+
+.spark-app[data-theme='dark'] .spark-toast-icon {
+  color: #c9d7ff !important;
+  background: rgba(130, 112, 255, 0.18) !important;
+}
+
+.spark-app[data-theme='dark'] .spark-toast-copy strong,
+.spark-app[data-theme='dark'] .spark-toast strong {
+  color: #ffffff !important;
+}
+
+.spark-app[data-theme='dark'] .spark-toast-copy p,
+.spark-app[data-theme='dark'] .spark-toast p {
+  color: #b8c4df !important;
+}
+
+.spark-app[data-theme='dark'] .spark-toast button {
+  color: #aebad6 !important;
+}
+
+.spark-app[data-theme='dark'] .spark-toast button:hover {
+  background: rgba(255, 255, 255, 0.09) !important;
+  color: #ffffff !important;
+}
+
+@media (max-width: 760px) {
+  .spark-toast {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    grid-template-columns: 34px minmax(0, 1fr) 28px !important;
+    gap: 9px !important;
+    padding: 11px !important;
+    border-radius: 18px !important;
+  }
+
+  .spark-toast-icon {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 13px !important;
+  }
+
+  .spark-toast-copy strong,
+  .spark-toast strong {
+    font-size: 13px !important;
+  }
+
+  .spark-toast-copy p,
+  .spark-toast p {
+    font-size: 12px !important;
+  }
+
+  .spark-toast button {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+  }
+}
+/* Pass 35B Patch 9 — drawer logout + dark toast readability end */
