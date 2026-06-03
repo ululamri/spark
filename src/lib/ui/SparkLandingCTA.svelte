@@ -3,15 +3,15 @@
   import SparkIcon from './SparkIcon.svelte';
 </script>
 
-<section class="landing-cta-v26 pass35b2-cta">
+<section class="landing-cta-v26 spark-home-cta">
   <div>
-    <span class="spark-eyebrow">Mulai</span>
-    <h2>Ambil satu langkah kecil dulu.</h2>
-    <p>Pilih jalur belajar yang paling ringan, lalu lanjutkan saat sudah siap.</p>
+    <span class="spark-eyebrow">Mulai dari langkah kecil</span>
+    <h2>Satu lesson cukup untuk memulai.</h2>
+    <p>Pelajari fondasi dulu, lalu masuk ke Lab dan Passport saat kamu siap.</p>
   </div>
 
-  <div class="landing-cta-actions pass35b2-cta-actions">
-    <SparkButton href="/core"><SparkIcon name="book-open" size={15} />Mulai Core</SparkButton>
+  <div class="spark-home-cta-actions">
+    <SparkButton href="/core"><SparkIcon name="book-open" size={15} />Core</SparkButton>
     <SparkButton href="/login" variant="secondary"><SparkIcon name="login" size={15} />Masuk</SparkButton>
   </div>
 </section>

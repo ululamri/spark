@@ -17,20 +17,20 @@ export type SparkAsset = {
 export const sparkAssets: SparkAsset[] = [
   {
     role: 'logo-main-light',
-    src: '/assets/brand/logo-main-light.svg',
+    src: '/assets/brand/karyra-spark-logo-tight.png',
     alt: 'Karyra Spark logo',
-    fallback: '✦ Karyra Spark'
+    fallback: 'Karyra Spark'
   },
   {
     role: 'logo-main-dark',
-    src: '/assets/brand/logo-main-dark.svg',
-    alt: 'Karyra Spark logo dark',
-    fallback: '✦ Karyra Spark'
+    src: '/assets/brand/karyra-spark-logo-tight.png',
+    alt: 'Karyra Spark logo',
+    fallback: 'Karyra Spark'
   },
   {
     role: 'logo-icon',
-    src: '/assets/brand/icon-only.svg',
-    alt: 'Karyra Spark icon',
+    src: '/assets/brand/karyra-spark-logo-tight.png',
+    alt: 'Karyra Spark logo',
     fallback: '✦'
   },
   {

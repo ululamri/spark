@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { getSparkAsset } from '$lib/assets/spark-assets';
   import { betaSession } from '$state/beta-session-state.svelte';
 
   type Props = {
@@ -8,21 +7,15 @@
 
   let { compact = false }: Props = $props();
 
-  const asset = getSparkAsset('logo-icon');
   const homeHref = $derived(betaSession.user ? '/dashboard' : '/');
   let imageFailed = $state(false);
+  const logoSrc = '/assets/brand/karyra-spark-logo-tight.png?v=35b5';
 </script>
 
-<a class={`spark-brand ${compact ? 'compact' : ''} production-brand pass35b2-brand`} href={homeHref} aria-label="Karyra Spark">
-  {#if asset && !imageFailed}
-    <span class="production-brand-logo pass35b2-brand-logo">
-      <img src={asset.src} alt={asset.alt} onerror={() => (imageFailed = true)} />
-    </span>
+<a class={`spark-brand karyra-brand ${compact ? 'compact' : ''}`.trim()} href={homeHref} aria-label="Karyra Spark">
+  {#if !imageFailed}
+    <img class="karyra-brand-logo" src={logoSrc} alt="Karyra Spark" onerror={() => (imageFailed = true)} />
   {:else}
-    <span class="spark-mark">✦</span>
-  {/if}
-
-  {#if !compact}
-    <span class="pass35b2-brand-wordmark"><strong>Karyra</strong><small>Spark</small></span>
+    <span class="karyra-brand-fallback">Karyra Spark</span>
   {/if}
 </a>
