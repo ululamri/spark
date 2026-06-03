@@ -14,14 +14,14 @@
     learningState
   } from '$state/learning-state.svelte';
 
-  const userName = $derived(betaSession.user?.name ?? 'Spark Learner');
+  const userName = $derived(betaSession.user?.name ?? 'Karyra');
   const unreadMessages = $derived(sparkMessages.filter((message) => !messageState.readMessageIds.includes(message.id)).length);
 
   const daily = $derived.by(() => {
-    if (getCompletedLessonCount() === 0) return { title: 'Mulai lesson pertama', copy: 'Fondasi blockchain harus terlihat sebelum pengguna masuk Lab atau Hub.', href: '/core', cta: 'Buka Core', icon: 'book-open' };
-    if (learningState.completedLabIds.length === 0) return { title: 'Coba Lab interaktif', copy: 'Ubah pemahaman menjadi checklist dan simulasi aman.', href: '/lab', cta: 'Buka Lab', icon: 'flask-conical' };
-    if (gatewayState.registeredWorkshopIds.length === 0) return { title: 'Sambungkan ke komunitas', copy: 'Workshop dan cohort membuat Spark terasa dekat dengan pengguna nyata.', href: '/community', cta: 'Buka Community', icon: 'users' };
-    return { title: 'Jelajahi Hub', copy: 'Readiness cukup untuk mulai menyimpan resource ekosistem.', href: '/hub', cta: 'Buka Hub', icon: 'compass' };
+    if (getCompletedLessonCount() === 0) return { title: 'Mulai dari fondasi', copy: 'Ambil satu lesson pendek sebelum masuk ke Lab atau Hub.', href: '/core', cta: 'Buka Core', icon: 'book-open' };
+    if (learningState.completedLabIds.length === 0) return { title: 'Coba latihan aman', copy: 'Ubah pemahaman menjadi praktik ringan tanpa risiko.', href: '/lab', cta: 'Buka Lab', icon: 'flask-conical' };
+    if (gatewayState.registeredWorkshopIds.length === 0) return { title: 'Temukan komunitas', copy: 'Workshop dan cohort membantu belajar lebih terarah.', href: '/community', cta: 'Buka Komunitas', icon: 'users' };
+    return { title: 'Jelajahi Hub', copy: 'Simpan resource ekosistem yang sesuai dengan kesiapanmu.', href: '/hub', cta: 'Buka Hub', icon: 'compass' };
   });
 
   const lanes = $derived([
@@ -32,35 +32,35 @@
   ]);
 </script>
 
-<section class="ops-board">
+<section class="ops-board pass35b-ops-board">
   <div class="ops-main-card">
     <div class="ops-user-line">
       <span>{userName.slice(0, 1)}</span>
-      <div><strong>{userName}</strong><small>Dashboard harian · {getLearningProgressPercent()}% progress belajar</small></div>
-      <SparkTrustBadge label={`${getReadinessScore()}% readiness`} tone={getReadinessScore() >= 75 ? 'safe' : 'beta'} />
+      <div><strong>{userName}</strong><small>{getLearningProgressPercent()}% progress belajar</small></div>
+      <SparkTrustBadge label={`${getReadinessScore()}%`} tone={getReadinessScore() >= 75 ? 'safe' : 'beta'} />
     </div>
 
     <div class="ops-focus">
-      <span><SparkIcon name={daily.icon} size={26} /></span>
+      <span><SparkIcon name={daily.icon} size={22} /></span>
       <div><span class="spark-eyebrow">Fokus hari ini</span><h1>{daily.title}</h1><p>{daily.copy}</p></div>
     </div>
 
     <div class="ops-actions">
-      <SparkButton href={daily.href}>{daily.cta}</SparkButton>
-      <SparkButton href="/profile" variant="secondary">Cek Passport</SparkButton>
+      <SparkButton href={daily.href} size="sm">{daily.cta}</SparkButton>
+      <SparkButton href="/profile" variant="secondary" size="sm">Passport</SparkButton>
     </div>
   </div>
 
   <aside class="ops-right-rail">
     <div class="ops-readiness-card">
       <div class="ops-ring" style={`--value:${getReadinessScore()}`}><strong>{getReadinessScore()}%</strong><span>Passport</span></div>
-      <p>Readiness dibaca dari lesson, Lab, workshop, dan Hub resource.</p>
+      <p>Readiness dibaca dari belajar, Lab, komunitas, dan Hub.</p>
     </div>
 
-    <div class="ops-lane-grid">
+    <div class="ops-lane-grid pass35b-metric-grid">
       {#each lanes as lane}
         <a href={lane.href}>
-          <SparkIcon name={lane.icon} size={17} />
+          <SparkIcon name={lane.icon} size={16} />
           <strong>{lane.value}</strong>
           <span>{lane.title}</span>
         </a>
@@ -69,9 +69,9 @@
   </aside>
 </section>
 
-<section class="ops-action-strip">
-  <a href="/core"><SparkIcon name="book-open" size={18} /><strong>Core</strong><span>Kurikulum utama</span></a>
-  <a href="/lab"><SparkIcon name="flask-conical" size={18} /><strong>Lab</strong><span>Simulasi aman</span></a>
-  <a href="/community"><SparkIcon name="users" size={18} /><strong>Community</strong><span>Workshop & cohort</span></a>
-  <a href="/hub"><SparkIcon name="compass" size={18} /><strong>Hub</strong><span>Gateway resource</span></a>
+<section class="ops-action-strip pass35b-action-strip" aria-label="Jalur utama Spark">
+  <a href="/core"><SparkIcon name="book-open" size={17} /><strong>Core</strong><span>Belajar</span></a>
+  <a href="/lab"><SparkIcon name="flask-conical" size={17} /><strong>Lab</strong><span>Praktik</span></a>
+  <a href="/community"><SparkIcon name="users" size={17} /><strong>Komunitas</strong><span>Bersama</span></a>
+  <a href="/hub"><SparkIcon name="compass" size={17} /><strong>Hub</strong><span>Resource</span></a>
 </section>

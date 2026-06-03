@@ -19,21 +19,21 @@
   }
 </script>
 
-<SparkCard class="spark-app-flow-checklist pass35b-flow-checklist" density="compact">
+<SparkCard class="spark-app-flow-checklist">
   <div class="flow-checklist-head">
     <div>
       <span class="spark-eyebrow">Alur aplikasi</span>
-      <h2>Jalur utama Spark.</h2>
-      <p>Masuk, belajar, praktik, cek Passport, lalu jelajahi komunitas dan Hub.</p>
+      <h2>Coba Spark seperti pengguna nyata.</h2>
+      <p>Checklist ini membantu memastikan flow utama tidak buntu: masuk, belajar, praktik, Passport, dan komunitas.</p>
     </div>
-    <SparkTrustBadge label="Flow aktif" tone="safe" />
+    <SparkTrustBadge label="Frontend-ready flow" tone="safe" />
   </div>
 
   <div class="flow-checklist-grid">
     {#each appFlowSteps as step}
       <a href={step.href} class:done={isDone(step.signal)}>
         <span>
-          <SparkIcon name={isDone(step.signal) ? 'check' : step.icon} size={16} />
+          <SparkIcon name={isDone(step.signal) ? 'check' : step.icon} size={17} />
         </span>
         <div>
           <strong>{step.title}</strong>

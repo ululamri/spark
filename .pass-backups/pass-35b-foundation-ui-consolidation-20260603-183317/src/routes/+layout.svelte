@@ -27,10 +27,13 @@
   import '$lib/styles/pass-26-home-landing-identity-footer.css';
   import '$lib/styles/pass-27-core-learn-learning-center.css';
   import '$lib/styles/pass-28-profile-passport-account-center.css';
+  import '$lib/styles/pass-31-ux-rhythm-reset.css';
+  import '$lib/styles/pass-31a-ux-density-overlay-repair.css';
   import '$lib/styles/pass-32-profile-passport-notification-repair.css';
+  import '$lib/styles/pass-33-spark-test-global-rhythm-density.css';
+  import '$lib/styles/pass-33a-mainstream-mobile-typography-system.css';
   import '$lib/styles/pass-34-production-surface-foundation.css';
   import '$lib/styles/pass-35-auth-public-surface-cleanup.css';
-  import '$lib/styles/pass-35b-foundation-ui-consolidation.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();
