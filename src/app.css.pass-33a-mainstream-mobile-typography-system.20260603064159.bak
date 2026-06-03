@@ -75,35 +75,35 @@ textarea { width: 100%; min-height: 150px; resize: vertical; }
 .spark-sidebar-nav a { display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: center; padding: 10px; border-radius: 18px; border: 1px solid transparent; }
 .spark-sidebar-nav a:hover { background: var(--spark-card); border-color: rgba(31,117,255,.22); box-shadow: 0 12px 28px rgba(5,9,78,.07); }
 .spark-sidebar-nav span:first-child { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 15px; background: #eff6ff; color: var(--spark-blue-strong); }
-.spark-sidebar-nav strong, .spark-card h3, .spark-card strong { display: block; color: var(--spark-navy); font-weight: 680; letter-spacing: -.015em; }
+.spark-sidebar-nav strong, .spark-card h3, .spark-card strong { display: block; color: var(--spark-navy); font-weight: 920; letter-spacing: -.035em; }
 [data-theme='dark'] .spark-sidebar-nav strong, [data-theme='dark'] .spark-card h3, [data-theme='dark'] .spark-card strong { color: #ffffff; }
-.spark-sidebar-nav small, .spark-card p, .spark-card small { color: var(--spark-muted); font-size: 12.5px; line-height: 1.55; font-weight: 430; }
+.spark-sidebar-nav small, .spark-card p, .spark-card small { color: var(--spark-muted); font-size: 12px; line-height: 1.45; font-weight: 650; }
 .spark-sidebar-status, .spark-sidebar-hub { margin-top: 16px; padding: 14px; border-radius: 22px; background: var(--spark-card); border: 1px solid var(--spark-line); box-shadow: 0 10px 24px rgba(5,9,78,.06); }
 .spark-sidebar-status { display: grid; grid-template-columns: 58px 1fr; gap: 12px; align-items: center; }
 .spark-sidebar-hub { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: center; }
 
-.spark-main { min-width: 0; padding: 24px 30px 112px; }
+.spark-main { min-width: 0; padding: 28px 36px 120px; }
 .spark-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .42fr); gap: 24px; align-items: center; min-height: 390px; padding: 48px; border-radius: 34px; border: 1px solid var(--spark-line); background: radial-gradient(circle at 82% 24%, rgba(255,128,0,.13), transparent 28%), radial-gradient(circle at 64% 56%, rgba(31,117,255,.12), transparent 34%), linear-gradient(135deg, rgba(255,255,255,.98), rgba(244,248,255,.95)); box-shadow: var(--spark-shadow); }
 [data-theme='dark'] .spark-hero { background: radial-gradient(circle at 82% 24%, rgba(255,128,0,.16), transparent 28%), radial-gradient(circle at 64% 56%, rgba(31,117,255,.16), transparent 34%), linear-gradient(135deg, rgba(9,14,48,.96), rgba(7,10,34,.92)); }
-.spark-hero h1, .spark-section h1, .spark-section h2 { margin: 8px 0 0; color: var(--spark-navy); font-size: clamp(34px, 4.2vw, 62px); line-height: 1.02; letter-spacing: -.048em; font-weight: 760; }
+.spark-hero h1, .spark-section h1, .spark-section h2 { margin: 8px 0 0; color: var(--spark-navy); font-size: clamp(44px, 4.8vw, 78px); line-height: .93; letter-spacing: -.082em; font-weight: 950; }
 [data-theme='dark'] .spark-hero h1, [data-theme='dark'] .spark-section h1, [data-theme='dark'] .spark-section h2 { color: #ffffff; }
-.spark-hero p { max-width: 720px; color: var(--spark-muted); font-size: 14.5px; line-height: 1.58; font-weight: 430; }
+.spark-hero p { max-width: 720px; color: var(--spark-muted); font-size: 17px; line-height: 1.65; font-weight: 560; }
 .spark-hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
 .spark-hero-panel, .spark-passport-card { padding: 24px; border-radius: 28px; background: var(--spark-card); border: 1px solid var(--spark-line); box-shadow: 0 16px 38px rgba(5,9,78,.09); }
 .spark-hero-panel strong { display: block; font-size: 58px; color: var(--spark-navy); letter-spacing: -.07em; }
 [data-theme='dark'] .spark-hero-panel strong { color: #fff; }
 
-.spark-section { margin-top: 24px; }
+.spark-section { margin-top: 34px; }
 .spark-section-head { display: flex; justify-content: space-between; gap: 18px; align-items: end; margin-bottom: 18px; }
 .spark-section h2 { font-size: clamp(30px, 2.5vw, 44px); }
 .spark-pillar-grid, .spark-card-grid.three, .spark-lab-grid, .spark-profile-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .spark-pillar-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .spark-card-grid.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.spark-card { min-height: 0; padding: 16px; border-radius: 18px; border: 1px solid var(--spark-line); background: var(--spark-card); box-shadow: 0 10px 28px rgba(5,9,78,.07); }
+.spark-card { min-height: 150px; padding: 18px; border-radius: var(--spark-radius); border: 1px solid var(--spark-line); background: var(--spark-card); box-shadow: 0 12px 30px rgba(5,9,78,.07); }
 .spark-card h2, .spark-card h3 { margin: 12px 0 0; }
 .spark-card .big { margin-top: 10px; font-size: 44px; line-height: 1; }
 
-.spark-btn { min-height: 42px; padding: 0 15px; border: 0; border-radius: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 650; transition: transform .16s ease, box-shadow .16s ease, opacity .16s ease; }
+.spark-btn { min-height: 46px; padding: 0 18px; border: 0; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 900; transition: transform .16s ease, box-shadow .16s ease, opacity .16s ease; }
 .spark-btn:hover { transform: translateY(-1px); }
 .spark-btn.primary { color: #fff; background: linear-gradient(135deg, var(--spark-blue), var(--spark-blue-strong)); box-shadow: 0 14px 28px rgba(31,117,255,.24); }
 .spark-btn.secondary { color: var(--spark-blue-strong); background: #ffffff; border: 1px solid rgba(31,117,255,.25); }
@@ -211,17 +211,3 @@ textarea { width: 100%; min-height: 150px; resize: vertical; }
   .spark-app[data-preview='mobile'] .spark-mode-grid,
   .spark-app[data-preview='mobile'] .spark-lesson-layout { grid-template-columns: 1fr; }
 }
-
-/* Pass 33A base typography patch start */
-@media (max-width: 760px) {
-  .spark-app { font-size: 13.75px; line-height: 1.55; }
-  .spark-main { padding: 12px 12px 94px !important; }
-  .spark-main :where(h1) { font-size: clamp(27px, 8.2vw, 36px) !important; line-height: 1.06 !important; letter-spacing: -.036em !important; font-weight: 720 !important; }
-  .spark-main :where(h2) { font-size: clamp(20px, 6vw, 26px) !important; line-height: 1.14 !important; letter-spacing: -.026em !important; font-weight: 680 !important; }
-  .spark-main :where(h3) { font-size: 16px !important; line-height: 1.18 !important; font-weight: 640 !important; }
-  .spark-main :where(p, li, input, textarea, select) { font-size: 13.75px !important; line-height: 1.55 !important; font-weight: 400 !important; }
-  .spark-main :where(small, em, label span) { font-size: 11.75px !important; line-height: 1.38 !important; font-weight: 390 !important; }
-  .spark-card { min-height: 0 !important; padding: 13px !important; border-radius: 16px !important; }
-  .spark-btn { min-height: 39px !important; padding: 0 12px !important; border-radius: 12px !important; font-size: 13px !important; font-weight: 600 !important; }
-}
-/* Pass 33A base typography patch end */

@@ -2,12 +2,10 @@
   import type { Snippet } from 'svelte';
 
   type Variant = 'primary' | 'secondary' | 'ghost';
-  type Size = 'sm' | 'md' | 'lg';
 
   type Props = {
     href?: string;
     variant?: Variant;
-    size?: Size;
     loading?: boolean;
     disabled?: boolean;
     onclick?: (event: MouseEvent) => void;
@@ -18,7 +16,6 @@
   let {
     href = '',
     variant = 'primary',
-    size = 'md',
     loading = false,
     disabled = false,
     onclick,
@@ -26,16 +23,16 @@
     class: className = ''
   }: Props = $props();
 
-  const buttonClass = $derived(`spark-btn ${variant} ${size} ${className}`.trim());
+  const buttonClass = $derived(`spark-btn ${variant} ${className}`);
 </script>
 
 {#if href}
-  <a class={buttonClass} href={disabled || loading ? undefined : href} aria-disabled={disabled || loading} data-spark-button>
+  <a class={buttonClass} href={disabled || loading ? undefined : href} aria-disabled={disabled || loading}>
     {#if loading}<span class="spark-spinner"></span>{/if}
     {@render children()}
   </a>
 {:else}
-  <button class={buttonClass} type="button" disabled={disabled || loading} {onclick} data-spark-button>
+  <button class={buttonClass} type="button" disabled={disabled || loading} {onclick}>
     {#if loading}<span class="spark-spinner"></span>{/if}
     {@render children()}
   </button>
