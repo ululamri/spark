@@ -2,6 +2,7 @@
   import SparkButton from './SparkButton.svelte';
   import SparkCard from './SparkCard.svelte';
   import SparkIcon from './SparkIcon.svelte';
+  import SparkTrustBadge from './SparkTrustBadge.svelte';
   import { kindLabel, sparkMessageFilters, sparkMessages, type SparkMessage } from '$lib/messaging/spark-messaging-model';
   import { markAllMessagesRead, markMessageRead, messageState, setMessageFilter, toggleSavedMessage } from '$state/message-state.svelte';
   import { pushToast } from '$state/app-state.svelte';
@@ -44,26 +45,37 @@
   }
 </script>
 
-<section class="spark-inbox-hero compact-inbox-hero">
+<section class="spark-inbox-hero">
   <div>
     <span class="spark-eyebrow">Pesan</span>
     <h1>Pesan dari Spark.</h1>
     <p>Arahan belajar, keamanan, workshop, Hub, dan Passport dikumpulkan di sini agar kamu tahu langkah berikutnya.</p>
     <div class="inbox-hero-actions">
       <SparkButton href="#messages">Lihat pesan</SparkButton>
-      <SparkButton href="/dashboard" variant="secondary">Dashboard</SparkButton>
+      <SparkButton href="/dashboard" variant="secondary">Buka Dashboard</SparkButton>
     </div>
   </div>
 
-  <aside class="inbox-summary-card compact-summary-card">
+  <aside class="inbox-summary-card">
     <div><strong>{sparkMessages.length}</strong><span>Total</span></div>
     <div><strong>{unreadCount}</strong><span>Baru</span></div>
     <div><strong>{savedCount}</strong><span>Disimpan</span></div>
   </aside>
 </section>
 
-<section id="messages" class="spark-section compact-message-section">
-  <SparkCard class="spark-inbox-shell compact-inbox-shell">
+<section class="spark-section">
+  <SparkCard class="inbox-sync-strip">
+    <span><SparkIcon name="shield" size={18} /></span>
+    <div>
+      <strong>Pesan dibuat singkat dan aman.</strong>
+      <p>Tidak ada ajakan spekulasi. Spark hanya membantu kamu belajar, latihan, dan menjaga keamanan.</p>
+    </div>
+    <SparkTrustBadge label="Safety-first" tone="safe" />
+  </SparkCard>
+</section>
+
+<section id="messages" class="spark-section">
+  <SparkCard class="spark-inbox-shell">
     <div class="inbox-tools">
       <label><span>Cari pesan</span><input bind:value={search} type="search" placeholder="Belajar, dompet, workshop, Hub..." /></label>
       <button type="button" onclick={readAll} disabled={unreadCount === 0}>Tandai dibaca</button>
@@ -84,20 +96,20 @@
             {@const unread = !messageState.readMessageIds.includes(message.id)}
             {@const saved = messageState.savedMessageIds.includes(message.id)}
             <button class={`message-row ${message.tone}`} class:active={selectedMessage?.id === message.id} class:unread type="button" onclick={() => openMessage(message)}>
-              <span class={`message-icon ${message.tone}`}><SparkIcon name={message.icon} size={16} /></span>
+              <span class={`message-icon ${message.tone}`}><SparkIcon name={message.icon} size={17} /></span>
               <span class="message-copy"><small>{kindLabel(message.kind)} · {message.sender} · {message.time}</small><strong>{message.title}</strong><em>{message.preview}</em></span>
               <span class="message-state">{#if unread}<i>Baru</i>{/if}{#if saved}<b>★</b>{/if}</span>
             </button>
           {/each}
         {:else}
-          <div class="message-empty-state"><SparkIcon name="messages" size={24} /><h3>Pesan tidak ditemukan</h3><p>Coba kata lain atau kembali ke Semua.</p></div>
+          <div class="message-empty-state"><SparkIcon name="messages" size={26} /><h3>Pesan tidak ditemukan</h3><p>Coba kata lain atau kembali ke Semua.</p></div>
         {/if}
       </div>
 
       {#if selectedMessage}
         <article class={`message-detail ${selectedMessage.tone}`}>
           <div class="message-detail-head">
-            <span class={`message-detail-icon ${selectedMessage.tone}`}><SparkIcon name={selectedMessage.icon} size={21} /></span>
+            <span class={`message-detail-icon ${selectedMessage.tone}`}><SparkIcon name={selectedMessage.icon} size={24} /></span>
             <div><span>{kindLabel(selectedMessage.kind)} · {selectedMessage.sender} · {selectedMessage.time}</span><h2>{selectedMessage.title}</h2></div>
           </div>
           <p>{selectedMessage.body}</p>
