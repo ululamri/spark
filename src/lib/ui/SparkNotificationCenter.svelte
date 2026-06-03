@@ -21,9 +21,10 @@
     })
   );
 
-  const unreadCount = $derived(notifications.filter((item) => !messageState.readNotificationIds.includes(item.id)).length);
-  const primaryNotification = $derived(notifications[0]);
-  const secondaryNotifications = $derived(notifications.slice(1, 4));
+  const unreadNotifications = $derived(
+    notifications.filter((item) => !messageState.readNotificationIds.includes(item.id)).slice(0, 4)
+  );
+  const unreadCount = $derived(unreadNotifications.length);
 
   function closePanel() {
     open = false;
@@ -31,7 +32,7 @@
 
   function readAll() {
     markAllNotificationsRead(notifications.map((item) => item.id));
-    pushToast({ title: 'Pemberitahuan dibaca', copy: 'Semua update singkat sudah ditandai dibaca.', tone: 'success' });
+    pushToast({ title: 'Pemberitahuan dibaca', copy: 'Tidak ada update baru.', tone: 'success' });
   }
 
   function openNotification(id: string) {
@@ -40,59 +41,54 @@
   }
 </script>
 
-<div class="spark-notification-center production-notification-center">
-  <button class="spark-icon-btn notification-trigger" type="button" aria-label="Pemberitahuan" aria-expanded={open} onclick={() => (open = !open)}>
+<div class="spark-notification-center production-notification-center pass35b7-notification-center">
+  <button class="spark-icon-btn notification-trigger pass35b7-notification-trigger" type="button" aria-label="Pemberitahuan" aria-expanded={open} onclick={() => (open = !open)}>
     <SparkIcon name="bell" size={18} />
-    {#if unreadCount > 0}<span class="notification-count">{unreadCount}</span>{:else}<span class="notification-dot"></span>{/if}
+    {#if unreadCount > 0}<span class="notification-count">{unreadCount}</span>{/if}
   </button>
 
   {#if open}
-    <button class="production-notification-scrim" transition:fade type="button" aria-label="Tutup pemberitahuan" onclick={closePanel}></button>
-    <div class="production-notification-panel" role="dialog" aria-label="Pemberitahuan" transition:fly={{ y: -6, duration: 150 }}>
-      <div class="production-notification-head">
+    <button class="production-notification-scrim pass35b7-notification-scrim" transition:fade type="button" aria-label="Tutup pemberitahuan" onclick={closePanel}></button>
+
+    <div class="production-notification-panel pass35b7-notification-panel" role="dialog" aria-label="Pemberitahuan" transition:fly={{ y: -6, duration: 150 }}>
+      <div class="production-notification-head pass35b7-notification-head">
         <div>
           <span class="spark-eyebrow">Pemberitahuan</span>
-          <h2>Update singkat</h2>
-          <p>{unreadCount > 0 ? `${unreadCount} update baru` : 'Semua update sudah dibaca'}</p>
+          <h2>{unreadCount > 0 ? `${unreadCount} update baru` : 'Tidak ada pemberitahuan'}</h2>
         </div>
-        <button type="button" aria-label="Tutup pemberitahuan" onclick={closePanel}><SparkIcon name="x" size={17} /></button>
+        <button type="button" aria-label="Tutup pemberitahuan" onclick={closePanel}><SparkIcon name="x" size={18} /></button>
       </div>
 
-      {#if primaryNotification}
-        <a class="production-notification-focus" href={primaryNotification.href} onclick={() => openNotification(primaryNotification.id)}>
-          <span class={`production-notification-focus-icon ${primaryNotification.tone}`}><SparkIcon name={primaryNotification.icon} size={17} /></span>
-          <div>
-            <small>Prioritas</small>
-            <strong>{primaryNotification.title}</strong>
-            <p>{primaryNotification.copy}</p>
-          </div>
+      {#if unreadCount === 0}
+        <div class="pass35b7-notification-empty" aria-live="polite">
+          <span><SparkIcon name="check" size={20} /></span>
+          <strong>Semua sudah dibaca</strong>
+          <p>Belum ada pemberitahuan baru.</p>
+        </div>
+      {:else}
+        <div class="pass35b7-notification-tools">
+          <span>Ringkasan update terbaru.</span>
+          <button type="button" onclick={readAll}>Tandai semua dibaca</button>
+        </div>
+
+        <div class="production-notification-list pass35b7-notification-list">
+          {#each unreadNotifications as item}
+            <a href={item.href} class={`production-notification-item pass35b7-notification-item ${item.tone}`} onclick={() => openNotification(item.id)}>
+              <span><SparkIcon name={item.icon} size={16} /></span>
+              <div>
+                <small>{item.kind}</small>
+                <strong>{item.title}</strong>
+                <p>{item.copy}</p>
+              </div>
+            </a>
+          {/each}
+        </div>
+
+        <a class="production-notification-inbox-link pass35b7-notification-inbox-link" href="/inbox" onclick={closePanel}>
+          Buka Inbox
+          <SparkIcon name="chevron-right" size={15} />
         </a>
       {/if}
-
-      <div class="production-notification-tools">
-        <span>Notifikasi memberi update cepat. Pesan lengkap ada di Inbox.</span>
-        <button type="button" onclick={readAll} disabled={unreadCount === 0}>Tandai dibaca</button>
-      </div>
-
-      <div class="production-notification-list">
-        {#each secondaryNotifications as item}
-          {@const read = messageState.readNotificationIds.includes(item.id)}
-          <a href={item.href} class={`production-notification-item ${item.tone}`} class:read onclick={() => openNotification(item.id)}>
-            <span><SparkIcon name={item.icon} size={15} /></span>
-            <div>
-              <small>{item.kind}{#if !read} · Baru{/if}</small>
-              <strong>{item.title}</strong>
-              <p>{item.copy}</p>
-            </div>
-            <em>{item.status}</em>
-          </a>
-        {/each}
-      </div>
-
-      <a class="production-notification-inbox-link" href="/inbox" onclick={closePanel}>
-        Buka Inbox untuk membaca pesan lengkap
-        <SparkIcon name="chevron-right" size={15} />
-      </a>
     </div>
   {/if}
 </div>
