@@ -41,7 +41,7 @@
     } else {
       url.searchParams.set('tab', tab);
     }
-    url.hash = '';
+    url.hash = 'community-tabs';
     window.history.pushState({}, '', url);
   }
 
@@ -52,13 +52,13 @@
   });
 </script>
 
-<section class="community-tabs-shell spark-section" id="community-tabs" data-karyra-community-tabs="pass37c">
-  <div class="community-tabs-head" aria-label="Ringkasan mode Community">
-    <span class="spark-eyebrow">Community space</span>
-    <div>
-      <h2>Pilih mode komunitas.</h2>
-      <p>Workshop, cohort, dan diskusi tetap satu ruang, tapi tidak menumpuk di layar kecil.</p>
-    </div>
+<section class="community-tabs-shell spark-section" id="community-tabs" data-karyra-community-tabs="pass37b">
+  <div class="community-tabs-head">
+    <SparkSectionHeader
+      eyebrow="Community space"
+      title="Satu halaman, beberapa mode komunitas."
+      copy="Workshop, cohort, dan diskusi tetap berada dalam Community, tapi tidak saling menutupi di layar mobile."
+    />
   </div>
 
   <div class="community-tab-row" role="tablist" aria-label="Mode halaman Community">
@@ -151,58 +151,39 @@
 <style>
   .community-tabs-shell {
     display: grid;
-    gap: 12px;
+    gap: 14px;
   }
 
   .community-tabs-head {
-    display: grid;
-    grid-template-columns: minmax(0, 0.38fr) minmax(0, 1fr);
-    gap: 12px;
-    align-items: end;
     padding: 2px 2px 0;
   }
 
-  .community-tabs-head h2 {
-    margin: 0;
-    color: var(--spark-navy);
-    font-size: clamp(22px, 3vw, 34px);
-    line-height: 1.06;
-    letter-spacing: -0.045em;
-  }
-
-  :global([data-theme='dark']) .community-tabs-head h2 { color: #fff; }
-
-  .community-tabs-head p {
-    max-width: 62ch;
-    margin: 5px 0 0;
-    color: var(--spark-muted);
-    font-size: 13px;
-    line-height: 1.45;
-    font-weight: 430;
-  }
-
   .community-tab-row {
+    position: sticky;
+    top: 78px;
+    z-index: 22;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 7px;
-    padding: 7px;
+    gap: 8px;
+    padding: 8px;
     border: 1px solid var(--spark-line);
-    border-radius: 22px;
-    background: color-mix(in srgb, var(--spark-card) 90%, transparent);
-    box-shadow: 0 10px 26px rgba(5, 9, 78, 0.055);
+    border-radius: 24px;
+    background: color-mix(in srgb, var(--spark-card) 92%, transparent);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 14px 34px rgba(5, 9, 78, 0.08);
   }
 
   .community-tab-row button {
     min-width: 0;
-    min-height: 50px;
+    min-height: 58px;
     display: grid;
-    grid-template-columns: 31px minmax(0, 1fr);
+    grid-template-columns: 34px minmax(0, 1fr);
     grid-template-rows: auto auto;
-    gap: 1px 7px;
+    gap: 2px 8px;
     align-items: center;
-    padding: 8px;
+    padding: 9px;
     border: 1px solid transparent;
-    border-radius: 16px;
+    border-radius: 18px;
     background: transparent;
     color: var(--spark-muted);
     text-align: left;
@@ -212,9 +193,9 @@
     grid-row: 1 / span 2;
     display: grid;
     place-items: center;
-    width: 31px;
-    height: 31px;
-    border-radius: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 13px;
     color: var(--spark-blue-strong);
     background: rgba(31, 117, 255, 0.09);
   }
@@ -230,7 +211,7 @@
 
   .community-tab-row strong {
     color: var(--spark-navy);
-    font-size: 12.5px;
+    font-size: 12.75px;
     line-height: 1.12;
     font-weight: 720;
   }
@@ -238,8 +219,8 @@
   :global([data-theme='dark']) .community-tab-row strong { color: #fff; }
 
   .community-tab-row small {
-    font-size: 10.5px;
-    line-height: 1.12;
+    font-size: 10.75px;
+    line-height: 1.15;
     font-weight: 480;
   }
 
@@ -247,7 +228,7 @@
     border-color: rgba(31, 117, 255, 0.28);
     background: rgba(31, 117, 255, 0.08);
     color: var(--spark-blue-strong);
-    box-shadow: 0 8px 18px rgba(31, 117, 255, 0.07);
+    box-shadow: 0 10px 24px rgba(31, 117, 255, 0.08);
   }
 
   .community-tab-row button.active > span {
@@ -327,9 +308,9 @@
     grid-template-columns: 38px minmax(0, 1fr) auto;
     gap: 10px;
     align-items: center;
-    min-height: 66px;
-    padding: 10px;
-    border-radius: 18px;
+    min-height: 70px;
+    padding: 11px;
+    border-radius: 20px;
     color: var(--spark-muted);
     text-align: left;
   }
@@ -350,69 +331,45 @@
   }
 
   @media (max-width: 920px) {
-    .community-tabs-head,
-    .community-overview-grid {
-      grid-template-columns: 1fr;
-    }
-
     .community-tab-row {
-      position: static;
-      top: auto;
-      z-index: auto;
+      top: 68px;
       overflow-x: auto;
-      grid-template-columns: repeat(4, minmax(112px, 1fr));
-      scroll-snap-type: x proximity;
-      -webkit-overflow-scrolling: touch;
+      grid-template-columns: repeat(4, minmax(132px, 1fr));
+      scroll-snap-type: x mandatory;
     }
 
     .community-tab-row button {
       scroll-snap-align: start;
     }
+
+    .community-overview-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 560px) {
     .community-tabs-shell {
-      gap: 10px;
-    }
-
-    .community-tabs-head {
-      gap: 5px;
-      padding-inline: 1px;
-    }
-
-    .community-tabs-head h2 {
-      font-size: 20px;
-      line-height: 1.08;
-    }
-
-    .community-tabs-head p {
-      font-size: 12px;
-      line-height: 1.38;
+      gap: 12px;
     }
 
     .community-tab-row {
-      margin-inline: 0;
-      padding: 6px;
-      border-radius: 18px;
-      grid-template-columns: repeat(4, minmax(96px, 1fr));
-      box-shadow: 0 7px 18px rgba(5, 9, 78, 0.045);
+      margin-inline: -2px;
+      padding: 7px;
+      border-radius: 20px;
+      grid-template-columns: repeat(4, minmax(118px, 1fr));
     }
 
     .community-tab-row button {
-      min-height: 44px;
-      grid-template-columns: 28px minmax(0, 1fr);
-      padding: 7px;
-      border-radius: 14px;
+      min-height: 54px;
+      grid-template-columns: 30px minmax(0, 1fr);
+      padding: 8px;
+      border-radius: 15px;
     }
 
     .community-tab-row button > span {
-      width: 28px;
-      height: 28px;
-      border-radius: 11px;
-    }
-
-    .community-tab-row strong {
-      font-size: 12px;
+      width: 30px;
+      height: 30px;
+      border-radius: 12px;
     }
 
     .community-tab-row small {
@@ -421,11 +378,7 @@
 
     .community-overview-card,
     .community-overview-actions button {
-      border-radius: 16px;
-    }
-
-    .community-overview-actions button {
-      min-height: 60px;
+      border-radius: 17px;
     }
   }
 </style>

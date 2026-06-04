@@ -1,5 +1,6 @@
 <script lang="ts">
   import SparkButton from './SparkButton.svelte';
+  import SparkCard from './SparkCard.svelte';
   import SparkIcon from './SparkIcon.svelte';
   import SparkTrustBadge from './SparkTrustBadge.svelte';
   import { sparkWorkshops } from '$content/spark-content';
@@ -27,13 +28,13 @@
       <SparkTrustBadge label="Mobile-first" tone="safe" />
     </div>
 
-    <div class="community-summary-card">
+    <SparkCard class="community-summary-card">
       <span><SparkIcon name="users" size={20} /></span>
       <div>
         <strong>{gatewayState.registeredWorkshopIds.length} workshop tersimpan</strong>
         <p>Total kapasitas contoh: {totalCapacity} peserta.</p>
       </div>
-    </div>
+    </SparkCard>
 
     <div class="community-mini-stats">
       <div>
