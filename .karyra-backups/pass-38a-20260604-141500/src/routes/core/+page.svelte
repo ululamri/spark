@@ -1,5 +1,5 @@
 <script lang="ts">
-  import SparkCoreGuidedFlow from '$ui/SparkCoreGuidedFlow.svelte';
+  import SparkCoreTabbedSurface from '$ui/SparkCoreTabbedSurface.svelte';
 </script>
 
 <svelte:head>
@@ -10,4 +10,4 @@
   />
 </svelte:head>
 
-<SparkCoreGuidedFlow />
+<SparkCoreTabbedSurface />
