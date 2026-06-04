@@ -95,34 +95,3 @@
     </nav>
   </aside>
 {/if}
-
-<style>
-  /* Pass 36D — keep the mobile menu scrim as a full-screen rectangle.
-     The scrim is a <button>, so broad global button radius rules can turn it
-     into a huge oval. Keep this override inside the drawer component. */
-  .spark-mobile-scrim {
-    min-width: 0;
-    min-height: 0;
-    width: auto;
-    height: auto;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    appearance: none;
-    -webkit-appearance: none;
-    cursor: default;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  @media (max-width: 980px) {
-    .spark-mobile-scrim {
-      position: fixed;
-      inset: 0;
-      z-index: 58;
-      display: block;
-      background: rgba(2, 6, 23, 0.42);
-    }
-  }
-</style>
