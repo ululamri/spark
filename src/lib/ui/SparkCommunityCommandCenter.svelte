@@ -23,7 +23,7 @@
 
   <aside class="community-command-panel" aria-label="Ringkasan Community">
     <div class="community-command-badges">
-      <SparkTrustBadge label="Local activation" tone="beta" />
+      <SparkTrustBadge label="Aktivasi lokal" tone="beta" />
       <SparkTrustBadge label="Mobile-first" tone="safe" />
     </div>
 

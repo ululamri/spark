@@ -42,8 +42,8 @@
 <section class="learn-center-hero">
   <div class="learn-hero-copy">
     <div class="learn-kicker-row">
-      <SparkTrustBadge label="Learning Center" tone="beta" />
-      <span>{getCompletedLessonCount()}/{getTotalLessonCount()} lesson selesai</span>
+      <SparkTrustBadge label="Pusat Belajar" tone="beta" />
+      <span>{getCompletedLessonCount()}/{getTotalLessonCount()} materi selesai</span>
     </div>
 
     <h1>Pusat belajar Spark: mulai dari fondasi, lanjut praktik saat sudah siap.</h1>
@@ -150,7 +150,7 @@
       </div>
     </div>
 
-    <SparkButton href={`/lesson/${nextLesson.slug}`}>Mulai Lesson</SparkButton>
+    <SparkButton href={`/lesson/${nextLesson.slug}`}>Mulai materi</SparkButton>
   </SparkCard>
 </section>
 

@@ -4,19 +4,19 @@ export const SOCIAL_VIEWER_ID = 'local-viewer';
 
 export const socialPostKindLabels = {
   all: 'Semua',
-  progress: 'Progress',
-  question: 'Tanya',
-  resource: 'Resource',
+  progress: 'Perkembangan',
+  question: 'Pertanyaan',
+  resource: 'Rujukan',
   workshop: 'Workshop',
   lab: 'Lab'
 } as const;
 
 export const socialPostKindHints = {
-  progress: 'Bagikan progress kecil hari ini.',
-  question: 'Tanya hal yang masih membingungkan.',
-  resource: 'Bagikan resource yang aman dan relevan.',
-  workshop: 'Catatan dari event, cohort, atau meetup.',
-  lab: 'Showcase latihan aman dari Lab.'
+  progress: 'Bagikan perkembangan kecil dari proses belajar.',
+  question: 'Tanyakan bagian yang masih membingungkan.',
+  resource: 'Bagikan rujukan yang aman dan relevan.',
+  workshop: 'Koordinasikan event, cohort, atau meetup lokal.',
+  lab: 'Bagikan latihan aman dari Lab.'
 } as const;
 
 export const socialProfiles: SocialProfile[] = [
@@ -25,8 +25,8 @@ export const socialProfiles: SocialProfile[] = [
     name: 'Learner Lokal',
     handle: '@learner-lokal',
     role: 'learner',
-    location: 'Local mode',
-    bio: 'Profil lokal untuk mencoba social layer sebelum backend aktif.',
+    location: 'Mode lokal',
+    bio: 'Profil lokal untuk mencoba ruang diskusi sebelum backend aktif.',
     avatarLabel: 'L',
     trusted: false
   },
@@ -67,7 +67,7 @@ export const socialSeedPosts: SocialPost[] = [
     id: 'seed-progress-core',
     authorId: 'facilitator-ayu',
     kind: 'progress',
-    body: 'Hari ini cohort pemula menyelesaikan topik wallet safety. Fokusnya bukan membuat wallet dulu, tapi paham risiko, istilah dasar, dan kebiasaan aman.',
+    body: 'Hari ini cohort pemula menyelesaikan topik wallet safety. Fokusnya bukan membuat wallet dulu, tapi memahami risiko, istilah dasar, dan kebiasaan aman.',
     tags: ['wallet-safety', 'cohort', 'pemula'],
     visibility: 'community',
     createdAt: '2026-06-04T02:10:00.000Z',
@@ -79,7 +79,7 @@ export const socialSeedPosts: SocialPost[] = [
     id: 'seed-question-starknet',
     authorId: 'mentor-bima',
     kind: 'question',
-    body: 'Pertanyaan bagus untuk diskusi: bagian mana dari Starknet yang paling membingungkan untuk pemula, account abstraction, testnet, atau istilah L2?',
+    body: 'Pertanyaan untuk diskusi: bagian mana dari Starknet yang paling membingungkan untuk pemula, account abstraction, testnet, atau istilah L2?',
     tags: ['starknet', 'diskusi', 'pemula'],
     visibility: 'community',
     createdAt: '2026-06-03T14:20:00.000Z',
@@ -91,7 +91,7 @@ export const socialSeedPosts: SocialPost[] = [
     id: 'seed-resource-safe-path',
     authorId: 'spark-guide',
     kind: 'resource',
-    body: 'Resource aman minggu ini: mulai dari Core, catat istilah yang belum jelas, lalu buka Lab hanya untuk simulasi. Jangan pernah membagikan seed phrase, private key, atau kode pemulihan.',
+    body: 'Rujukan aman minggu ini: mulai dari Core, catat istilah yang belum jelas, lalu buka Lab hanya untuk simulasi. Jangan pernah membagikan seed phrase, private key, atau kode pemulihan.',
     tags: ['safety', 'core', 'lab'],
     visibility: 'community',
     createdAt: '2026-06-03T09:00:00.000Z',
@@ -125,7 +125,7 @@ export const socialSeedComments: Record<string, SocialComment[]> = {
       id: 'seed-comment-3',
       postId: 'seed-question-starknet',
       authorId: 'facilitator-ayu',
-      body: 'Untuk pemula biasanya istilah L2 dan testnet perlu analogi paling sederhana dulu.',
+      body: 'Untuk pemula, istilah L2 dan testnet biasanya perlu analogi yang paling sederhana dulu.',
       createdAt: '2026-06-03T15:10:00.000Z',
       status: 'local'
     }

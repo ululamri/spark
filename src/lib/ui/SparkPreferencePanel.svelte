@@ -56,7 +56,7 @@
   <section class="preference-card danger">
     <span class="spark-eyebrow">Data lokal</span>
     <h2>Reset perangkat ini.</h2>
-    <p>Untuk preview ulang dari awal, kamu bisa menghapus progress lokal di browser/perangkat ini.</p>
+    <p>Untuk preview ulang dari awal, silakan menghapus progress lokal di browser/perangkat ini.</p>
     <SparkButton variant="secondary" onclick={resetLocalData}>Reset data lokal</SparkButton>
   </section>
 </div>

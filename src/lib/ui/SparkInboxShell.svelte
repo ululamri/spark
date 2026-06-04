@@ -33,7 +33,7 @@
     toggleSavedMessage(message.id);
     pushToast({
       title: wasSaved ? 'Pesan dilepas' : 'Pesan disimpan',
-      copy: wasSaved ? 'Pesan ini tidak lagi ada di simpanan.' : 'Kamu bisa membukanya lagi nanti.',
+      copy: wasSaved ? 'Pesan ini tidak lagi ada di simpanan.' : 'Silakan membukanya lagi nanti.',
       tone: 'info'
     });
   }

@@ -25,7 +25,7 @@
   const utilityLinks = [
     { href: '/help', icon: 'help', title: 'Bantuan', copy: 'FAQ dan panduan' },
     { href: '/docs', icon: 'code', title: 'Dokumentasi', copy: 'Teknis dan non-teknis' },
-    { href: '/terms', icon: 'shield', title: 'Ketentuan', copy: 'Terms & conditions' }
+    { href: '/terms', icon: 'shield', title: 'Ketentuan', copy: 'Ketentuan layanan' }
   ];
 
   function close() {

@@ -9,54 +9,78 @@
 
   let draft = $state('');
   let kind = $state<SocialPostKind>('progress');
+  let composerOpen = $state(false);
   const policy = $derived(evaluateSocialDraft(draft));
 
+  function openComposer(nextKind: SocialPostKind = kind) {
+    kind = nextKind;
+    composerOpen = true;
+  }
+
   function submit() {
-    if (!policy.canSubmit) return;
+    if (!policy.canKirim) return;
     createSocialPost({ body: draft, kind });
     draft = '';
     kind = 'progress';
+    composerOpen = false;
   }
 </script>
 
-<div class="social-composer">
+<div class="social-composer" class:collapsed={!composerOpen && draft.trim().length === 0}>
   <div class="composer-head">
     <span><SparkIcon name="messages" size={18} /></span>
     <div>
-      <strong>Bagikan progress kecil</strong>
-      <small>{socialPostKindHints[kind]}</small>
+      <strong>Tanya atau bagikan perkembangan</strong>
+      <small>{composerOpen ? socialPostKindHints[kind] : 'Tulis pertanyaan, koordinasi workshop, atau progress belajar.'}</small>
     </div>
   </div>
 
-  <div class="composer-kind-row" aria-label="Jenis post">
-    {#each kinds as item}
-      <button class:active={kind === item} type="button" onclick={() => (kind = item)}>
-        {socialPostKindLabels[item]}
+  {#if !composerOpen && draft.trim().length === 0}
+    <div class="composer-open-actions" aria-label="Mulai diskusi">
+      <button type="button" onclick={() => openComposer('question')}>
+        <SparkIcon name="help" size={15} /> Tanya
       </button>
-    {/each}
-  </div>
+      <button type="button" onclick={() => openComposer('progress')}>
+        <SparkIcon name="check" size={15} /> Perkembangan
+      </button>
+      <button type="button" onclick={() => openComposer('workshop')}>
+        <SparkIcon name="calendar" size={15} /> Workshop
+      </button>
+    </div>
+  {:else}
+    <div class="composer-kind-row" aria-label="Jenis diskusi">
+      {#each kinds as item}
+        <button class:active={kind === item} type="button" onclick={() => (kind = item)}>
+          {socialPostKindLabels[item]}
+        </button>
+      {/each}
+    </div>
 
-  <textarea
-    bind:value={draft}
-    maxlength="720"
-    placeholder="Apa yang kamu pelajari hari ini? Tulis pertanyaan, catatan workshop, resource aman, atau progress dari Lab."
-    aria-label="Tulis post komunitas"
-  ></textarea>
+    <textarea
+      bind:value={draft}
+      maxlength="720"
+      placeholder="Tulis pertanyaan, ajakan hadir di workshop, catatan belajar, rujukan aman, atau perkembangan dari Lab."
+      aria-label="Tulis diskusi komunitas"
+    ></textarea>
 
-  {#if policy.warnings.length > 0}
-    <p class="composer-warning"><SparkIcon name="shield" size={14} /> {policy.warnings[0]}</p>
+    {#if policy.warnings.length > 0}
+      <p class="composer-warning"><SparkIcon name="shield" size={14} /> {policy.warnings[0]}</p>
+    {/if}
+
+    {#if policy.errors.length > 0 && draft.trim().length > 0}
+      <p class="composer-error"><SparkIcon name="shield-alert" size={14} /> {policy.errors[0]}</p>
+    {/if}
+
+    <div class="composer-actions">
+      <small>{policy.normalized.length}/640 · tersimpan lokal dulu</small>
+      <div>
+        <button type="button" class="composer-cancel" onclick={() => { draft = ''; composerOpen = false; }}>Batal</button>
+        <button type="button" class="spark-btn primary" disabled={!policy.canKirim} onclick={submit}>
+          <SparkIcon name="send" size={15} /> Kirim
+        </button>
+      </div>
+    </div>
   {/if}
-
-  {#if policy.errors.length > 0 && draft.trim().length > 0}
-    <p class="composer-error"><SparkIcon name="shield-alert" size={14} /> {policy.errors[0]}</p>
-  {/if}
-
-  <div class="composer-actions">
-    <small>{policy.normalized.length}/640 · tersimpan lokal dulu</small>
-    <button type="button" class="spark-btn primary" disabled={!policy.canSubmit} onclick={submit}>
-      <SparkIcon name="send" size={15} /> Kirim
-    </button>
-  </div>
 </div>
 
 <style>
@@ -69,6 +93,8 @@
     background: var(--spark-card);
     box-shadow: 0 12px 30px rgba(5, 9, 78, 0.07);
   }
+
+  .social-composer.collapsed { gap: 10px; }
 
   .composer-head {
     display: grid;
@@ -88,9 +114,7 @@
   }
 
   .composer-head strong,
-  .composer-head small {
-    display: block;
-  }
+  .composer-head small { display: block; }
 
   .composer-head strong {
     color: var(--spark-navy);
@@ -107,6 +131,7 @@
     line-height: 1.3;
   }
 
+  .composer-open-actions,
   .composer-kind-row {
     display: flex;
     gap: 7px;
@@ -114,7 +139,9 @@
     padding-bottom: 1px;
   }
 
-  .composer-kind-row button {
+  .composer-open-actions button,
+  .composer-kind-row button,
+  .composer-cancel {
     flex: 0 0 auto;
     min-height: 32px;
     padding: 0 10px;
@@ -126,7 +153,16 @@
     font-weight: 680;
   }
 
-  :global([data-theme='dark']) .composer-kind-row button { background: rgba(255,255,255,.055); }
+  .composer-open-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  :global([data-theme='dark']) .composer-open-actions button,
+  :global([data-theme='dark']) .composer-kind-row button,
+  :global([data-theme='dark']) .composer-cancel { background: rgba(255,255,255,.055); }
 
   .composer-kind-row button.active {
     border-color: rgba(31, 117, 255, 0.34);
@@ -177,16 +213,17 @@
     gap: 10px;
   }
 
-  .composer-actions button {
-    min-height: 38px;
+  .composer-actions > div {
+    display: flex;
+    align-items: center;
+    gap: 7px;
   }
+
+  .composer-actions button { min-height: 38px; }
 
   @media (max-width: 520px) {
     .social-composer { padding: 12px; border-radius: 20px; }
     .composer-actions { align-items: stretch; }
-    .composer-actions button { flex: 0 0 auto; }
+    .composer-actions > div { justify-content: flex-end; }
   }
-
-
-/* KARYRA PASS 37A SOCIAL CSS SCOPE WARNING FIX: parent theme selectors are global; local classes remain scoped. */
 </style>

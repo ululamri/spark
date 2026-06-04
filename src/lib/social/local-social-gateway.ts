@@ -10,7 +10,7 @@ function pushEvent(event: ReturnType<typeof createSocialEvent>) {
 
 export function createSocialPost(input: SocialDraftInput) {
   const policy = evaluateSocialDraft(input.body);
-  if (!policy.canSubmit) return;
+  if (!policy.canKirim) return;
 
   const post: SocialPost = {
     id: createSocialId('post'),
@@ -64,7 +64,7 @@ export function toggleSocialReaction(postId: string, reaction: SocialReactionKin
 
 export function addSocialComment(input: SocialCommentInput) {
   const policy = evaluateSocialComment(input.body);
-  if (!policy.canSubmit) return;
+  if (!policy.canKirim) return;
 
   const comment: SocialComment = {
     id: createSocialId('comment'),
@@ -119,7 +119,7 @@ export function hideSocialPost(postId: string) {
       kind: 'post.hidden',
       targetId: postId,
       title: 'Post disembunyikan',
-      copy: 'Post tidak lagi muncul di feed lokal perangkat ini.',
+      copy: 'Post tidak lagi muncul di ruang diskusi lokal perangkat ini.',
       href: '/community#social-layer'
     })
   );

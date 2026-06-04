@@ -23,7 +23,7 @@
   const copy = $derived(
     status === 404
       ? 'Spark masih beta. Beberapa route mungkin belum tersedia, tetapi alur utama tetap bisa digunakan.'
-      : message || 'Kamu bisa kembali ke Dashboard, Core, atau Login.'
+      : message || 'Silakan kembali ke Dashboard, Core, atau Login.'
   );
 </script>
 

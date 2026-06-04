@@ -14,7 +14,7 @@
   } from '$state/learning-state.svelte';
 
   const primaryHref = $derived(betaSession.user ? '/dashboard' : '/login');
-  const primaryLabel = $derived(betaSession.user ? 'Buka Dashboard' : 'Masuk Mode Coba');
+  const primaryLabel = $derived(betaSession.user ? 'Buka Dashboard' : 'Masuk Mode coba');
 
   const steps = [
     { title: 'Core', copy: 'Fondasi blockchain, crypto, Web3, dan Starknet.', href: '/core', icon: 'book-open' },
@@ -35,7 +35,7 @@
 
     <div class="launch-actions">
       <SparkButton href={primaryHref}>{primaryLabel}</SparkButton>
-      <SparkButton href={`/lesson/${getRecommendedLessonSlug()}`} variant="secondary">Mulai Lesson</SparkButton>
+      <SparkButton href={`/lesson/${getRecommendedLessonSlug()}`} variant="secondary">Mulai materi</SparkButton>
     </div>
 
     <div class="launch-proof-strip">

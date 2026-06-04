@@ -1,6 +1,6 @@
 # Social Layer module
 
-Pass 37 membuat social layer local-first dan backend-ready.
+Pass 37 membuat diskusi komunitas local-first dan backend-ready.
 
 ## Alur saat ini
 

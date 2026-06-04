@@ -1,7 +1,7 @@
 export const profileSignalRows = [
   {
     title: 'Learning signal',
-    copy: 'Lesson selesai dan checkpoint benar.',
+    copy: 'Materi selesai dan checkpoint benar.',
     icon: 'book-open',
     key: 'learning'
   },

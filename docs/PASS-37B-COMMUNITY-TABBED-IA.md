@@ -1,6 +1,6 @@
 # Pass 37B — Community Tabbed IA & Discussion Placement
 
-Pass 37B repositions the Pass 37 discussion/social layer so Community remains the home for workshop, cohort, and interaction without stacking every feature vertically on one mobile screen.
+Pass 37B repositions the Pass 37 discussion/diskusi komunitas so Community remains the home for workshop, cohort, and interaction without stacking every feature vertically on one mobile screen.
 
 ## Product decision
 

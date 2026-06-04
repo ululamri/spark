@@ -33,7 +33,7 @@ export const landingFeatureCards = [
 
 export const landingFooterColumns = [
   { title:'Produk', links:[['Core','/core','Kurikulum utama'],['Practice Lab','/lab','Simulasi aman'],['Passport','/profile','Readiness pengguna'],['Community','/community','Workshop & cohort'],['Hub','/hub','Gateway resource']] },
-  { title:'Mulai', links:[['Masuk Mode Coba','/login','Coba alur aplikasi'],['Dashboard','/dashboard','Ruang kerja harian'],['Lesson pertama','/lesson/why-blockchain','Mulai dari fondasi'],['Inbox','/inbox','Pesan dan arahan']] },
+  { title:'Mulai', links:[['Masuk Mode coba','/login','Coba alur aplikasi'],['Dashboard','/dashboard','Ruang kerja harian'],['Lesson pertama','/lesson/why-blockchain','Mulai dari fondasi'],['Inbox','/inbox','Pesan dan arahan']] },
   { title:'Tentang Spark', links:[['Alur Spark','/#alur','Core → Lab → Passport → Hub'],['Untuk siapa','/#untuk-siapa','Pemula, komunitas, penjelajah'],['Kenapa berbeda','/#kenapa-berbeda','Readiness-first'],['Fitur utama','/#fitur','Preview ekosistem']] },
   { title:'Keamanan', links:[['Settings','/settings','Tema, mode, data lokal'],['Wallet Safety','/lab','Simulasi risiko'],['Data lokal','/settings','Kontrol perangkat'],['Bukan saran finansial','/#footer','Fokus edukasi']] }
 ] as const;

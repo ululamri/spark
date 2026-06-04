@@ -1,6 +1,6 @@
 # Pass 37 Social Layer Backend Contract
 
-This document describes the backend path for the local-first social layer.
+This document describes the backend path for the local-first diskusi komunitas.
 
 ## Core entities
 

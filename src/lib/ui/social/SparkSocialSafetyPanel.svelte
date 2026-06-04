@@ -2,7 +2,7 @@
   import SparkIcon from '$ui/SparkIcon.svelte';
 </script>
 
-<aside class="social-safety-panel" aria-label="Panduan keamanan social layer">
+<aside class="social-safety-panel" aria-label="Panduan keamanan diskusi komunitas">
   <span><SparkIcon name="shield" size={18} /></span>
   <div>
     <strong>Ruang sosial aman</strong>

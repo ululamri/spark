@@ -19,8 +19,8 @@
   function markComplete() {
     completeLesson(lesson.slug);
     pushToast({
-      title: 'Lesson selesai',
-      copy: nextSlug ? 'Kamu bisa lanjut ke lesson berikutnya.' : 'Lesson terakhir selesai. Lanjutkan ke Lab.',
+      title: 'Materi selesai',
+      copy: nextSlug ? 'Silakan lanjut ke lesson berikutnya.' : 'Lesson terakhir selesai. Lanjutkan ke Lab.',
       tone: 'success'
     });
   }

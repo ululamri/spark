@@ -22,7 +22,7 @@
           <strong>{module.title}</strong>
           <em>{module.description}</em>
         </span>
-        <span class="spark-module-meta">{module.lessons.length} lesson</span>
+        <span class="spark-module-meta">{module.lessons.length} materi</span>
       </button>
 
       {#if expanded}

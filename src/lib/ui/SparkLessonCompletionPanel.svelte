@@ -20,8 +20,8 @@
   function markComplete() {
     completeLesson(lesson.slug);
     pushToast({
-      title: 'Lesson selesai',
-      copy: nextSlug ? 'Progress tersimpan lokal. Kamu bisa lanjut ke lesson berikutnya.' : 'Semua lesson utama sudah kamu lalui.',
+      title: 'Materi selesai',
+      copy: nextSlug ? 'Progress tersimpan lokal. Silakan lanjut ke lesson berikutnya.' : 'Semua lesson utama sudah kamu lalui.',
       tone: 'success'
     });
   }
@@ -34,7 +34,7 @@
 
   <div>
     <div class="lesson-completion-head">
-      <span class="spark-eyebrow">{completed ? 'Lesson selesai' : 'Selesaikan lesson'}</span>
+      <span class="spark-eyebrow">{completed ? 'Materi selesai' : 'Selesaikan lesson'}</span>
       {#if completed}
         <SparkTrustBadge label="Tersimpan lokal" tone="safe" />
       {:else}

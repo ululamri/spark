@@ -86,6 +86,6 @@
       <p>{recommendedLesson.summary}</p>
       <div class="spotlight-meta"><span>{recommendedLesson.estimatedMinutes} menit</span><span>{recommendedLesson.modeHint.join(' · ')}</span></div>
     </div>
-    <SparkButton href={`/lesson/${recommendedLesson.slug}`}>Mulai Lesson</SparkButton>
+    <SparkButton href={`/lesson/${recommendedLesson.slug}`}>Mulai materi</SparkButton>
   </SparkCard>
 </section>

@@ -4,7 +4,7 @@
   import { gatewayState } from '$state/gateway-state.svelte';
 
   const items = $derived([
-    { label: 'Learning', value: `${getCompletedLessonCount()}/${getTotalLessonCount()}`, copy: 'Lesson selesai' },
+    { label: 'Learning', value: `${getCompletedLessonCount()}/${getTotalLessonCount()}`, copy: 'Materi selesai' },
     { label: 'Checkpoint', value: `${Object.values(learningState.checkpointAnswers).filter((answer) => answer.correct).length}`, copy: 'Jawaban benar' },
     { label: 'Practice', value: `${learningState.completedLabIds.length}/3`, copy: 'Lab selesai' },
     { label: 'Community', value: `${gatewayState.registeredWorkshopIds.length}`, copy: 'Workshop terdaftar' },

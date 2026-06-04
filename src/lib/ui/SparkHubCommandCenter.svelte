@@ -50,7 +50,7 @@
       </div>
       <div>
         <strong>{getCompletedLessonCount()}</strong>
-        <span>Lesson selesai</span>
+        <span>Materi selesai</span>
       </div>
       <div>
         <strong>{learningState.completedLabIds.length}</strong>

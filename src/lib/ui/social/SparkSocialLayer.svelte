@@ -39,19 +39,19 @@
   );
 </script>
 
-<div class="social-layer" data-karyra-social-layer="pass37">
+<div class="social-layer" data-karyra-social-layer="pass38-discussion">
   <div class="social-layer-head">
     <SparkSectionHeader
-      eyebrow="Social layer"
-      title="Belajar bersama, bukan sendirian."
-      copy="Feed lokal untuk progress, pertanyaan, resource, catatan workshop, dan showcase Lab. Semua masih local-first dan backend-ready."
+      eyebrow="Diskusi komunitas"
+      title="Tanya, koordinasi, dan berbagi progress."
+      copy="Ruang diskusi lokal untuk pertanyaan, ajakan workshop, rujukan aman, catatan belajar, dan showcase Lab. Data masih tersimpan lokal dan siap disambungkan ke backend nanti."
     />
 
     <div class="social-event-card">
       <span><SparkIcon name="bell" size={17} /></span>
       <div>
         <strong>{socialUnreadEventCount} aktivitas lokal</strong>
-        <small>Event ini menjadi jalur notification dan backend sync nanti.</small>
+        <small>Aktivitas ini menjadi jalur notifikasi dan sinkronisasi backend nanti.</small>
       </div>
       <button type="button" onclick={markSocialEventsRead}>Tandai</button>
     </div>
@@ -62,7 +62,7 @@
       <SparkSocialSafetyPanel />
 
       <div class="social-filter-card">
-        <strong>Filter feed</strong>
+        <strong>Filter diskusi</strong>
         <div>
           {#each filters as filter}
             <button type="button" class:active={socialState.activeFilter === filter} onclick={() => setSocialFilter(filter)}>
@@ -80,8 +80,8 @@
         {#if visiblePosts.length === 0}
           <div class="social-empty-state">
             <SparkIcon name="messages" size={22} />
-            <strong>Belum ada post di filter ini</strong>
-            <p>Coba pilih filter lain atau buat post progress kecil dari composer.</p>
+            <strong>Belum ada diskusi di filter ini</strong>
+            <p>Silakan pilih filter lain atau mulai percakapan dari composer.</p>
           </div>
         {:else}
           {#each visiblePosts as post (post.id)}
@@ -232,26 +232,17 @@
 
   @media (max-width: 920px) {
     .social-layer-head,
-    .social-layout {
-      grid-template-columns: 1fr;
-    }
+    .social-layout { grid-template-columns: 1fr; }
 
-    .social-left-rail {
-      position: static;
-    }
+    .social-left-rail { position: static; }
   }
 
   @media (max-width: 520px) {
-    .social-event-card {
-      grid-template-columns: 36px minmax(0, 1fr);
-    }
+    .social-event-card { grid-template-columns: 36px minmax(0, 1fr); }
 
     .social-event-card button {
       grid-column: 2;
       width: fit-content;
     }
   }
-
-
-/* KARYRA PASS 37A SOCIAL CSS SCOPE WARNING FIX: parent theme selectors are global; local classes remain scoped. */
 </style>

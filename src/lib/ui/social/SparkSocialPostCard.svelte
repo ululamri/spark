@@ -31,7 +31,7 @@
   ];
 
   function addComment() {
-    if (!commentPolicy.canSubmit) return;
+    if (!commentPolicy.canKirim) return;
     addSocialComment({ postId: post.id, body: commentDraft });
     commentDraft = '';
     showComments = true;
@@ -109,7 +109,7 @@
 
       <div class="comment-compose">
         <input bind:value={commentDraft} placeholder="Tulis komentar aman..." aria-label="Tulis komentar" onkeydown={(event) => event.key === 'Enter' && addComment()} />
-        <button type="button" disabled={!commentPolicy.canSubmit} onclick={addComment}>Kirim</button>
+        <button type="button" disabled={!commentPolicy.canKirim} onclick={addComment}>Kirim</button>
       </div>
       {#if commentDraft.trim().length > 0 && commentPolicy.errors.length > 0}
         <small class="comment-error">{commentPolicy.errors[0]}</small>

@@ -42,7 +42,7 @@
     <p>© {year} Karyra Spark. Dibangun sebagai produk edukasi dan readiness, bukan saran finansial.</p>
     <div>
       <a href="/settings">Settings</a>
-      <a href="/login">Mode Coba</a>
+      <a href="/login">Mode coba</a>
       <a href="/#alur">Alur Spark</a>
     </div>
   </div>

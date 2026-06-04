@@ -213,11 +213,11 @@ export const sparkModules: SparkModule[] = [
         summary: 'Menghubungkan konsep wallet dengan pengalaman menggunakan aplikasi.',
         estimatedMinutes: 10,
         modeHint: ['guided', 'explorer'],
-        checkpoint: 'Pengguna memahami connect wallet tidak sama dengan menyerahkan aset.',
+        checkpoint: 'Pengguna memahami connect wallet tidak sama dengan mengirim aset.',
         body: defaultBody,
         checkpointQuestion: 'Apa arti connect wallet secara sederhana?',
         checkpointOptions: [
-          { id: 'identity', label: 'Memberi aplikasi cara mengenali alamat wallet kita', correct: true, feedback: 'Benar. Connect wallet bukan otomatis menyerahkan aset.' },
+          { id: 'identity', label: 'Memberi aplikasi cara mengenali alamat wallet kita', correct: true, feedback: 'Benar. Connect wallet bukan otomatis mengirim aset.' },
           { id: 'transfer', label: 'Otomatis mengirim semua aset ke aplikasi', feedback: 'Tidak tepat. Transfer butuh aksi/signature tambahan.' }
         ],
         glossaryTerms: [

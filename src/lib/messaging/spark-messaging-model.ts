@@ -80,7 +80,7 @@ export const sparkMessages: SparkMessage[] = [
     title: 'Belajar bersama komunitas',
     preview: 'Workshop membantu pemula bertanya dan belajar dengan ritme yang tenang.',
     body:
-      'Community menghubungkan belajar mandiri dengan cohort, fasilitator lokal, dan ruang tanya jawab yang aman. Kamu bisa menyimpan workshop yang relevan, lalu kembali saat waktunya cocok.',
+      'Community menghubungkan belajar mandiri dengan cohort, fasilitator lokal, dan ruang tanya jawab yang aman. Silakan menyimpan workshop yang relevan, lalu kembali saat waktunya cocok.',
     time: 'Komunitas',
     href: '/community',
     cta: 'Lihat workshop',

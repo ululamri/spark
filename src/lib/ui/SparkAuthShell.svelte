@@ -161,6 +161,6 @@
       </SparkButton>
     </div>
 
-    <p class="pass35-auth-note">Kamu bisa mengganti profil dan mode belajar kapan saja dari Ruang Saya.</p>
+    <p class="pass35-auth-note">Silakan mengganti profil dan mode belajar kapan saja dari Ruang Saya.</p>
   </SparkCard>
 </section>

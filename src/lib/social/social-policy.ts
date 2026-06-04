@@ -35,7 +35,7 @@ export function evaluateSocialDraft(body: string) {
     warnings.push('Pastikan konteksnya edukasi/safety. Jangan tulis data rahasia sungguhan.');
   }
 
-  return { normalized, warnings, errors, canSubmit: errors.length === 0 };
+  return { normalized, warnings, errors, canKirim: errors.length === 0 };
 }
 
 export function evaluateSocialComment(body: string) {
@@ -48,5 +48,5 @@ export function evaluateSocialComment(body: string) {
     errors.push('Jangan membagikan data pemulihan atau private key di komentar.');
   }
 
-  return { normalized, errors, canSubmit: errors.length === 0 };
+  return { normalized, errors, canKirim: errors.length === 0 };
 }
