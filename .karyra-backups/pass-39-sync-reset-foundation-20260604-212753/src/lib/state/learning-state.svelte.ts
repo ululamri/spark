@@ -1,5 +1,4 @@
 import { sparkModules } from '$content/spark-content';
-import { enqueueSyncEvent } from '$lib/sync/sync-event-queue.svelte';
 
 export type ExperienceLevel = 'unknown' | 'beginner' | 'guided' | 'explorer';
 
@@ -29,13 +28,6 @@ export function setLearnerIdentity(learnerId: string) {
 
 export function setExperience(level: ExperienceLevel) {
   learningState.experience = level;
-  enqueueSyncEvent({
-    name: 'learning.mode.changed',
-    entity: 'learning',
-    action: 'mode.changed',
-    subjectId: level,
-    payload: { mode: level }
-  });
 }
 
 export function completeOnboarding() {
@@ -56,59 +48,28 @@ export function toggleModule(moduleId: string) {
 }
 
 export function completeLesson(slug: string) {
-  const wasCompleted = learningState.completedLessonSlugs.includes(slug);
-  if (!wasCompleted) {
+  if (!learningState.completedLessonSlugs.includes(slug)) {
     learningState.completedLessonSlugs = [...learningState.completedLessonSlugs, slug];
   }
   learningState.activeLessonSlug = slug;
-  enqueueSyncEvent({
-    name: 'learning.lesson.completed',
-    entity: 'learning',
-    action: 'lesson.completed',
-    subjectId: slug,
-    payload: { slug, wasCompleted }
-  });
 }
 
 export function completeLab(id: string) {
-  const wasCompleted = learningState.completedLabIds.includes(id);
-  if (!wasCompleted) {
+  if (!learningState.completedLabIds.includes(id)) {
     learningState.completedLabIds = [...learningState.completedLabIds, id];
   }
-  enqueueSyncEvent({
-    name: 'lab.simulation.completed',
-    entity: 'lab',
-    action: 'simulation.completed',
-    subjectId: id,
-    payload: { id, wasCompleted }
-  });
 }
 
 export function toggleBookmark(slug: string) {
-  const wasSaved = learningState.bookmarkSlugs.includes(slug);
-  if (wasSaved) {
+  if (learningState.bookmarkSlugs.includes(slug)) {
     learningState.bookmarkSlugs = learningState.bookmarkSlugs.filter((item) => item !== slug);
   } else {
     learningState.bookmarkSlugs = [...learningState.bookmarkSlugs, slug];
   }
-  enqueueSyncEvent({
-    name: 'learning.bookmark.toggled',
-    entity: 'learning',
-    action: 'bookmark.toggled',
-    subjectId: slug,
-    payload: { slug, saved: !wasSaved }
-  });
 }
 
 export function setLessonNote(slug: string, note: string) {
   learningState.notes = { ...learningState.notes, [slug]: note };
-  enqueueSyncEvent({
-    name: 'learning.note.changed',
-    entity: 'learning',
-    action: 'note.changed',
-    subjectId: slug,
-    payload: { slug, hasNote: Boolean(note.trim()) }
-  });
 }
 
 export function answerCheckpoint(slug: string, optionId: string, correct: boolean) {

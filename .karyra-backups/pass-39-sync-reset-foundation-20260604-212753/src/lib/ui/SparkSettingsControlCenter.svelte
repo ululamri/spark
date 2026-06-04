@@ -3,7 +3,6 @@
   import SparkButton from './SparkButton.svelte';
   import SparkCard from './SparkCard.svelte';
   import SparkIcon from './SparkIcon.svelte';
-  import SparkDataControlCenter from './SparkDataControlCenter.svelte';
   import { pushToast } from '$state/app-state.svelte';
   import { learningState, setExperience, type ExperienceLevel } from '$state/learning-state.svelte';
   import { setThemePreference, themeState, type ThemePreference } from '$state/theme-state.svelte';
@@ -164,8 +163,6 @@
       </button>
     </div>
   </SparkCard>
-
-  <SparkDataControlCenter />
 
   <SparkCard class="settings-simple-card settings-link-card">
     <div class="settings-section-head">

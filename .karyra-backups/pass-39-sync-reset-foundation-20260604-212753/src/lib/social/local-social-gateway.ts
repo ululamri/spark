@@ -1,6 +1,4 @@
 import { createSocialEvent, createSocialId } from './social-events';
-import { enqueueSyncEvent } from '$lib/sync/sync-event-queue.svelte';
-import type { SyncEventName } from '$lib/sync/sync-types';
 import { SOCIAL_VIEWER_ID } from './social-model';
 import { evaluateSocialComment, evaluateSocialDraft, extractSocialTags } from './social-policy';
 import { socialState } from './social-state.svelte';
@@ -8,13 +6,6 @@ import type { SocialComment, SocialCommentInput, SocialDraftInput, SocialPost, S
 
 function pushEvent(event: ReturnType<typeof createSocialEvent>) {
   socialState.events = [event, ...socialState.events].slice(0, 80);
-  enqueueSyncEvent({
-    name: `social.${event.kind}` as SyncEventName,
-    entity: 'social',
-    action: event.kind,
-    subjectId: event.targetId,
-    payload: { eventId: event.id, title: event.title, href: event.href }
-  });
 }
 
 export function createSocialPost(input: SocialDraftInput) {

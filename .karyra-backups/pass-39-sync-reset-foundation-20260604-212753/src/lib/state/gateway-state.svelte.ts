@@ -1,5 +1,3 @@
-import { enqueueSyncEvent } from '$lib/sync/sync-event-queue.svelte';
-
 const STORAGE_KEY = 'karyra-spark-gateway-state-v1';
 
 export const gatewayState = $state({
@@ -10,35 +8,19 @@ export const gatewayState = $state({
 });
 
 export function toggleWorkshopRegistration(id: string) {
-  const wasSaved = gatewayState.registeredWorkshopIds.includes(id);
-  if (wasSaved) {
+  if (gatewayState.registeredWorkshopIds.includes(id)) {
     gatewayState.registeredWorkshopIds = gatewayState.registeredWorkshopIds.filter((item) => item !== id);
   } else {
     gatewayState.registeredWorkshopIds = [...gatewayState.registeredWorkshopIds, id];
   }
-  enqueueSyncEvent({
-    name: 'community.workshop.saved',
-    entity: 'community',
-    action: 'workshop.saved',
-    subjectId: id,
-    payload: { id, saved: !wasSaved }
-  });
 }
 
 export function toggleHubResource(id: string) {
-  const wasSaved = gatewayState.savedHubResourceIds.includes(id);
-  if (wasSaved) {
+  if (gatewayState.savedHubResourceIds.includes(id)) {
     gatewayState.savedHubResourceIds = gatewayState.savedHubResourceIds.filter((item) => item !== id);
   } else {
     gatewayState.savedHubResourceIds = [...gatewayState.savedHubResourceIds, id];
   }
-  enqueueSyncEvent({
-    name: 'hub.resource.saved',
-    entity: 'hub',
-    action: 'resource.saved',
-    subjectId: id,
-    payload: { id, saved: !wasSaved }
-  });
 }
 
 export function dismissBridge(id: string) {
