@@ -1,11 +1,11 @@
 export type Tone = 'blue' | 'green' | 'purple' | 'orange' | 'pink';
 
 export const landingFlowSteps = [
-  { id:'core', title:'Core', label:'Belajar', copy:'Belajar fondasi blockchain, crypto, Web3, wallet safety, dan pengantar Starknet.', href:'/core', icon:'book-open', tone:'blue' },
-  { id:'lab', title:'Lab', label:'Praktik', copy:'Praktik simulasi aman sebelum testnet, wallet, atau eksplorasi teknis.', href:'/lab', icon:'flask-conical', tone:'purple' },
-  { id:'passport', title:'Passport', label:'Terbukti', copy:'Buktikan kesiapan melalui sinyal belajar, praktik, dan komunitas.', href:'/profile', icon:'badge', tone:'green' },
-  { id:'community', title:'Community', label:'Bersama', copy:'Belajar bersama lewat workshop, cohort, dan fasilitator lokal.', href:'/community', icon:'users', tone:'pink' },
-  { id:'hub', title:'Hub', label:'Jelajah', copy:'Jelajahi resource dan ekosistem setelah punya arah dan kesiapan dasar.', href:'/hub', icon:'compass', tone:'orange' }
+  { id:'core', title:'Core', label:'Belajar', copy:'Fondasi blockchain, cryptocurrency, Web3, wallet safety, dan pengantar Starknet.', href:'/core', icon:'book-open', tone:'blue' },
+  { id:'lab', title:'Lab', label:'Praktik', copy:'Simulasi aman sebelum testnet, wallet, atau eksplorasi teknis.', href:'/lab', icon:'flask-conical', tone:'purple' },
+  { id:'passport', title:'Passport', label:'Terbukti', copy:'Sinyal belajar, praktik, dan komunitas diringkas menjadi readiness sederhana.', href:'/profile', icon:'badge', tone:'green' },
+  { id:'community', title:'Community', label:'Bersama', copy:'Workshop, cohort, dan fasilitator lokal agar belajar tidak sendirian.', href:'/community', icon:'users', tone:'pink' },
+  { id:'hub', title:'Hub', label:'Jelajah', copy:'Resource dan ekosistem terbuka setelah pengguna punya arah dan kesiapan dasar.', href:'/hub', icon:'compass', tone:'orange' }
 ] as const;
 
 export const landingAudienceCards = [
