@@ -4,7 +4,6 @@
   import SparkLocalDataNotice from '$ui/SparkLocalDataNotice.svelte';
   import SparkSectionHeader from '$ui/SparkSectionHeader.svelte';
   import SparkWorkshopEventBoardRich from '$ui/SparkWorkshopEventBoardRich.svelte';
-  import SparkSocialLayer from '$ui/social/SparkSocialLayer.svelte';
 </script>
 
 <svelte:head>
@@ -15,10 +14,6 @@
 
 <section class="spark-section trust-compact-section">
   <SparkLocalDataNotice />
-</section>
-
-<section class="spark-section" id="social-layer">
-  <SparkSocialLayer />
 </section>
 
 <section class="spark-section" id="workshops">
