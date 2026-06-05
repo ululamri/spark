@@ -14,18 +14,20 @@
       ? [
           { href: '/dashboard', icon: 'dashboard', title: 'Hari ini', copy: 'Fokus belajar terdekat' },
           { href: '/profile', icon: 'user-round', title: 'Saya', copy: 'Profil dan Passport' },
-          { href: '/inbox', icon: 'messages', title: 'Inbox', copy: unreadMessages > 0 ? `${unreadMessages} pesan baru` : 'Pesan dan arahan' }
+          { href: '/inbox', icon: 'messages', title: 'Inbox', copy: unreadMessages > 0 ? `${unreadMessages} pesan baru` : 'Pesan dan arahan' },
+          { href: '/settings', icon: 'settings', title: 'Pengaturan', copy: 'Tampilan dan cara belajar' }
         ]
       : [
-          { href: '/login', icon: 'login', title: 'Masuk', copy: 'Simpan perjalanan belajar' },
+          { href: '/login', icon: 'login', title: 'Masuk', copy: 'Lanjutkan perjalanan belajar' },
+          { href: '/register', icon: 'user-plus', title: 'Daftar', copy: 'Buat ruang belajar baru' },
           { href: '/core', icon: 'book-open', title: 'Belajar', copy: 'Mulai dari fondasi' }
         ]
   );
 
   const utilityLinks = [
-    { href: '/help', icon: 'help', title: 'Bantuan', copy: 'FAQ dan panduan' },
-    { href: '/docs', icon: 'code', title: 'Dokumentasi', copy: 'Teknis dan non-teknis' },
-    { href: '/terms', icon: 'shield', title: 'Ketentuan', copy: 'Ketentuan layanan' }
+    { href: '/help', icon: 'help', title: 'Bantuan', copy: 'Panduan singkat' },
+    { href: '/faq', icon: 'faq', title: 'FAQ', copy: 'Pertanyaan umum' },
+    { href: '/terms', icon: 'shield', title: 'Ketentuan', copy: 'Aturan penggunaan' }
   ];
 
   function close() {
@@ -97,9 +99,6 @@
 {/if}
 
 <style>
-  /* Pass 36D — keep the mobile menu scrim as a full-screen rectangle.
-     The scrim is a <button>, so broad global button radius rules can turn it
-     into a huge oval. Keep this override inside the drawer component. */
   .spark-mobile-scrim {
     min-width: 0;
     min-height: 0;

@@ -30,11 +30,11 @@
 
   const rawNext = $derived(page.url.searchParams.get('next') ?? '/dashboard');
   const nextHref = $derived(rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/dashboard');
-  const title = $derived(mode === 'login' ? 'Masuk ke Karyra Spark' : 'Buat ruang belajar');
+  const title = $derived(mode === 'login' ? 'Masuk ke Spark' : 'Buat ruang belajar');
   const copy = $derived(
     mode === 'login'
-      ? 'Lanjutkan belajar, buka Passport, dan simpan langkah penting di satu tempat.'
-      : 'Siapkan ruang belajar untuk menyimpan progress, Passport, dan preferensi kamu.'
+      ? 'Lanjutkan belajar, buka Passport, dan ikuti progress dari satu tempat.'
+      : 'Daftar untuk menyimpan progress, Passport, dan pilihan belajar.'
   );
 
   $effect(() => {
@@ -64,7 +64,7 @@
     }
 
     if (password.length < 6) {
-      formError = 'Password minimal 6 karakter.';
+      formError = 'Kata sandi minimal 6 karakter.';
       return;
     }
 
@@ -74,7 +74,7 @@
 
     pushToast({
       title: mode === 'login' ? 'Masuk berhasil' : 'Ruang belajar dibuat',
-      copy: `Mode belajar: ${getModeLabel(user.mode)}.`,
+      copy: `Ritme belajar: ${getModeLabel(user.mode)}.`,
       tone: 'success'
     });
 
@@ -82,40 +82,13 @@
   }
 </script>
 
-<section class="spark-auth-shell pass35-auth-shell">
-  <div class="auth-hero-panel pass35-auth-intro">
-    <span class="spark-eyebrow">Akses belajar</span>
-    <h1>{title}</h1>
-    <p>{copy}</p>
-
-    <div class="auth-trust-row pass35-auth-trust-row">
-      <SparkTrustBadge label="Safety-first" tone="safe" />
-      <SparkTrustBadge label="Passport" tone="target" />
-      <SparkTrustBadge label="Starknet path" tone="beta" />
-    </div>
-
-    <div class="pass35-auth-points" aria-label="Yang bisa kamu lanjutkan setelah masuk">
-      <article>
-        <SparkIcon name="dashboard" size={17} />
-        <div><strong>Dashboard</strong><small>Lihat fokus belajar hari ini.</small></div>
-      </article>
-      <article>
-        <SparkIcon name="badge" size={17} />
-        <div><strong>Passport</strong><small>Pantau tanda kesiapanmu.</small></div>
-      </article>
-      <article>
-        <SparkIcon name="messages" size={17} />
-        <div><strong>Pesan</strong><small>Simpan arahan penting.</small></div>
-      </article>
-    </div>
-  </div>
-
-  <SparkCard class="auth-form-card pass35-auth-card">
+<section class="spark-auth-shell pass35-auth-shell pass40b-auth-shell">
+  <SparkCard class="auth-form-card pass35-auth-card pass40b-auth-card">
     <div class="auth-form-head pass35-auth-head">
       <span><SparkIcon name={mode === 'login' ? 'login' : 'key'} size={19} /></span>
       <div>
         <h2>{mode === 'login' ? 'Masuk' : 'Daftar'}</h2>
-        <p>{mode === 'login' ? 'Gunakan email dan password kamu.' : 'Buat akses belajar baru.'}</p>
+        <p>{mode === 'login' ? 'Gunakan email dan kata sandi.' : 'Buat akses belajar baru.'}</p>
       </div>
     </div>
 
@@ -140,27 +113,81 @@
       </label>
 
       <label>
-        <span>Password</span>
+        <span>Kata sandi</span>
         <input bind:value={password} type="password" placeholder="Minimal 6 karakter" autocomplete={mode === 'login' ? 'current-password' : 'new-password'} />
       </label>
     </div>
 
-    <div class="pass35-mode-picker" aria-label="Pilih ritme belajar">
-      {#each modeOptions as item}
-        <button type="button" class:active={selectedMode === item.key} onclick={() => (selectedMode = item.key)}>
-          <strong>{item.label}</strong>
-          <small>{item.copy}</small>
-        </button>
-      {/each}
-    </div>
+    {#if mode === 'login'}
+      <a class="pass40b-forgot-link" href="/help?topic=password">Lupa kata sandi?</a>
+    {:else}
+      <div class="pass35-mode-picker" aria-label="Pilih ritme belajar">
+        {#each modeOptions as item}
+          <button type="button" class:active={selectedMode === item.key} onclick={() => (selectedMode = item.key)}>
+            <strong>{item.label}</strong>
+            <small>{item.copy}</small>
+          </button>
+        {/each}
+      </div>
+    {/if}
 
     <div class="auth-actions pass35-auth-actions">
       <SparkButton onclick={submitForm}>{mode === 'login' ? 'Masuk' : 'Daftar'}</SparkButton>
       <SparkButton href={mode === 'login' ? `/register?next=${encodeURIComponent(nextHref)}` : `/login?next=${encodeURIComponent(nextHref)}`} variant="ghost">
-        {mode === 'login' ? 'Buat ruang belajar' : 'Sudah punya akses?'}
+        {mode === 'login' ? 'Buat akun' : 'Sudah punya akun?'}
       </SparkButton>
     </div>
 
-    <p class="pass35-auth-note">Silakan mengganti profil dan mode belajar kapan saja dari Ruang Saya.</p>
+    <p class="pass35-auth-note">Ritme belajar dapat diubah dari Pengaturan.</p>
   </SparkCard>
+
+  <div class="auth-hero-panel pass35-auth-intro pass40b-auth-intro">
+    <span class="spark-eyebrow">Akses belajar</span>
+    <h1>{title}</h1>
+    <p>{copy}</p>
+
+    <div class="auth-trust-row pass35-auth-trust-row">
+      <SparkTrustBadge label="Safety-first" tone="safe" />
+      <SparkTrustBadge label="Passport" tone="target" />
+      <SparkTrustBadge label="Starknet path" tone="beta" />
+    </div>
+
+    <div class="pass35-auth-points" aria-label="Yang bisa dilanjutkan setelah masuk">
+      <article>
+        <SparkIcon name="dashboard" size={17} />
+        <div><strong>Dashboard</strong><small>Fokus belajar hari ini.</small></div>
+      </article>
+      <article>
+        <SparkIcon name="badge" size={17} />
+        <div><strong>Passport</strong><small>Pantau kesiapanmu.</small></div>
+      </article>
+      <article>
+        <SparkIcon name="messages" size={17} />
+        <div><strong>Pesan</strong><small>Arahan penting dari Spark.</small></div>
+      </article>
+    </div>
+  </div>
 </section>
+
+<style>
+  .pass40b-auth-shell {
+    align-items: start;
+  }
+
+  :global(.pass40b-auth-card) {
+    order: -1;
+  }
+
+  .pass40b-forgot-link {
+    width: fit-content;
+    color: var(--spark-blue-strong);
+    font-size: 12.5px;
+    font-weight: 760;
+  }
+
+  @media (max-width: 860px) {
+    .pass40b-auth-intro {
+      order: 2;
+    }
+  }
+</style>

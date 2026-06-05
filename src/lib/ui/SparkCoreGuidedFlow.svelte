@@ -4,15 +4,13 @@
   import SparkModuleAccordion from '$ui/SparkModuleAccordion.svelte';
   import SparkTrustBadge from '$ui/SparkTrustBadge.svelte';
   import { sparkModules } from '$content/spark-content';
-  import { learnOutcomeCards, learnPrinciples, learnTrackCards } from '$lib/core/learn-center-model';
+  import { learnOutcomeCards, learnPrinciples } from '$lib/core/learn-center-model';
   import {
     getCompletedLessonCount,
     getLearningProgressPercent,
     getRecommendedModuleId,
     getTotalLessonCount,
-    learningState,
-    setExperience,
-    type ExperienceLevel
+    learningState
   } from '$state/learning-state.svelte';
 
   const recommendedModule = $derived(
@@ -92,7 +90,7 @@
     <div class="core-section-head compact">
       <span class="spark-eyebrow">Level aktif</span>
       <h2 id="core-active-level-title">Mulai dari level yang paling relevan.</h2>
-      <p>Rekomendasi ini mengikuti progres belajar, mode belajar, dan aktivitas Lab yang sudah tersimpan lokal.</p>
+      <p>Rekomendasi ini mengikuti progres belajar dan latihan yang sudah kamu selesaikan.</p>
     </div>
 
     <div class="core-active-level-card">
@@ -118,30 +116,6 @@
     </div>
   </section>
 
-  <section class="core-guided-section" aria-labelledby="core-track-title">
-    <div class="core-section-head split">
-      <div>
-        <span class="spark-eyebrow">Pilih cara belajar</span>
-        <h2 id="core-track-title">Jalur boleh berbeda, fondasinya tetap satu.</h2>
-      </div>
-      <p>Silakan pilih ritme yang paling cocok. Pilihan ini hanya membantu rekomendasi dan bisa diubah kapan saja.</p>
-    </div>
-
-    <div class="core-track-grid">
-      {#each learnTrackCards as track}
-        <button
-          type="button"
-          class={`core-track-card ${track.tone}`}
-          class:active={learningState.experience === track.mode}
-          onclick={() => setExperience(track.mode as ExperienceLevel)}
-        >
-          <span><SparkIcon name={track.icon} size={19} /></span>
-          <strong>{track.title}</strong>
-          <small>{track.copy}</small>
-        </button>
-      {/each}
-    </div>
-  </section>
 
   <section class="core-guided-section" id="core-path" aria-labelledby="core-path-title">
     <div class="core-section-head split">
@@ -332,7 +306,6 @@
   .core-active-level-card,
   .core-next-focus-card,
   .core-discussion-card,
-  .core-track-card,
   .core-path-list a,
   .core-outcome-grid a {
     border: 1px solid var(--spark-line);
@@ -458,50 +431,18 @@
     height: 48px;
   }
 
-  .core-track-grid,
   .core-outcome-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
   }
 
-  .core-track-card {
-    display: grid;
-    gap: 9px;
-    min-height: 150px;
-    padding: 14px;
-    border-radius: 22px;
-    color: var(--spark-muted);
-    text-align: left;
-  }
-
-  .core-track-card > span {
-    display: grid;
-    place-items: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 15px;
-    color: var(--spark-blue-strong);
-    background: rgba(31, 117, 255, 0.1);
-  }
-
-  .core-track-card strong {
-    color: var(--spark-navy);
-    font-size: 16px;
-    line-height: 1.12;
-  }
-
-  .core-track-card small,
   .core-outcome-grid small {
     color: var(--spark-muted);
     font-size: 12.5px;
     line-height: 1.45;
   }
 
-  .core-track-card.active {
-    border-color: rgba(31, 117, 255, 0.32);
-    box-shadow: 0 12px 30px rgba(31, 117, 255, 0.11);
-  }
 
   .core-principle-list {
     display: flex;
@@ -580,7 +521,6 @@
     .core-active-level-card,
     .core-next-focus-card,
     .core-discussion-card,
-    .core-track-grid,
     .core-outcome-grid {
       grid-template-columns: 1fr;
     }
@@ -621,16 +561,6 @@
     .core-next-focus-card,
     .core-discussion-card {
       border-radius: 20px;
-      padding: 12px;
-    }
-
-    .core-track-grid {
-      gap: 10px;
-    }
-
-    .core-track-card {
-      min-height: 0;
-      border-radius: 18px;
       padding: 12px;
     }
   }

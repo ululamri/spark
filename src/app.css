@@ -544,3 +544,21 @@ textarea { width: 100%; min-height: 150px; resize: vertical; }
 /* === END KARYRA SPARK — PASS 36 PRODUCT POLISH FOUNDATION ================== */
 /* <<< KARYRA_PASS_36_PRODUCT_POLISH_END <<< */
 
+/* === KARYRA SPARK — PASS 40B PUBLIC FOOTER BOUNDS ======================== */
+@media (max-width: 760px) {
+  body {
+    padding-bottom: 0 !important;
+  }
+
+  .spark-main {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .spark-simple-footer,
+  .karyra-footer-stable,
+  .pass40b-footer {
+    margin-bottom: 0 !important;
+  }
+}
+/* === END KARYRA SPARK — PASS 40B PUBLIC FOOTER BOUNDS ==================== */
+

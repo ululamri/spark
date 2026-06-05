@@ -90,11 +90,11 @@ export const defaultManagedContent: SparkManagedContent = {
       title: 'Atur Spark agar nyaman untuk cara belajarmu.',
       description:
         'Pilih tampilan, cara belajar, arahan, dan pengingat yang membuat perjalanan menuju Starknet terasa lebih tenang.',
-      primaryCtaLabel: 'Buka Studio',
-      primaryCtaHref: '/studio',
-      secondaryCtaLabel: 'Lihat Profile',
+      primaryCtaLabel: 'Mulai belajar',
+      primaryCtaHref: '/core',
+      secondaryCtaLabel: 'Buka Ruang Saya',
       secondaryCtaHref: '/profile',
-      note: 'Settings menjaga pengalaman belajar tetap sederhana. Identitas dan Passport tetap dikelola dari Profile.',
+      note: 'Pengaturan menjaga pengalaman belajar tetap sederhana.',
       status: 'published'
     },
     {
@@ -137,9 +137,9 @@ export const defaultManagedContent: SparkManagedContent = {
         'Menu Spark menghubungkan belajar, praktik, komunitas, Hub, Profile, pesan, dan pengaturan dalam struktur yang mudah dipahami.',
       primaryCtaLabel: 'Buka Dashboard',
       primaryCtaHref: '/dashboard',
-      secondaryCtaLabel: 'Buka Studio',
-      secondaryCtaHref: '/studio',
-      note: 'Hindari istilah teknis internal di menu publik.',
+      secondaryCtaLabel: 'Buka Bantuan',
+      secondaryCtaHref: '/help',
+      note: 'Menu membantu pengguna berpindah halaman dengan jelas.',
       status: 'published'
     },
     {
@@ -166,7 +166,7 @@ export const defaultManagedContent: SparkManagedContent = {
       preview: 'Bangun pemahaman dasar sebelum masuk wallet, Starknet, dan Lab.',
       body:
         'Tidak perlu terburu-buru masuk ke istilah teknis. Mulai dari fondasi blockchain, lalu pelan-pelan naik ke wallet safety, Starknet, dan praktik aman.',
-      ctaLabel: 'Buka Learn',
+      ctaLabel: 'Mulai belajar',
       ctaHref: '/core',
       status: 'published'
     },

@@ -9,7 +9,7 @@
 </script>
 
 {#if visible}
-  <footer class="spark-simple-footer pass35b-simple-footer karyra-footer-stable" aria-label="Footer Karyra Spark">
+  <footer class="spark-simple-footer pass35b-simple-footer karyra-footer-stable pass40b-footer" aria-label="Footer Karyra Spark">
     <div class="karyra-footer-brandline">
       <SparkBrand compact />
       <p>Belajar blockchain dan Starknet dengan ritme aman: paham dulu, praktik pelan-pelan, lalu jelajah ekosistem.</p>
@@ -17,11 +17,11 @@
 
     <div class="karyra-footer-meta">
       <nav aria-label="Link bantuan">
-        <a href="/about">About</a>
-        <a href="/help">Help</a>
+        <a href="/about">Tentang</a>
+        <a href="/help">Bantuan</a>
         <a href="/faq">FAQ</a>
-        <a href="/docs">Docs</a>
-        <a href="/terms">Terms</a>
+        <a href="/docs">Panduan</a>
+        <a href="/terms">Ketentuan</a>
       </nav>
 
       <small>© {year} Karyra Spark · Edukasi dan readiness, bukan saran finansial.</small>
