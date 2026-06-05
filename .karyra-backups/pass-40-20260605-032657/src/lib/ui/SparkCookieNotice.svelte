@@ -32,7 +32,7 @@
     <span><SparkIcon name="shield" size={17} /></span>
     <div>
       <strong>Cookie sederhana untuk pengalaman belajar</strong>
-      <p>Spark memakai cookie penting untuk tema, sesi, dan preferensi tampilan. Tidak ada seed phrase atau private key yang diminta.</p>
+      <p>Spark memakai penyimpanan lokal dan cookie penting untuk tema, sesi perangkat, dan preferensi. Tidak ada seed phrase atau private key yang diminta.</p>
       <a href="/terms">Baca ketentuan</a>
     </div>
     <div class="spark-cookie-actions">

@@ -11,7 +11,7 @@
 
   const tabs: { key: CommunityTab; label: string; icon: string; copy: string }[] = [
     { key: 'ringkasan', label: 'Ringkasan', icon: 'sparkles', copy: 'Arah komunitas' },
-    { key: 'workshop', label: 'Workshop', icon: 'calendar', copy: 'Event lokal' },
+    { key: 'workshop', label: 'Workshop', icon: 'calendar', copy: 'Aktivitas' },
     { key: 'cohort', label: 'Cohort', icon: 'users', copy: 'Belajar bersama' },
     { key: 'diskusi', label: 'Diskusi', icon: 'messages', copy: 'Tanya & respons' }
   ];
@@ -98,7 +98,7 @@
             <span><SparkIcon name="calendar" size={17} /></span>
             <div>
               <strong>Lihat Workshop</strong>
-              <small>Event lokal, kapasitas, dan fasilitator.</small>
+              <small>Aktivitas, kapasitas, dan fasilitator.</small>
             </div>
             <SparkIcon name="chevron-right" size={14} />
           </button>

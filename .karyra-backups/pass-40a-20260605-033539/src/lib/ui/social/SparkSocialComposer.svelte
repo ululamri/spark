@@ -5,7 +5,7 @@
   import { evaluateSocialDraft } from '$lib/social/social-policy';
   import type { SocialPostKind } from '$lib/social/social-types';
 
-  const kinds: SocialPostKind[] = ['progress', 'question', 'resource', 'workshop', 'lab'];
+  const kinds: SocialPostKind[] = ['progress', 'question', 'rujukan', 'workshop', 'lab'];
 
   let draft = $state('');
   let kind = $state<SocialPostKind>('progress');

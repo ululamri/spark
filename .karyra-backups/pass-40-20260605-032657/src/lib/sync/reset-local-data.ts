@@ -100,10 +100,10 @@ export function resetLocalSparkData(mode: LocalResetMode = 'progress-only') {
 
   appState.mobileMenuOpen = false;
   pushToast({
-    title: isAllLocal ? 'Data Spark dihapus' : 'Perjalanan belajar dimulai ulang',
+    title: isAllLocal ? 'Data lokal dihapus' : 'Progres lokal direset',
     copy: isAllLocal
-      ? 'Spark kembali seperti pertama kali dibuka di perangkat ini.'
-      : 'Progress belajar, diskusi, pesan, dan data belajar tersimpan sudah dikosongkan.',
+      ? 'Spark kembali seperti perangkat baru. Silakan masuk lagi jika perlu.'
+      : 'Progress, diskusi lokal, notifikasi, dan antrean sync di perangkat ini sudah dikosongkan.',
     tone: 'success'
   });
 

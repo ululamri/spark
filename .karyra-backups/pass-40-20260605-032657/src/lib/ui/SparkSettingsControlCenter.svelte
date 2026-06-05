@@ -11,14 +11,14 @@
 
   const fallbackSettingsCopy = {
     eyebrow: 'Pengaturan',
-    title: 'Atur Spark sesuai cara belajarmu.',
+    title: 'Atur Spark agar nyaman dipakai.',
     description:
-      'Pilih tampilan, ritme belajar, dan bantuan yang membuat Spark lebih nyaman dipakai.',
+      'Pilih tampilan, ritme belajar, dan bantuan kecil yang membuat proses belajar terasa lebih tenang.',
     primaryCtaLabel: 'Mulai belajar',
     primaryCtaHref: '/core',
     secondaryCtaLabel: 'Buka Passport',
     secondaryCtaHref: '/profile',
-    note: 'Pengaturan ini membantu Spark terasa lebih pas tanpa mengubah jalur belajar utama.'
+    note: 'Pengaturan ini membantu Spark menyesuaikan rasa belajar tanpa mengubah jalur utamamu.'
   };
 
   const themes: { key: ThemePreference; title: string; copy: string; icon: string }[] = [
@@ -30,7 +30,7 @@
   const learningModes: { key: ExperienceLevel; title: string; copy: string; icon: string }[] = [
     { key: 'beginner', title: 'Pemula', copy: 'Penjelasan pelan dan istilah dibuka bertahap.', icon: 'sparkles' },
     { key: 'guided', title: 'Terarah', copy: 'Langkah belajar lebih rapi dan berurutan.', icon: 'target' },
-    { key: 'explorer', title: 'Penjelajah', copy: 'Lebih bebas membuka Lab, Hub, dan rujukan.', icon: 'compass' }
+    { key: 'explorer', title: 'Penjelajah', copy: 'Lebih bebas membuka Lab, Hub, dan resource.', icon: 'compass' }
   ];
 
   let guidanceEnabled = $state(true);
@@ -107,7 +107,7 @@
   <SparkCard class="settings-simple-card">
     <div class="settings-section-head">
       <span class="spark-eyebrow">Tampilan</span>
-      <h2>Pilih tampilan layar.</h2>
+      <h2>Pilih rasa layar.</h2>
       <p>Gunakan mode yang paling nyaman untuk membaca dan belajar.</p>
     </div>
 
@@ -144,8 +144,8 @@
 
   <SparkCard class="settings-simple-card">
     <div class="settings-section-head">
-      <span class="spark-eyebrow">Bantuan belajar</span>
-      <h2>Atur bantuan dari Spark.</h2>
+      <span class="spark-eyebrow">Bantuan kecil</span>
+      <h2>Atur arahan Spark.</h2>
       <p>Pilih bantuan yang ingin kamu lihat saat belajar atau praktik.</p>
     </div>
 
@@ -169,8 +169,8 @@
 
   <SparkCard class="settings-simple-card settings-link-card">
     <div class="settings-section-head">
-      <span class="spark-eyebrow">Akses cepat</span>
-      <h2>Buka bagian penting.</h2>
+      <span class="spark-eyebrow">Tempat penting</span>
+      <h2>Lanjut dari sini.</h2>
     </div>
 
     <div class="settings-link-list">

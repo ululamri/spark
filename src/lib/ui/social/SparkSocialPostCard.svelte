@@ -118,7 +118,7 @@
   {/if}
 
   <footer class="post-tools">
-    <small>{post.status === 'local' ? 'Local-first · belum sync backend' : post.status}</small>
+    <small>{post.status === 'local' ? 'Tersimpan aman · belum penyimpanan akun' : post.status}</small>
     <div>
       <button type="button" onclick={() => hideSocialPost(post.id)}>Sembunyikan</button>
       <button type="button" disabled={post.viewer.reported} onclick={() => reportSocialPost(post.id, 'unsafe')}>

@@ -4,7 +4,7 @@ import type { SyncEventName } from '$lib/sync/sync-types';
 import { SOCIAL_VIEWER_ID } from './social-model';
 import { evaluateSocialComment, evaluateSocialDraft, extractSocialTags } from './social-policy';
 import { socialState } from './social-state.svelte';
-import type { SocialComment, SocialCommentInput, SocialDraftInput, SocialPost, SocialReactionKind, SocialReportReason } from './social-types';
+import type { SocialComment, SocialCommentInput, SocialDraftInput, SocialPost, SocialReactionKind, SocialLaporanReason } from './social-types';
 
 function pushEvent(event: ReturnType<typeof createSocialEvent>) {
   socialState.events = [event, ...socialState.events].slice(0, 80);
@@ -134,7 +134,7 @@ export function hideSocialPost(postId: string) {
   );
 }
 
-export function reportSocialPost(postId: string, reason: SocialReportReason = 'other') {
+export function reportSocialPost(postId: string, reason: SocialLaporanReason = 'other') {
   socialState.posts = socialState.posts.map((post) =>
     post.id === postId ? { ...post, viewer: { ...post.viewer, reported: true } } : post
   );

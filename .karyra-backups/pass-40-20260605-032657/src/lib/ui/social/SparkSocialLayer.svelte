@@ -50,7 +50,7 @@
     <div class="social-event-card">
       <span><SparkIcon name="bell" size={17} /></span>
       <div>
-        <strong>{socialUnreadEventCount} aktivitas baru</strong>
+        <strong>{socialUnreadEventCount} aktivitas lokal</strong>
         <small>Aktivitas ini menjadi jalur notifikasi dan sinkronisasi backend nanti.</small>
       </div>
       <button type="button" onclick={markSocialEventsRead}>Tandai</button>

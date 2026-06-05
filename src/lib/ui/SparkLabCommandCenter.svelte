@@ -27,7 +27,7 @@
     <div class="lab-command-badges">
       <SparkTrustBadge label="No real asset" tone="safe" />
       <SparkTrustBadge label="Testnet-first" tone="beta" />
-      <SparkTrustBadge label="Backend-ready" tone="local" />
+      <SparkTrustBadge label="Siap dikembangkan" tone="local" />
     </div>
 
     <SparkCard class="lab-next-card">

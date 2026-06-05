@@ -45,7 +45,7 @@ export const socialProfiles: SocialProfile[] = [
     name: 'Bima Mentor',
     handle: '@bima-lab',
     role: 'mentor',
-    location: 'Lab praktik',
+    location: 'Practice Lab',
     bio: 'Fokus pada wallet safety dan readiness sebelum testnet.',
     avatarLabel: 'B',
     trusted: true

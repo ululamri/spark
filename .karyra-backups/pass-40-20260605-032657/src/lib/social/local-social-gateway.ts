@@ -40,8 +40,8 @@ export function createSocialPost(input: SocialDraftInput) {
     createSocialEvent({
       kind: 'post.created',
       targetId: post.id,
-      title: 'Postingan terkirim',
-      copy: 'Postingan sudah muncul di Ruang Diskusi.',
+      title: 'Post komunitas dibuat',
+      copy: 'Post tersimpan lokal dan siap disinkronkan saat backend aktif.',
       href: `/community#${post.id}`
     })
   );
@@ -64,8 +64,8 @@ export function toggleSocialReaction(postId: string, reaction: SocialReactionKin
     createSocialEvent({
       kind: 'reaction.toggled',
       targetId: postId,
-      title: 'Reaksi disimpan',
-      copy: 'Terima kasih sudah memberi respons.',
+      title: 'Reaction diperbarui',
+      copy: 'Aktivitas reaction tersimpan sebagai event lokal.',
       href: `/community#${postId}`
     })
   );
@@ -95,7 +95,7 @@ export function addSocialComment(input: SocialCommentInput) {
       kind: 'comment.created',
       targetId: input.postId,
       title: 'Komentar terkirim',
-      copy: 'Komentar sudah muncul di percakapan ini.',
+      copy: 'Komentar tersimpan lokal dan masuk antrean sync masa depan.',
       href: `/community#${input.postId}`
     })
   );
@@ -113,8 +113,8 @@ export function toggleSocialFollow(profileId: string) {
       kind: 'follow.toggled',
       targetId: profileId,
       title: followed ? 'Berhenti mengikuti' : 'Mulai mengikuti',
-      copy: followed ? 'Profil ini tidak lagi diikuti.' : 'Profil ini sekarang diikuti.',
-      href: '/community?tab=diskusi#diskusi'
+      copy: followed ? 'Author dihapus dari daftar ikuti lokal.' : 'Author ditambahkan ke daftar ikuti lokal.',
+      href: '/community#social-layer'
     })
   );
 }
@@ -128,8 +128,8 @@ export function hideSocialPost(postId: string) {
       kind: 'post.hidden',
       targetId: postId,
       title: 'Post disembunyikan',
-      copy: 'Postingan tidak lagi muncul di Ruang Diskusi kamu.',
-      href: '/community?tab=diskusi#diskusi'
+      copy: 'Post tidak lagi muncul di ruang diskusi lokal perangkat ini.',
+      href: '/community#social-layer'
     })
   );
 }
@@ -142,9 +142,9 @@ export function reportSocialPost(postId: string, reason: SocialReportReason = 'o
     createSocialEvent({
       kind: 'post.reported',
       targetId: postId,
-      title: 'Laporan dikirim',
-      copy: `Laporan diterima. Alasan: ${reason}.`,
-      href: '/community?tab=diskusi#diskusi'
+      title: 'Report tersimpan',
+      copy: `Alasan report: ${reason}. Backend nanti dapat menerima event ini untuk moderation queue.`,
+      href: '/community#social-layer'
     })
   );
 }
@@ -158,7 +158,7 @@ export function shareSocialPost(postId: string) {
       kind: 'post.shared',
       targetId: postId,
       title: 'Link post disalin',
-      copy: 'Link postingan siap dibagikan.',
+      copy: 'Share masih lokal/copy link. Backend nanti dapat membuat permalink sungguhan.',
       href: `/community#${postId}`
     })
   );

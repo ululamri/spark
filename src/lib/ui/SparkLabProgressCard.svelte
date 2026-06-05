@@ -12,7 +12,7 @@
   <div>
     <span class="spark-eyebrow">Progres Lab</span>
     <h2>{completedCount === sparkLabs.length ? 'Semua lab utama selesai.' : `Lanjutkan: ${nextLab.title}`}</h2>
-    <p>{completedCount} dari {sparkLabs.length} lab selesai. Progress ini tersimpan lokal dan siap disinkronkan saat backend aktif.</p>
+    <p>{completedCount} dari {sparkLabs.length} lab selesai. Progress ini tersimpan lokal dan siap disinkronkan saat fitur akun aktif.</p>
     <div class="lab-progress-bar"><span style={`width: ${Math.max(8, labPercent)}%`}></span></div>
   </div>
 

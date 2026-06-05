@@ -72,7 +72,7 @@
     {/if}
 
     <div class="composer-actions">
-      <small>{policy.normalized.length}/640 · siap dibagikan</small>
+      <small>{policy.normalized.length}/640 · tersimpan lokal dulu</small>
       <div>
         <button type="button" class="composer-cancel" onclick={() => { draft = ''; composerOpen = false; }}>Batal</button>
         <button type="button" class="spark-btn primary" disabled={!policy.canKirim} onclick={submit}>
