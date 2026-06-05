@@ -1,13 +1,13 @@
 <script lang="ts">
-  import SparkProfileAccountCenter from '$ui/SparkProfileAccountCenter.svelte';
+  import SparkProfileIdentityCenter from '$ui/SparkProfileIdentityCenter.svelte';
   import SparkProtectedRoute from '$ui/SparkProtectedRoute.svelte';
 </script>
 
 <svelte:head>
-  <title>Ruang Saya — Karyra Spark</title>
-  <meta name="description" content="Ruang Saya Karyra Spark: profil, Passport, tanda kesiapan, aktivitas belajar, dan koneksi komunitas." />
+  <title>Profil — Karyra Spark</title>
+  <meta name="description" content="Profil Karyra Spark berisi identitas akun pribadi dan preferensi dasar pengguna." />
 </svelte:head>
 
-<SparkProtectedRoute title="Masuk untuk membuka Ruang Saya" copy="Profil dan Passport hanya bisa dilihat setelah kamu masuk.">
-  <SparkProfileAccountCenter />
+<SparkProtectedRoute title="Masuk untuk membuka Profil" copy="Profil berisi identitas akun pribadi kamu di Spark.">
+  <SparkProfileIdentityCenter />
 </SparkProtectedRoute>

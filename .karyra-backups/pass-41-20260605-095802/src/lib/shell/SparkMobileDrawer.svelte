@@ -12,8 +12,8 @@
   const accountLinks = $derived(
     betaSession.user
       ? [
-          { href: '/passport', icon: 'passport', title: 'Passport', copy: 'Lihat bukti kesiapanmu' },
-          { href: '/profile', icon: 'user-round', title: 'Profil', copy: 'Identitas akun pribadi' },
+          { href: '/dashboard', icon: 'dashboard', title: 'Hari ini', copy: 'Fokus belajar terdekat' },
+          { href: '/profile', icon: 'user-round', title: 'Saya', copy: 'Profil dan Passport' },
           { href: '/inbox', icon: 'messages', title: 'Inbox', copy: unreadMessages > 0 ? `${unreadMessages} pesan baru` : 'Pesan dan arahan' },
           { href: '/settings', icon: 'settings', title: 'Pengaturan', copy: 'Tampilan dan cara belajar' }
         ]

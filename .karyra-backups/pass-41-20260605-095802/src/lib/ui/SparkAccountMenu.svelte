@@ -17,8 +17,8 @@
     logoutBetaSession();
     close();
     pushToast({
-      title: 'Keluar dari akun',
-      copy: 'Silakan masuk lagi kapan saja.',
+      title: 'Keluar dari akun contoh',
+      copy: 'Session beta lokal dibersihkan dari perangkat ini.',
       tone: 'info'
     });
     await goto('/');
@@ -50,14 +50,14 @@
       </div>
 
       <div class="account-menu-badges">
-        <SparkTrustBadge label="Akun aktif" tone="safe" />
+        <SparkTrustBadge label="Akun contoh lokal" tone="local" copy="Session frontend lokal sampai backend auth aktif." />
         <SparkTrustBadge label={getModeLabel(betaSession.user.mode)} tone="beta" />
       </div>
 
       <nav class="account-menu-links" aria-label="Menu akun">
-        <a href="/passport" onclick={close}><SparkIcon name="passport" size={16} /> Passport</a>
-        <a href="/profile" onclick={close}><SparkIcon name="user-round" size={16} /> Profil</a>
-        <a href="/settings" onclick={close}><SparkIcon name="settings" size={16} /> Pengaturan</a>
+        <a href="/dashboard" onclick={close}><SparkIcon name="dashboard" size={16} /> Dashboard</a>
+        <a href="/profile" onclick={close}><SparkIcon name="user-round" size={16} /> Profile & Passport</a>
+        <a href="/settings" onclick={close}><SparkIcon name="settings" size={16} /> Settings</a>
         <button type="button" onclick={logout}><SparkIcon name="logout" size={16} /> Keluar</button>
       </nav>
     </div>

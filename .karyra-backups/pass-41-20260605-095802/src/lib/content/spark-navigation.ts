@@ -1,4 +1,4 @@
-export type SparkNavKey = 'gateway' | 'dashboard' | 'core' | 'lab' | 'community' | 'passport' | 'profile' | 'hub' | 'settings';
+export type SparkNavKey = 'gateway' | 'core' | 'lab' | 'community' | 'profile' | 'hub' | 'settings';
 
 export type SparkNavItem = {
   key: SparkNavKey;
@@ -18,15 +18,6 @@ export const sparkNavItems: SparkNavItem[] = [
     shortLabel: 'Home',
     copy: 'Mulai mengenal Spark',
     icon: 'home',
-    primary: true
-  },
-  {
-    key: 'dashboard',
-    href: '/dashboard',
-    label: 'Dashboard',
-    shortLabel: 'Dashboard',
-    copy: 'Ringkasan belajar hari ini',
-    icon: 'dashboard',
     primary: true
   },
   {
@@ -52,34 +43,25 @@ export const sparkNavItems: SparkNavItem[] = [
     href: '/community',
     label: 'Komunitas',
     shortLabel: 'Komunitas',
-    copy: 'Workshop, cohort, dan diskusi',
+    copy: 'Workshop, cohort, dan belajar bersama',
     icon: 'users',
-    primary: true
-  },
-  {
-    key: 'passport',
-    href: '/passport',
-    label: 'Passport',
-    shortLabel: 'Passport',
-    copy: 'Bukti kesiapan dan perjalanan belajar',
-    icon: 'passport',
     primary: true
   },
   {
     key: 'profile',
     href: '/profile',
-    label: 'Profil',
-    shortLabel: 'Profil',
-    copy: 'Identitas akun pribadi',
+    label: 'Ruang Saya',
+    shortLabel: 'Saya',
+    copy: 'Profile, Passport, dan perjalanan belajar',
     icon: 'user-round',
-    primary: false
+    primary: true
   },
   {
     key: 'hub',
     href: '/hub',
     label: 'Hub',
     shortLabel: 'Hub',
-    copy: 'Rujukan dan jalur eksplorasi Starknet',
+    copy: 'Resource dan jalur eksplorasi Starknet',
     icon: 'compass',
     primary: false
   },
@@ -95,7 +77,7 @@ export const sparkNavItems: SparkNavItem[] = [
 ];
 
 export const primaryMobileNavItems = sparkNavItems.filter((item) =>
-  ['dashboard', 'core', 'lab', 'community', 'passport'].includes(item.key)
+  ['gateway', 'core', 'lab', 'community', 'profile'].includes(item.key)
 );
 
 export function getNavItem(key: SparkNavKey) {
