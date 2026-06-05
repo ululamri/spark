@@ -19,8 +19,6 @@
   type Props = { children: Snippet };
   let { children }: Props = $props();
 
-  const signedIn = $derived(Boolean(betaSession.user));
-
   onMount(() => {
     initTheme();
     restoreBetaSession();
@@ -71,13 +69,7 @@
   });
 </script>
 
-<div
-  class="spark-app"
-  data-theme={themeState.resolved}
-  data-theme-preference={themeState.preference}
-  data-preview={appState.previewMode}
-  data-auth={signedIn ? 'user' : 'guest'}
->
+<div class="spark-app" data-theme={themeState.resolved} data-theme-preference={themeState.preference} data-preview={appState.previewMode}>
   <SparkRouteProgress />
   <SparkTopBar />
   <div class="spark-shell">
@@ -85,9 +77,7 @@
     <main class="spark-main">{@render children()}</main>
   </div>
   <SparkSimpleFooter />
-  {#if signedIn}
-    <SparkBottomNav />
-  {/if}
+  <SparkBottomNav />
   <SparkMobileDrawer />
   <SparkToast />
   <SparkCookieNotice />

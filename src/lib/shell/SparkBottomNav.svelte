@@ -2,35 +2,15 @@
   import { onMount } from 'svelte';
   import { page } from '$app/state';
   import { isNavActive, primaryMobileNavItems } from '$lib/content/spark-navigation';
-  import { betaSession } from '$state/beta-session-state.svelte';
   import SparkIcon from '$ui/SparkIcon.svelte';
 
   let hidden = $state(false);
 
-  const guestGatewayItem = {
-    href: '/',
-    shortLabel: 'Home',
-    icon: 'home'
-  };
-
-  const mobileItems = $derived(
-    betaSession.user
-      ? primaryMobileNavItems.map((item) => ({
-          href: item.href,
-          shortLabel: item.shortLabel,
-          icon: item.icon
-        }))
-      : [
-          guestGatewayItem,
-          ...primaryMobileNavItems
-            .filter((item) => item.key !== 'dashboard')
-            .map((item) => ({
-              href: item.href,
-              shortLabel: item.shortLabel,
-              icon: item.icon
-            }))
-        ]
-  );
+  const mobileItems = primaryMobileNavItems.map((item) => ({
+    href: item.href,
+    shortLabel: item.shortLabel,
+    icon: item.icon
+  }));
 
   onMount(() => {
     let lastY = window.scrollY;
