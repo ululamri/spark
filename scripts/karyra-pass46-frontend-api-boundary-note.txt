@@ -1,0 +1,1 @@
+Pass 46 backend auth foundation installed. Frontend API integration is intentionally held until backend auth compiles cleanly.
