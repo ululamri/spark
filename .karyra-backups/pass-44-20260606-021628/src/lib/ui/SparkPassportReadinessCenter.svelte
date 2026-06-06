@@ -31,7 +31,6 @@
     getPassportLevelTitle,
     getVerificationTier
   } from '$lib/passport/passport-proof-model';
-  import { getPassportProofSignals } from '$lib/proof/proof-signals-model';
 
   onMount(() => {
     restoreProfileState();
@@ -126,8 +125,6 @@
       progress: savedResources > 0 ? 100 : readiness >= 75 ? 50 : 0
     }
   ]);
-
-  const proofSignalCards = $derived(getPassportProofSignals(evidenceBundle));
 </script>
 
 <section class="passport-shell" data-karyra-passport="proof-foundation">
@@ -195,34 +192,6 @@
         </div>
       </a>
     {/each}
-  </section>
-
-  <section class="passport-proof-family-card" aria-labelledby="passport-proof-family-title">
-    <div class="passport-section-head">
-      <span class="spark-eyebrow">Keluarga proof Spark</span>
-      <h2 id="passport-proof-family-title">Passport dirangkum dari beberapa bukti, bukan satu klaim.</h2>
-      <p>
-        Proof-of-Readiness adalah hasil akhir. Di bawahnya ada bukti belajar, praktik, safety, partisipasi, eksplorasi, dan kontribusi yang akan naik menjadi signed event saat backend aktif.
-      </p>
-    </div>
-
-    <div class="passport-proof-signal-grid">
-      {#each proofSignalCards as proof}
-        <a href={proof.href} class={`proof-signal-card ${proof.status}`}>
-          <span><SparkIcon name={proof.icon} size={18} /></span>
-          <div>
-            <small>{proof.label}</small>
-            <strong>{proof.title}</strong>
-            <p>{proof.copy}</p>
-            <div class="proof-signal-foot">
-              <em>{proof.statusLabel}</em>
-              <b>{proof.progress}%</b>
-            </div>
-            <div class="proof-signal-progress" aria-hidden="true"><i style={`width: ${Math.max(4, proof.progress)}%`}></i></div>
-          </div>
-        </a>
-      {/each}
-    </div>
   </section>
 
   <section class="passport-proof-card" id="passport-proof">
@@ -537,111 +506,6 @@
   .passport-privacy-card {
     grid-template-columns: auto minmax(0, 1fr);
     align-items: start;
-  }
-
-
-  .passport-proof-family-card {
-    display: grid;
-    gap: 14px;
-    padding: 18px;
-    border: 1px solid var(--spark-line);
-    border-radius: 26px;
-    background: var(--spark-card);
-    box-shadow: 0 10px 26px rgba(5, 9, 78, .06);
-  }
-
-  .passport-proof-signal-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .proof-signal-card {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 12px;
-    align-items: start;
-    padding: 14px;
-    border: 1px solid var(--spark-line);
-    border-radius: 22px;
-    color: inherit;
-    background: rgba(255, 255, 255, .52);
-  }
-
-  .proof-signal-card.active {
-    border-color: rgba(35, 184, 125, .34);
-    background: rgba(35, 184, 125, .08);
-  }
-
-  .proof-signal-card.planned {
-    border-style: dashed;
-  }
-
-  .proof-signal-card > span {
-    width: 38px;
-    height: 38px;
-    display: grid;
-    place-items: center;
-    border-radius: 16px;
-    color: var(--spark-blue-strong);
-    background: rgba(31, 117, 255, .1);
-  }
-
-  .proof-signal-card small,
-  .proof-signal-foot em,
-  .proof-signal-foot b {
-    color: var(--spark-muted);
-    font-size: 11px;
-    font-style: normal;
-    font-weight: 850;
-  }
-
-  .proof-signal-card strong {
-    display: block;
-    margin-top: 3px;
-    color: var(--spark-navy);
-  }
-
-  .proof-signal-card p {
-    margin: 6px 0 0;
-    color: var(--spark-muted);
-    font-size: 13px;
-    line-height: 1.5;
-  }
-
-  .proof-signal-foot {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  .proof-signal-progress {
-    height: 7px;
-    margin-top: 8px;
-    overflow: hidden;
-    border-radius: 999px;
-    background: rgba(31, 117, 255, .1);
-  }
-
-  .proof-signal-progress i {
-    display: block;
-    height: 100%;
-    border-radius: inherit;
-    background: linear-gradient(90deg, var(--spark-blue), var(--spark-orange));
-  }
-
-  @media (max-width: 880px) {
-    .passport-proof-signal-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 560px) {
-    .passport-proof-signal-grid,
-    .proof-signal-card {
-      grid-template-columns: 1fr;
-    }
   }
 
   @media (max-width: 880px) {
