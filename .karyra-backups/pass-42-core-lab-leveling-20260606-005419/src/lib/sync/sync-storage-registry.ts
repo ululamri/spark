@@ -14,16 +14,6 @@ export const sparkStorageRegistry: SparkStorageEntry[] = [
     futureBackendRole: 'Server menjadi sumber utama. Local state menjadi cache dan draft offline.'
   },
   {
-    key: 'karyra-spark-leveling-state-v1',
-    owner: 'learning',
-    label: 'Level dan ujian',
-    description: 'Hasil ujian Core/Lab, level yang lulus, dan jawaban sementara.',
-    authority: 'server-source',
-    resetOnProgressReset: true,
-    resetOnAllLocalReset: true,
-    futureBackendRole: 'Server menyimpan hasil ujian, kelulusan level, dan eligibility Passport.'
-  },
-  {
     key: 'karyra-spark-gateway-state-v1',
     owner: 'community',
     label: 'Community dan Hub',

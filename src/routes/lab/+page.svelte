@@ -1,35 +1,13 @@
 <script lang="ts">
-  import SparkExplorerPlaceholder from '$ui/SparkExplorerPlaceholder.svelte';
-  import SparkLabInteractiveSimulator from '$ui/SparkLabInteractiveSimulator.svelte';
-  import SparkLabProofRoadmapRich from '$ui/SparkLabProofRoadmapRich.svelte';
-  import SparkLabRichGrid from '$ui/SparkLabRichGrid.svelte';
-  import SparkSectionHeader from '$ui/SparkSectionHeader.svelte';
+  import SparkLabLevelingFlow from '$ui/SparkLabLevelingFlow.svelte';
 </script>
 
 <svelte:head>
-  <title>Practice Lab — Karyra Spark</title>
+  <title>Lab Praktik — Karyra Spark</title>
+  <meta
+    name="description"
+    content="Lab Karyra Spark membantu pengguna berlatih aman lewat level Beginner, Intermediate, dan Advanced sebelum masuk eksplorasi Starknet."
+  />
 </svelte:head>
 
-<SparkLabInteractiveSimulator />
-
-<section class="spark-section" id="lab-modules">
-  <SparkSectionHeader
-    eyebrow="Modul praktik"
-    title="Latihan tetap tersedia sebagai proof-of-practice."
-    copy="Simulasi di atas memberi interaksi cepat. Kartu di bawah memberi jalur praktik lebih lengkap."
-  />
-  <SparkLabRichGrid />
-</section>
-
-<section class="spark-section">
-  <SparkSectionHeader
-    eyebrow="Advanced workspace"
-    title="Mode teknis tetap disiapkan bertahap."
-    copy="CodeMirror dan StarknetKit masih placeholder aman sampai backend dan grant lebih pasti."
-  />
-  <SparkExplorerPlaceholder />
-</section>
-
-<section class="spark-section">
-  <SparkLabProofRoadmapRich />
-</section>
+<SparkLabLevelingFlow />

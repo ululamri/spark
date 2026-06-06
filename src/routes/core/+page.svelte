@@ -1,13 +1,13 @@
 <script lang="ts">
-  import SparkCoreGuidedFlow from '$ui/SparkCoreGuidedFlow.svelte';
+  import SparkCoreLevelingFlow from '$ui/SparkCoreLevelingFlow.svelte';
 </script>
 
 <svelte:head>
   <title>Belajar / Core — Karyra Spark</title>
   <meta
     name="description"
-    content="Ruang belajar Karyra Spark untuk memahami blockchain, cryptocurrency, Web3, keamanan wallet, dan Starknet secara bertahap."
+    content="Core Karyra Spark membantu pengguna memahami blockchain, keamanan, Web3, dan Starknet lewat level Beginner, Intermediate, dan Advanced."
   />
 </svelte:head>
 
-<SparkCoreGuidedFlow />
+<SparkCoreLevelingFlow />

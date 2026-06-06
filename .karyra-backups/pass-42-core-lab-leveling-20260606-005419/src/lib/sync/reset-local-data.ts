@@ -5,7 +5,6 @@ import { learningState } from '$state/learning-state.svelte';
 import { messageState } from '$state/message-state.svelte';
 import { themeState } from '$state/theme-state.svelte';
 import { sparkModules } from '$content/spark-content';
-import { resetLevelingState } from '$lib/leveling/leveling-state.svelte';
 import { socialSeedComments, socialSeedPosts } from '$lib/social/social-model';
 import { socialState } from '$lib/social/social-state.svelte';
 import { clearSyncQueue, enqueueSyncEvent } from './sync-event-queue.svelte';
@@ -80,7 +79,6 @@ export function resetLocalSparkData(mode: LocalResetMode = 'progress-only') {
   if (isAllLocal) clearCookie('karyra-spark-cookie-choice-v1');
 
   resetLearningMemory();
-  resetLevelingState();
   resetGatewayMemory();
   resetMessageMemory();
   resetSocialMemory();
@@ -105,7 +103,7 @@ export function resetLocalSparkData(mode: LocalResetMode = 'progress-only') {
     title: isAllLocal ? 'Data Spark dihapus' : 'Perjalanan belajar dimulai ulang',
     copy: isAllLocal
       ? 'Spark kembali seperti pertama kali dibuka di perangkat ini.'
-      : 'Progress belajar, ujian level, diskusi, pesan, dan data belajar tersimpan sudah dikosongkan.',
+      : 'Progress belajar, diskusi, pesan, dan data belajar tersimpan sudah dikosongkan.',
     tone: 'success'
   });
 
