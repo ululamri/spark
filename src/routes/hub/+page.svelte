@@ -1,9 +1,16 @@
+\
 <script lang="ts">
+  import { onMount } from 'svelte';
   import SparkHubCommandCenter from '$ui/SparkHubCommandCenter.svelte';
   import SparkHubDirectoryRich from '$ui/SparkHubDirectoryRich.svelte';
   import SparkHubMilestonePath from '$ui/SparkHubMilestonePath.svelte';
   import SparkHubMissionBoard from '$ui/SparkHubMissionBoard.svelte';
   import SparkSectionHeader from '$ui/SparkSectionHeader.svelte';
+  import { hydrateGatewayStateFromBackend } from '$state/gateway-state.svelte';
+
+  onMount(() => {
+    void hydrateGatewayStateFromBackend();
+  });
 </script>
 
 <svelte:head>
