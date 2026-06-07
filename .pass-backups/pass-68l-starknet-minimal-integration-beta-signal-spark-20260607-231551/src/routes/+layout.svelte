@@ -37,7 +37,6 @@
   import '$lib/styles/pass-68d-core-lab-flow-cleanup.css';
   import '$lib/styles/pass-68e-passport-explainability-preview.css';
   import '$lib/styles/pass-68k-desktop-layout-repair.css';
-  import '$lib/styles/pass-68l-beta-signal.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();

@@ -18,8 +18,7 @@
     "audit:pass68e": "node src/scripts/audit-pass68e-passport-explainability.mjs",
     "audit:pass68e-css": "node src/scripts/audit-pass68e-css-global-pseudo.mjs",
     "audit:hub-topology": "node src/scripts/audit-hub-topology.mjs",
-    "audit:pass68k": "node src/scripts/audit-pass68k-desktop-layout.mjs",
-    "audit:pass68l": "node src/scripts/audit-pass68l-beta-signal.mjs"
+    "audit:pass68k": "node src/scripts/audit-pass68k-desktop-layout.mjs"
   },
   "dependencies": {
     "@lucide/svelte": "latest",

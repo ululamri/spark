@@ -7,7 +7,6 @@
   import SparkSidebar from './SparkSidebar.svelte';
   import SparkToast from './SparkToast.svelte';
   import SparkTopBar from './SparkTopBar.svelte';
-  import SparkBetaBanner from '$ui/SparkBetaBanner.svelte';
   import SparkCookieNotice from '$ui/SparkCookieNotice.svelte';
   import SparkSimpleFooter from '$ui/SparkSimpleFooter.svelte';
   import { appState, markPersistenceReady } from '$lib/state/app-state.svelte';
@@ -95,7 +94,6 @@
   data-auth={signedIn ? 'user' : 'guest'}
 >
   <SparkRouteProgress />
-  <SparkBetaBanner />
   <SparkTopBar />
   <div class="spark-shell">
     <SparkSidebar />
