@@ -15,7 +15,7 @@
   let {
     children,
     title = 'Masuk untuk membuka halaman ini',
-    copy = 'Area ini menyimpan progres, Passport, pesan, dan pengaturan belajar kamu.'
+    copy = 'Area ini menyimpan data pribadi seperti progress, Passport, pesan, dan pengaturan belajar.'
   }: Props = $props();
 
   let redirecting = $state(false);
@@ -38,9 +38,9 @@
   <section class="spark-auth-gate pass35-auth-gate" aria-live="polite">
     <div>
       <span><SparkIcon name="shield" size={22} /></span>
-      <p class="spark-eyebrow">Memeriksa akun</p>
-      <h1>Menghubungkan ruang belajarmu</h1>
-      <p>Kami sedang memastikan akunmu masih bisa dilanjutkan dengan aman.</p>
+      <p class="spark-eyebrow">Memeriksa sesi</p>
+      <h1>Menghubungkan akun Spark</h1>
+      <p>Kami sedang memastikan sesi backend kamu masih aktif.</p>
     </div>
   </section>
 {:else}
@@ -51,8 +51,8 @@
       <h1>{title}</h1>
       <p>{copy}</p>
       <div class="pass35-auth-gate-actions">
-        <SparkButton href={loginHref}>Masuk untuk Lanjutkan</SparkButton>
-        <SparkButton href="/" variant="secondary">Kembali ke Beranda</SparkButton>
+        <SparkButton href={loginHref}>Masuk</SparkButton>
+        <SparkButton href="/" variant="secondary">Kembali ke beranda</SparkButton>
       </div>
     </div>
   </section>

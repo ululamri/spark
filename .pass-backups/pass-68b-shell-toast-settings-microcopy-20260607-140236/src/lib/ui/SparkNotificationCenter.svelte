@@ -35,7 +35,7 @@
 
   function readAll() {
     markAllNotificationsRead(notifications.map((item) => item.id));
-    pushToast({ title: 'Semua kabar sudah dibaca', copy: 'Kabar baru akan muncul saat ada langkah penting.', tone: 'success' });
+    pushToast({ title: 'Pemberitahuan dibaca', copy: 'Tidak ada update baru.', tone: 'success' });
   }
 
   function openNotification(id: string) {
@@ -58,7 +58,7 @@
         <div class="production-notification-head pass35b7-notification-head">
           <div>
             <span class="spark-eyebrow">Pemberitahuan</span>
-            <h2>{unreadCount > 0 ? `${unreadCount} kabar baru` : 'Semua sudah tenang'}</h2>
+            <h2>{unreadCount > 0 ? `${unreadCount} update baru` : 'Tidak ada pemberitahuan'}</h2>
           </div>
           <button type="button" aria-label="Tutup pemberitahuan" onclick={closePanel}><SparkIcon name="x" size={18} /></button>
         </div>
@@ -66,13 +66,13 @@
         {#if unreadCount === 0}
           <div class="pass35b7-notification-empty" aria-live="polite">
             <span><SparkIcon name="check" size={20} /></span>
-            <strong>Semua kabar sudah dibaca</strong>
-            <p>Belum ada langkah penting baru untukmu.</p>
+            <strong>Semua sudah dibaca</strong>
+            <p>Belum ada pemberitahuan baru.</p>
           </div>
         {:else}
           <div class="pass35b7-notification-tools">
-            <span>Kabar terbaru untukmu.</span>
-            <button type="button" onclick={readAll}>Tandai sudah dibaca</button>
+            <span>Update terbaru.</span>
+            <button type="button" onclick={readAll}>Tandai semua dibaca</button>
           </div>
 
           <div class="production-notification-list pass35b7-notification-list">
@@ -89,7 +89,7 @@
           </div>
 
           <a class="production-notification-inbox-link pass35b7-notification-inbox-link" href="/inbox" onclick={closePanel}>
-            Lihat Semua Pesan
+            Buka Inbox
             <SparkIcon name="chevron-right" size={15} />
           </a>
         {/if}

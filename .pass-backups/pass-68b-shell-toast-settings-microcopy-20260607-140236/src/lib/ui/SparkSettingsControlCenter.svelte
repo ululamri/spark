@@ -29,19 +29,19 @@
 
   function chooseTheme(theme: ThemePreference) {
     setThemePreference(theme);
-    pushToast({ title: 'Tampilan disimpan', copy: 'Spark akan mengikuti pilihan tampilanmu.', tone: 'success' });
+    pushToast({ title: 'Tampilan disimpan', copy: 'Pengaturan tampilan sudah diperbarui.', tone: 'success' });
   }
 
   function chooseMode(mode: ExperienceLevel) {
     setExperience(mode);
-    pushToast({ title: 'Ritme belajar disimpan', copy: 'Spark akan menyesuaikan arahan belajarmu.', tone: 'success' });
+    pushToast({ title: 'Cara belajar disimpan', copy: 'Ritme belajar sudah diperbarui.', tone: 'success' });
   }
 
   function toggleGuidance(key: 'guidance' | 'reminders' | 'safety') {
     if (key === 'guidance') guidanceEnabled = !guidanceEnabled;
     if (key === 'reminders') remindersEnabled = !remindersEnabled;
     if (key === 'safety') safetyTipsEnabled = !safetyTipsEnabled;
-    pushToast({ title: 'Pilihan bantuan disimpan', copy: 'Arahan belajar akan mengikuti pilihanmu.', tone: 'success' });
+    pushToast({ title: 'Pilihan disimpan', copy: 'Pengaturan bantuan sudah diperbarui.', tone: 'success' });
   }
 
   function resetPreferences() {
@@ -51,14 +51,14 @@
     remindersEnabled = true;
     safetyTipsEnabled = true;
     confirmResetOpen = false;
-    pushToast({ title: 'Pengaturan dipulihkan', copy: 'Tampilan dan ritme belajar kembali ke pilihan awal.', tone: 'success' });
+    pushToast({ title: 'Pengaturan dipulihkan', copy: 'Spark kembali ke pilihan awal.', tone: 'success' });
   }
 </script>
 
 <section class="settings-simple-hero pass40b-settings-hero">
   <div>
     <span class="spark-eyebrow">Pengaturan</span>
-    <h1>Atur pengalaman belajarmu</h1>
+    <h1>Atur Spark</h1>
     <p>Pilih tampilan, ritme belajar, dan bantuan yang paling nyaman.</p>
   </div>
 
@@ -75,7 +75,7 @@
   <SparkCard class="settings-simple-card pass40b-settings-card">
     <div class="settings-section-head pass40b-section-head">
       <span class="spark-eyebrow">Tampilan</span>
-      <h2>Pilih tampilan layar.</h2>
+      <h2>Pilih mode layar.</h2>
     </div>
 
     <div class="settings-choice-row">
@@ -91,7 +91,7 @@
   <SparkCard class="settings-simple-card pass40b-settings-card">
     <div class="settings-section-head pass40b-section-head">
       <span class="spark-eyebrow">Cara belajar</span>
-      <h2>Pilih ritme belajar.</h2>
+      <h2>Sesuaikan ritme.</h2>
     </div>
 
     <div class="settings-mode-list">
@@ -110,21 +110,21 @@
   <SparkCard class="settings-simple-card pass40b-settings-card">
     <div class="settings-section-head pass40b-section-head">
       <span class="spark-eyebrow">Bantuan</span>
-      <h2>Pilih bantuan belajar.</h2>
+      <h2>Atur arahan belajar.</h2>
     </div>
 
     <div class="settings-toggle-list">
       <button type="button" onclick={() => toggleGuidance('guidance')} class:active={guidanceEnabled}>
         <span><SparkIcon name="sparkles" size={17} /></span>
-        <div><strong>Saran langkah berikutnya</strong><small>{guidanceEnabled ? 'Aktif' : 'Mati'}</small></div>
+        <div><strong>Saran langkah</strong><small>{guidanceEnabled ? 'Aktif' : 'Mati'}</small></div>
       </button>
       <button type="button" onclick={() => toggleGuidance('reminders')} class:active={remindersEnabled}>
         <span><SparkIcon name="bell" size={17} /></span>
-        <div><strong>Pengingat belajar</strong><small>{remindersEnabled ? 'Aktif' : 'Mati'}</small></div>
+        <div><strong>Pengingat</strong><small>{remindersEnabled ? 'Aktif' : 'Mati'}</small></div>
       </button>
       <button type="button" onclick={() => toggleGuidance('safety')} class:active={safetyTipsEnabled}>
         <span><SparkIcon name="shield" size={17} /></span>
-        <div><strong>Tips keamanan wallet</strong><small>{safetyTipsEnabled ? 'Aktif' : 'Mati'}</small></div>
+        <div><strong>Tips keamanan</strong><small>{safetyTipsEnabled ? 'Aktif' : 'Mati'}</small></div>
       </button>
     </div>
   </SparkCard>
@@ -138,15 +138,15 @@
     </div>
 
     <div class="settings-link-list">
-      <a href="/core"><SparkIcon name="book-open" size={16} /> Mulai Belajar</a>
-      <a href="/profile"><SparkIcon name="user-round" size={16} /> Lihat Profil</a>
-      <a href="/dashboard"><SparkIcon name="dashboard" size={16} /> Lihat Ringkasan</a>
-      <a href="/help"><SparkIcon name="help" size={16} /> Buka Bantuan</a>
+      <a href="/core"><SparkIcon name="book-open" size={16} /> Belajar</a>
+      <a href="/profile"><SparkIcon name="user-round" size={16} /> Ruang Saya</a>
+      <a href="/dashboard"><SparkIcon name="dashboard" size={16} /> Dashboard</a>
+      <a href="/help"><SparkIcon name="help" size={16} /> Bantuan</a>
     </div>
 
     <div class="settings-reset-box pass40b-reset-box">
-      <strong>Pulihkan pengaturan awal?</strong>
-      <SparkButton variant="secondary" onclick={() => (confirmResetOpen = true)}>Pulihkan Pengaturan</SparkButton>
+      <strong>Pulihkan pilihan awal?</strong>
+      <SparkButton variant="secondary" onclick={() => (confirmResetOpen = true)}>Pulihkan</SparkButton>
     </div>
   </SparkCard>
 </section>
@@ -159,7 +159,7 @@
     <p>Tampilan, cara belajar, dan bantuan akan kembali ke pilihan awal.</p>
     <div>
       <SparkButton variant="ghost" onclick={() => (confirmResetOpen = false)}>Batal</SparkButton>
-      <SparkButton onclick={resetPreferences}>Ya, pulihkan pengaturan</SparkButton>
+      <SparkButton onclick={resetPreferences}>Pulihkan</SparkButton>
     </div>
   </div>
 {/if}

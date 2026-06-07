@@ -31,13 +31,13 @@
   <aside class="spark-cookie-notice" aria-label="Pilihan cookie">
     <span><SparkIcon name="shield" size={17} /></span>
     <div>
-      <strong>Cookie penting untuk pengalaman belajar</strong>
-      <p>Spark memakai cookie penting untuk tema, akses akun, dan preferensi tampilan. Spark tidak pernah meminta seed phrase atau private key.</p>
+      <strong>Cookie sederhana untuk pengalaman belajar</strong>
+      <p>Spark memakai cookie penting untuk tema, sesi, dan preferensi tampilan. Tidak ada seed phrase atau private key yang diminta.</p>
       <a href="/terms">Baca ketentuan</a>
     </div>
     <div class="spark-cookie-actions">
-      <button type="button" onclick={() => saveChoice('essential')}>Pakai yang penting saja</button>
-      <button type="button" class="primary" onclick={() => saveChoice('accepted')}>Setuju dan lanjutkan</button>
+      <button type="button" onclick={() => saveChoice('essential')}>Hanya yang perlu</button>
+      <button type="button" class="primary" onclick={() => saveChoice('accepted')}>Setuju</button>
     </div>
   </aside>
 {/if}

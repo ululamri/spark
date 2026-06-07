@@ -20,8 +20,8 @@
     await logoutBetaSession();
     close();
     pushToast({
-      title: 'Kamu sudah keluar',
-      copy: 'Progress yang tersimpan di akun tetap aman.',
+      title: 'Keluar dari akun',
+      copy: 'Sesi backend Spark sudah ditutup.',
       tone: 'info'
     });
     await goto('/');
@@ -38,7 +38,7 @@
   {:else}
     <SparkButton href="/login" variant="secondary">
       <SparkIcon name="login" size={16} />
-      Masuk untuk Lanjutkan
+      Masuk
     </SparkButton>
   {/if}
 
@@ -59,10 +59,10 @@
       </div>
 
       <nav class="account-menu-links" aria-label="Menu akun">
-        <a href="/passport" onclick={close}><SparkIcon name="passport" size={16} /> Lihat Passport Saya</a>
-        <a href="/profile" onclick={close}><SparkIcon name="user-round" size={16} /> Kelola Profil</a>
-        <a href="/settings" onclick={close}><SparkIcon name="settings" size={16} /> Atur Spark</a>
-        <button type="button" onclick={logout} disabled={loggingOut}><SparkIcon name="logout" size={16} /> {loggingOut ? 'Menutup akun...' : 'Keluar dari Akun'}</button>
+        <a href="/passport" onclick={close}><SparkIcon name="passport" size={16} /> Passport</a>
+        <a href="/profile" onclick={close}><SparkIcon name="user-round" size={16} /> Profil</a>
+        <a href="/settings" onclick={close}><SparkIcon name="settings" size={16} /> Pengaturan</a>
+        <button type="button" onclick={logout} disabled={loggingOut}><SparkIcon name="logout" size={16} /> {loggingOut ? 'Keluar...' : 'Keluar'}</button>
       </nav>
     </div>
   {/if}

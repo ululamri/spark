@@ -168,12 +168,12 @@
       <article>
         <small>Kode Passport</small>
         <strong>{shortHash(currentCredential?.credential_hash)}</strong>
-        <p>{currentCredential?.schema_version ?? 'Passport belum diterbitkan.'}</p>
+        <p>{currentCredential?.schema_version ?? 'Credential belum diterbitkan.'}</p>
       </article>
     </div>
 
     {#if activeLevel}
-      <div class="passport-backend-proof-row" aria-label="Syarat Passport">
+      <div class="passport-backend-proof-row" aria-label="Syarat Passport dari backend">
         <div class:done={activeLevel.proof_of_learning}><span>{activeLevel.proof_of_learning ? '✓' : '•'}</span> Learning</div>
         <div class:done={activeLevel.proof_of_practice}><span>{activeLevel.proof_of_practice ? '✓' : '•'}</span> Practice</div>
         <div class:done={activeLevel.proof_of_safety}><span>{activeLevel.proof_of_safety ? '✓' : '•'}</span> Safety</div>

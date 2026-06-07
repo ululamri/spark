@@ -14,15 +14,15 @@
   const accountLinks = $derived(
     betaSession.user
       ? [
-          { href: '/passport', icon: 'passport', title: 'Lihat Passport', copy: 'Lihat bukti belajar dan langkah berikutnya' },
-          { href: '/profile', icon: 'user-round', title: 'Edit Profil', copy: 'Kelola identitas belajarmu' },
-          { href: '/inbox', icon: 'messages', title: 'Lihat Pesan', copy: unreadMessages > 0 ? `${unreadMessages} pesan baru` : 'Arahan belajar dan kabar penting' },
-          { href: '/settings', icon: 'settings', title: 'Pengaturan Akun', copy: 'Atur tampilan dan ritme belajar' }
+          { href: '/passport', icon: 'passport', title: 'Passport', copy: 'Lihat bukti kesiapanmu' },
+          { href: '/profile', icon: 'user-round', title: 'Profil', copy: 'Identitas akun pribadi' },
+          { href: '/inbox', icon: 'messages', title: 'Inbox', copy: unreadMessages > 0 ? `${unreadMessages} pesan baru` : 'Pesan dan arahan' },
+          { href: '/settings', icon: 'settings', title: 'Pengaturan', copy: 'Tampilan dan cara belajar' }
         ]
       : [
-          { href: '/login', icon: 'login', title: 'Masuk untuk Lanjutkan', copy: 'Lanjutkan progres belajarmu' },
-          { href: '/register', icon: 'user-plus', title: 'Buat Akun Gratis', copy: 'Mulai bangun Passport dari dasar' },
-          { href: '/core', icon: 'book-open', title: 'Mulai Core Beginner', copy: 'Mulai dari lesson pertama' }
+          { href: '/login', icon: 'login', title: 'Masuk', copy: 'Lanjutkan perjalanan belajar' },
+          { href: '/register', icon: 'user-plus', title: 'Daftar', copy: 'Buat ruang belajar baru' },
+          { href: '/core', icon: 'book-open', title: 'Belajar', copy: 'Mulai dari fondasi' }
         ]
   );
 
@@ -41,7 +41,7 @@
     loggingOut = true;
     await logoutBetaSession();
     close();
-    pushToast({ title: 'Keluar dari akun', copy: 'Akunmu sudah keluar dengan aman.', tone: 'info' });
+    pushToast({ title: 'Keluar dari akun', copy: 'Sesi backend Spark sudah ditutup.', tone: 'info' });
     await goto('/');
     loggingOut = false;
   }
@@ -52,7 +52,7 @@
 
   <aside class="spark-mobile-drawer production-drawer pass35b2-drawer" transition:fly={{ x: 24, duration: 160 }} aria-label="Menu Spark">
     <div class="drawer-head production-drawer-head pass35b2-drawer-head">
-      <strong>Menu Spark</strong>
+      <strong>Menu</strong>
       <button type="button" aria-label="Tutup menu" onclick={close}><SparkIcon name="x" size={17} /></button>
     </div>
 
@@ -97,7 +97,7 @@
       {#if betaSession.user}
         <button class="drawer-logout" type="button" onclick={logout} disabled={loggingOut}>
           <span><SparkIcon name="logout" size={17} /></span>
-          <div><strong>{loggingOut ? 'Mengeluarkan...' : 'Keluar dari Akun'}</strong></div>
+          <div><strong>{loggingOut ? 'Keluar...' : 'Keluar'}</strong></div>
           <SparkIcon name="chevron-right" size={14} />
         </button>
       {/if}

@@ -277,13 +277,13 @@
   <section class="passport-roadmap-grid">
     <article>
       <span><SparkIcon name="checklist" size={20} /></span>
-      <strong>Jejak kesiapan belajar</strong>
-      <p>Catatan ujian, latihan, dan partisipasi dibuat otomatis oleh Spark, jadi pengguna tidak perlu mengunggah bukti manual.</p>
+      <strong>Readiness event ledger</strong>
+      <p>Catatan ujian, latihan, dan partisipasi ditandatangani oleh sistem Spark, bukan diunggah manual oleh user.</p>
     </article>
     <article>
       <span><SparkIcon name="network" size={20} /></span>
-      <strong>Catatan Starknet</strong>
-      <p>Ringkasan bukti dan status Passport disiapkan agar bisa dicatat ke Starknet. Sepolia untuk uji, mainnet sebagai target akhir.</p>
+      <strong>Starknet anchor</strong>
+      <p>Evidence root dan status Passport diarahkan ke kontrak registry Starknet. Sepolia untuk uji, mainnet sebagai target akhir.</p>
     </article>
     <article>
       <span><SparkIcon name="badge" size={20} /></span>
@@ -295,9 +295,9 @@
   <section class="passport-privacy-card">
     <span><SparkIcon name="shield" size={22} /></span>
     <div>
-      <h2>Bukti kuat, data pribadi tetap dibatasi.</h2>
+      <h2>Proof kuat, data pribadi tetap dibatasi.</h2>
       <p>
-        Passport membuktikan kesiapan belajar dan praktik. Jawaban mentah, catatan pribadi, dan identitas sensitif tidak dibagikan ke jaringan publik. Verifikasi identitas lanjutan tetap menjadi tahap masa depan.
+        Passport membuktikan kesiapan belajar dan praktik. Jawaban mentah, catatan pribadi, dan identitas sensitif tidak ditaruh di chain. KYC nyata tetap menjadi tier masa depan.
       </p>
       <SparkButton href="/terms" variant="secondary">Baca ketentuan</SparkButton>
     </div>

@@ -66,7 +66,7 @@
     if (value.includes('core level exam')) return 'Lulus ujian Core level terkait';
     if (value.includes('lab practice')) return 'Selesaikan praktik Lab level terkait';
     if (value.includes('lab safety')) return 'Capai safety score Lab minimal 70';
-    if (value.includes('evidence root')) return 'Kumpulkan bukti belajar dari aktivitasmu';
+    if (value.includes('evidence root')) return 'Buat evidence root dari aktivitas sistem';
     return value;
   }
 
@@ -90,7 +90,7 @@
       if (cause instanceof SparkApiError) {
         error = cause.message;
       } else {
-        error = 'Belum bisa membaca data Passport. Coba lagi sebentar.';
+        error = 'Belum bisa membaca data Passport dari Spark API.';
       }
     } finally {
       loading = false;
@@ -120,10 +120,10 @@
 <section class="passport-backend-panel" aria-labelledby="passport-backend-title">
   <div class="passport-backend-head">
     <div>
-      <span class="spark-eyebrow">Jejak belajar</span>
-      <h2 id="passport-backend-title">Passport membaca bukti belajar yang tersimpan aman.</h2>
+      <span class="spark-eyebrow">Backend proof</span>
+      <h2 id="passport-backend-title">Passport sekarang membaca bukti dari Spark API.</h2>
       <p>
-        Panel ini memakai catatan belajar, praktik Lab, dan status Passport yang tersimpan aman. Data mentah tetap tidak ditaruh on-chain.
+        Panel ini memakai catatan sistem: progress belajar, lab, proof event ledger, evidence root, dan credential Passport backend. Data mentah tetap tidak ditaruh on-chain.
       </p>
     </div>
 
@@ -143,37 +143,37 @@
     <div class="passport-backend-loading" aria-live="polite">
       <span></span>
       <div>
-        <strong>Membaca bukti belajar…</strong>
-        <p>Spark sedang mengambil status belajar dan Passport yang tersimpan.</p>
+        <strong>Membaca evidence root…</strong>
+        <p>Spark sedang mengambil status proof dan Passport dari backend.</p>
       </div>
     </div>
   {:else}
     <div class="passport-backend-grid">
       <article>
-        <small>Status Passport</small>
-        <strong>{issued ? 'Aktif' : eligibility?.eligible ? 'Siap diterbitkan' : 'Belum lengkap'}</strong>
-        <p>{issued ? 'Passport sudah aktif.' : eligibility?.eligible ? 'Bukti belajar cukup untuk diterbitkan.' : 'Lengkapi bukti belajar terlebih dulu.'}</p>
+        <small>Status issue</small>
+        <strong>{issued ? 'Issued' : eligibility?.eligible ? 'Eligible' : 'Draft'}</strong>
+        <p>{issued ? 'Credential backend sudah aktif.' : eligibility?.eligible ? 'Bukti sistem cukup untuk diterbitkan.' : 'Lengkapi bukti sistem terlebih dulu.'}</p>
         <div class="passport-backend-badges">
           <SparkTrustBadge label={levelLabel(eligibility?.highest_eligible_level ?? currentCredential?.readiness_level)} tone={eligibility?.eligible || issued ? 'safe' : 'target'} />
-          <SparkTrustBadge label={currentCredential?.starknet_anchor_status === 'not_ready' ? 'Tersimpan aman' : currentCredential?.starknet_anchor_status ?? 'Belum ditautkan'} tone="local" />
+          <SparkTrustBadge label={currentCredential?.starknet_anchor_status === 'not_ready' ? 'Off-chain dulu' : currentCredential?.starknet_anchor_status ?? 'Belum anchor'} tone="local" />
         </div>
       </article>
 
       <article>
-        <small>Bukti tersimpan</small>
+        <small>Evidence root</small>
         <strong>{shortHash(evidenceCode)}</strong>
-        <p>{evidenceCount} bukti belajar tercatat.</p>
+        <p>{evidenceCount} event proof tercatat di backend.</p>
       </article>
 
       <article>
-        <small>Kode Passport</small>
+        <small>Credential hash</small>
         <strong>{shortHash(currentCredential?.credential_hash)}</strong>
-        <p>{currentCredential?.schema_version ?? 'Passport belum diterbitkan.'}</p>
+        <p>{currentCredential?.schema_version ?? 'Credential belum diterbitkan.'}</p>
       </article>
     </div>
 
     {#if activeLevel}
-      <div class="passport-backend-proof-row" aria-label="Syarat Passport">
+      <div class="passport-backend-proof-row" aria-label="Syarat Passport dari backend">
         <div class:done={activeLevel.proof_of_learning}><span>{activeLevel.proof_of_learning ? '✓' : '•'}</span> Learning</div>
         <div class:done={activeLevel.proof_of_practice}><span>{activeLevel.proof_of_practice ? '✓' : '•'}</span> Practice</div>
         <div class:done={activeLevel.proof_of_safety}><span>{activeLevel.proof_of_safety ? '✓' : '•'}</span> Safety</div>
@@ -194,17 +194,17 @@
 
     <div class="passport-backend-events">
       <div class="passport-backend-events-head">
-        <strong>Bukti belajar terbaru</strong>
-        <small>{proofEvents.length} catatan terakhir</small>
+        <strong>Event proof terbaru</strong>
+        <small>{proofEvents.length} event terakhir</small>
       </div>
 
       {#if proofEvents.length === 0}
-        <p class="passport-backend-empty">Belum ada bukti belajar. Selesaikan lesson, checkpoint, atau Lab untuk mulai mencatat bukti.</p>
+        <p class="passport-backend-empty">Belum ada event proof. Selesaikan lesson, checkpoint, atau lab untuk membuat evidence root.</p>
       {:else}
         <div class="passport-backend-event-list">
           {#each proofEvents as event}
             <article>
-              <span>{event.track ?? 'bukti'}</span>
+              <span>{event.track ?? 'proof'}</span>
               <div>
                 <strong>{eventLabel(event.event_type)}</strong>
                 <small>{event.subject_id} · {shortHash(event.event_hash)}</small>

@@ -384,8 +384,8 @@
 
   .content-builder-hero aside,
   .builder-sidebar,
-  :global(.editor-card),
-  :global(.preview-card) {
+  .editor-card,
+  .preview-card {
     border: 1px solid var(--spark-line);
     border-radius: 24px;
     background: rgba(255, 255, 255, 0.55);
@@ -393,8 +393,8 @@
 
   :global([data-theme='dark']) .content-builder-hero aside,
   :global([data-theme='dark']) .builder-sidebar,
-  :global([data-theme='dark'] .editor-card),
-  :global([data-theme='dark'] .preview-card) {
+  :global([data-theme='dark']) .editor-card,
+  :global([data-theme='dark']) .preview-card {
     background: rgba(255, 255, 255, 0.045);
   }
 
@@ -463,8 +463,8 @@
     background: rgba(31, 117, 255, 0.1);
   }
 
-  :global(.editor-card),
-  :global(.preview-card) {
+  .editor-card,
+  .preview-card {
     padding: 16px;
   }
 

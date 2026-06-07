@@ -161,13 +161,13 @@
     {/if}
 
     <div class="auth-actions pass35-auth-actions">
-      <SparkButton onclick={submitForm} loading={submitting} disabled={submitting}>{submitting ? 'Memproses...' : mode === 'login' ? 'Masuk untuk Lanjutkan' : 'Buat Akun & Mulai Belajar'}</SparkButton>
+      <SparkButton onclick={submitForm} loading={submitting} disabled={submitting}>{submitting ? 'Memproses...' : mode === 'login' ? 'Masuk' : 'Daftar'}</SparkButton>
       <SparkButton href={mode === 'login' ? `/register?next=${encodeURIComponent(nextHref)}` : `/login?next=${encodeURIComponent(nextHref)}`} variant="ghost" disabled={submitting}>
-        {mode === 'login' ? 'Belum punya akun? Buat gratis' : 'Sudah punya akun? Masuk'}
+        {mode === 'login' ? 'Buat akun' : 'Sudah punya akun?'}
       </SparkButton>
     </div>
 
-    <p class="pass35-auth-note">Akunmu tersimpan aman dan bisa dilanjutkan kapan saja.</p>
+    <p class="pass35-auth-note">Akun tersimpan aman lewat sesi backend Spark.</p>
   </SparkCard>
 
   <div class="auth-hero-panel pass35-auth-intro pass40b-auth-intro">
@@ -184,11 +184,11 @@
     <div class="pass35-auth-points" aria-label="Yang bisa dilanjutkan setelah masuk">
       <article>
         <SparkIcon name="dashboard" size={17} />
-        <div><strong>Ringkasan</strong><small>Lanjutkan fokus belajar hari ini.</small></div>
+        <div><strong>Dashboard</strong><small>Fokus belajar hari ini.</small></div>
       </article>
       <article>
         <SparkIcon name="badge" size={17} />
-        <div><strong>Passport</strong><small>Lihat kesiapan dan bukti belajarmu.</small></div>
+        <div><strong>Passport</strong><small>Pantau kesiapanmu.</small></div>
       </article>
       <article>
         <SparkIcon name="messages" size={17} />

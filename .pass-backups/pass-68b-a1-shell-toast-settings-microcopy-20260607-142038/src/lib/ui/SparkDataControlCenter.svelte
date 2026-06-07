@@ -16,18 +16,18 @@
   }[] = [
     {
       mode: 'progress-only',
-      title: 'Reset Progress Belajar',
-      copy: 'Kosongkan progres belajar di perangkat ini. Akun dan tampilan tetap aman.',
+      title: 'Mulai ulang progress',
+      copy: 'Progress belajar dikosongkan. Akun dan tampilan tetap dipertahankan.',
       icon: 'book-open',
-      action: 'Reset progress',
+      action: 'Mulai ulang',
       tone: 'normal'
     },
     {
       mode: 'all-local',
-      title: 'Hapus Data Lokal',
-      copy: 'Hapus data Spark dari browser ini saat perangkat akan dipakai orang lain.',
+      title: 'Hapus data perangkat',
+      copy: 'Gunakan saat perangkat akan dipakai orang lain.',
       icon: 'shield-alert',
-      action: 'Hapus data lokal',
+      action: 'Hapus data',
       tone: 'danger'
     }
   ];
@@ -46,7 +46,7 @@
     <span><SparkIcon name="shield" size={19} /></span>
     <div>
       <span class="spark-eyebrow">Data</span>
-      <h2>Kelola data lokal dengan aman.</h2>
+      <h2>Kelola data di perangkat ini.</h2>
     </div>
   </div>
 
@@ -76,14 +76,14 @@
     <h2>{selectedOption.title}?</h2>
     <p>
       {#if confirmMode === 'all-local'}
-        Semua data Spark di browser ini akan dihapus. Akunmu tetap ada, tetapi data lokal di perangkat ini tidak bisa dikembalikan.
+        Semua data Spark di perangkat ini akan dihapus. Tindakan ini tidak bisa dibatalkan dari perangkat ini.
       {:else}
-        Progress belajar di perangkat ini akan dikosongkan. Akun dan pilihan tampilan tetap dipertahankan.
+        Progress belajar dan aktivitas terkait akan dikosongkan. Akun dan tampilan tetap dipertahankan.
       {/if}
     </p>
     <div>
       <SparkButton variant="ghost" onclick={() => (confirmMode = null)}>Batal</SparkButton>
-      <SparkButton onclick={runReset}>{confirmMode === 'all-local' ? 'Ya, hapus data lokal' : 'Ya, reset progress saya'}</SparkButton>
+      <SparkButton onclick={runReset}>{selectedOption.action}</SparkButton>
     </div>
   </div>
 {/if}

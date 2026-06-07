@@ -213,8 +213,7 @@
 
     {#if activeBlock}
       <div class="builder-editor">
-        <div class="editor-card">
-          <SparkCard>
+        <SparkCard class="editor-card">
           <div class="editor-head">
             <div>
               <span class="spark-eyebrow">{activeBlock.page}</span>
@@ -272,11 +271,9 @@
               </article>
             {/each}
           </div>
-          </SparkCard>
-        </div>
+        </SparkCard>
 
-        <div class="preview-card">
-          <SparkCard>
+        <SparkCard class="preview-card">
           <span class="spark-eyebrow">Preview</span>
           <div class="public-preview">
             {#if isSlotVisible(activeBlock, 'eyebrow')}
@@ -302,8 +299,7 @@
               <em>{slotText(activeBlock, 'note')}</em>
             {/if}
           </div>
-          </SparkCard>
-        </div>
+        </SparkCard>
       </div>
     {/if}
   </section>
@@ -384,8 +380,8 @@
 
   .content-builder-hero aside,
   .builder-sidebar,
-  :global(.editor-card),
-  :global(.preview-card) {
+  .editor-card,
+  .preview-card {
     border: 1px solid var(--spark-line);
     border-radius: 24px;
     background: rgba(255, 255, 255, 0.55);
@@ -393,8 +389,8 @@
 
   :global([data-theme='dark']) .content-builder-hero aside,
   :global([data-theme='dark']) .builder-sidebar,
-  :global([data-theme='dark'] .editor-card),
-  :global([data-theme='dark'] .preview-card) {
+  :global([data-theme='dark']) .editor-card,
+  :global([data-theme='dark']) .preview-card {
     background: rgba(255, 255, 255, 0.045);
   }
 
@@ -463,8 +459,8 @@
     background: rgba(31, 117, 255, 0.1);
   }
 
-  :global(.editor-card),
-  :global(.preview-card) {
+  .editor-card,
+  .preview-card {
     padding: 16px;
   }
 

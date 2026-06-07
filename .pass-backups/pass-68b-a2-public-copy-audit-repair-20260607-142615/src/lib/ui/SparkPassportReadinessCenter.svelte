@@ -199,10 +199,10 @@
 
   <section class="passport-proof-family-card" aria-labelledby="passport-proof-family-title">
     <div class="passport-section-head">
-      <span class="spark-eyebrow">Kumpulan bukti Spark</span>
+      <span class="spark-eyebrow">Keluarga proof Spark</span>
       <h2 id="passport-proof-family-title">Passport dirangkum dari beberapa bukti, bukan satu klaim.</h2>
       <p>
-        Kesiapan adalah hasil akhir. Di bawahnya ada bukti belajar, praktik aman, partisipasi, eksplorasi, dan kontribusi yang akan dirangkum saat akun tersinkron penuh.
+        Proof-of-Readiness adalah hasil akhir. Di bawahnya ada bukti belajar, praktik, safety, partisipasi, eksplorasi, dan kontribusi yang akan naik menjadi signed event saat backend aktif.
       </p>
     </div>
 
@@ -227,10 +227,10 @@
 
   <section class="passport-proof-card" id="passport-proof">
     <div class="passport-section-head">
-      <span class="spark-eyebrow">Dasar bukti</span>
+      <span class="spark-eyebrow">Proof foundation</span>
       <h2>Bukti tidak berasal dari klaim manual user.</h2>
       <p>
-        Spark menyusun bukti dari hasil ujian Core dan Lab. Versi produksi akan merangkum catatan belajar, menyimpan bukti dengan aman, lalu menautkan status Passport ke Starknet saat waktunya siap.
+        Spark menyusun bukti dari hasil ujian Core dan Lab. Versi produksi akan menandatangani event belajar di backend, membuat evidence root, lalu meng-anchor status Passport ke Starknet Mainnet.
       </p>
     </div>
 
@@ -244,7 +244,7 @@
         <strong>{proofPreview.targetChain}</strong>
       </div>
       <div>
-        <small>Bukti tersimpan</small>
+        <small>Evidence root</small>
         <strong>{proofPreview.evidenceRoot}</strong>
       </div>
       <div>
@@ -277,13 +277,13 @@
   <section class="passport-roadmap-grid">
     <article>
       <span><SparkIcon name="checklist" size={20} /></span>
-      <strong>Jejak kesiapan belajar</strong>
-      <p>Catatan ujian, latihan, dan partisipasi dibuat otomatis oleh Spark, jadi pengguna tidak perlu mengunggah bukti manual.</p>
+      <strong>Readiness event ledger</strong>
+      <p>Catatan ujian, latihan, dan partisipasi ditandatangani oleh sistem Spark, bukan diunggah manual oleh user.</p>
     </article>
     <article>
       <span><SparkIcon name="network" size={20} /></span>
-      <strong>Catatan Starknet</strong>
-      <p>Ringkasan bukti dan status Passport disiapkan agar bisa dicatat ke Starknet. Sepolia untuk uji, mainnet sebagai target akhir.</p>
+      <strong>Starknet anchor</strong>
+      <p>Evidence root dan status Passport diarahkan ke kontrak registry Starknet. Sepolia untuk uji, mainnet sebagai target akhir.</p>
     </article>
     <article>
       <span><SparkIcon name="badge" size={20} /></span>
@@ -295,9 +295,9 @@
   <section class="passport-privacy-card">
     <span><SparkIcon name="shield" size={22} /></span>
     <div>
-      <h2>Bukti kuat, data pribadi tetap dibatasi.</h2>
+      <h2>Proof kuat, data pribadi tetap dibatasi.</h2>
       <p>
-        Passport membuktikan kesiapan belajar dan praktik. Jawaban mentah, catatan pribadi, dan identitas sensitif tidak dibagikan ke jaringan publik. Verifikasi identitas lanjutan tetap menjadi tahap masa depan.
+        Passport membuktikan kesiapan belajar dan praktik. Jawaban mentah, catatan pribadi, dan identitas sensitif tidak ditaruh di chain. KYC nyata tetap menjadi tier masa depan.
       </p>
       <SparkButton href="/terms" variant="secondary">Baca ketentuan</SparkButton>
     </div>
