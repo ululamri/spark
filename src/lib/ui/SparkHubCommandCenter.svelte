@@ -20,11 +20,11 @@
   <div>
     <span class="spark-eyebrow">Spark Hub</span>
     <h1>Gateway eksplorasi setelah pengguna punya arah.</h1>
-    <p>Hub bukan daftar link mentah. Hub adalah gateway berlapis untuk resource, aplikasi, tools, komunitas, dan misi yang diberi label readiness.</p>
+    <p>Hub membantu kamu menemukan resource yang tepat sesuai kesiapanmu. Hub adalah gateway berlapis untuk resource, aplikasi, tools, komunitas, dan misi yang diberi label readiness.</p>
 
     <div class="hub-command-actions">
       <SparkButton href={access.href}>{access.cta}</SparkButton>
-      <SparkButton href="/profile" variant="secondary">Cek Passport</SparkButton>
+      <SparkButton href="/profile" variant="secondary">Lihat langkah agar siap</SparkButton>
     </div>
   </div>
 

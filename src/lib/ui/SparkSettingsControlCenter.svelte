@@ -134,7 +134,7 @@
   <SparkCard class="settings-simple-card settings-link-card pass40b-settings-card">
     <div class="settings-section-head pass40b-section-head">
       <span class="spark-eyebrow">Akses cepat</span>
-      <h2>Lanjut dari sini.</h2>
+      <h2>Lanjutkan dari sini.</h2>
     </div>
 
     <div class="settings-link-list">

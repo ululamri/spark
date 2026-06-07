@@ -78,7 +78,7 @@
   <SparkCard class="mission-card primary">
     <div>
       <span class="spark-eyebrow">Langkah terbaik sekarang</span>
-      <h2>{getCompletedLessonCount() === 0 ? 'Mulai dari Core, bukan langsung Hub.' : learningState.completedLabIds.length === 0 ? 'Ubah pemahaman menjadi praktik.' : 'Cek Passport dan lanjut ke Hub.'}</h2>
+      <h2>{getCompletedLessonCount() === 0 ? 'Mulai dari Core, bukan langsung Hub.' : learningState.completedLabIds.length === 0 ? 'Ubah pemahaman menjadi praktik.' : 'Lihat langkah agar siap dan lanjut ke Hub.'}</h2>
       <p>
         {getCompletedLessonCount() === 0
           ? 'Pengguna pemula butuh fondasi dulu agar tidak bingung dengan wallet, testnet, atau Cairo.'

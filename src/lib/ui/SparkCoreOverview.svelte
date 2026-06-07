@@ -38,7 +38,7 @@
   <SparkCard class="core-continue-card">
     <div class="core-continue-main">
       <span class="spark-eyebrow">Continue learning</span>
-      <h2>Mulai dari fondasi, naik bertahap ke Starknet.</h2>
+      <h2>Langkah berikutnya: mulai Core Beginner, naik bertahap ke Starknet.</h2>
       <p>
         Spark menjaga jalur tetap sederhana: pahami konsep, jawab checkpoint, praktik aman,
         lalu kumpulkan sinyal readiness di Passport.

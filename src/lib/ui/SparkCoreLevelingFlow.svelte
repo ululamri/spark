@@ -69,8 +69,8 @@
         Core sekarang dibagi menjadi Beginner, Intermediate, dan Advanced. Setiap level punya materi utama dan ujian akhir agar Passport nanti punya dasar kesiapan yang lebih kuat.
       </p>
       <div class="leveling-actions">
-        <SparkButton href={`/lesson/${nextLessonSlug}`}>Lanjutkan belajar</SparkButton>
-        <a href="#core-level-exam">Buka ujian level</a>
+        <SparkButton href={`/lesson/${nextLessonSlug}`}>Mulai Core Beginner</SparkButton>
+        <a href="#core-level-exam">Kerjakan ujian saat siap</a>
       </div>
     </div>
 

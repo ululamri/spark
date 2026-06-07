@@ -36,6 +36,6 @@
 
   <div class="spark-hero-actions">
     <SparkButton href="/core">Lanjut Core</SparkButton>
-    <SparkButton href="/profile" variant="secondary">Lihat Passport</SparkButton>
+    <SparkButton href="/profile" variant="secondary">Lihat Passport Saya</SparkButton>
   </div>
 </SparkCard>

@@ -30,7 +30,7 @@
     if (learningState.completedLabIds.length === 0) {
       return {
         href: '/lab',
-        label: 'Lanjut Practice Lab',
+        label: 'Lanjut Praktik di Lab',
         copy: 'Ubah pemahaman menjadi praktik aman dan proof-of-practice.',
         icon: 'flask-conical',
         tone: 'purple'
@@ -79,5 +79,5 @@
     </div>
   </div>
 
-  <SparkButton href={nextAction.href}>Lanjut</SparkButton>
+  <SparkButton href={nextAction.href}>Lanjutkan</SparkButton>
 </SparkCard>

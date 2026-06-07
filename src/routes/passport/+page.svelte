@@ -12,7 +12,7 @@
   />
 </svelte:head>
 
-<SparkProtectedRoute title="Masuk untuk membuka Passport" copy="Passport menampilkan bukti perjalanan belajar dan latihanmu di Spark.">
+<SparkProtectedRoute title="Masuk untuk melihat Passport" copy="Passport menampilkan bukti perjalanan belajar dan latihanmu di Spark.">
   <SparkPassportReadinessCenter />
   <SparkPassportBackendPanel />
 </SparkProtectedRoute>

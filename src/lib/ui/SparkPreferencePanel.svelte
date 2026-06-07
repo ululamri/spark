@@ -20,7 +20,7 @@
     window.localStorage.removeItem('karyra-spark-gateway-state-v1');
 
     pushToast({
-      title: 'Data lokal direset',
+      title: 'Catatan perangkat direset',
       copy: 'Halaman akan dimuat ulang agar state kembali bersih.',
       tone: 'warning'
     });
@@ -54,7 +54,7 @@
   </section>
 
   <section class="preference-card danger">
-    <span class="spark-eyebrow">Data lokal</span>
+    <span class="spark-eyebrow">Catatan perangkat</span>
     <h2>Reset perangkat ini.</h2>
     <p>Untuk preview ulang dari awal, silakan menghapus progress lokal di browser/perangkat ini.</p>
     <SparkButton variant="secondary" onclick={resetLocalData}>Reset data lokal</SparkButton>

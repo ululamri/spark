@@ -98,7 +98,7 @@
 
       <div class="core-hero-actions">
         <SparkButton href={`/lesson/${nextLesson.slug}`}>Lanjut: {nextLesson.title}</SparkButton>
-        <SparkButton href="/community?tab=diskusi" variant="secondary">Tanya di Diskusi</SparkButton>
+        <SparkButton href="/community?tab=diskusi" variant="secondary">Tanya ke Komunitas</SparkButton>
       </div>
     </div>
 

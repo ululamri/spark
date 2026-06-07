@@ -15,7 +15,7 @@
     <h1>Belajar Starknet dengan jalur yang lebih manusiawi.</h1>
     <p>Spark menghubungkan Learn, Lab, Community, Passport, dan Hub dalam satu pengalaman belajar yang ramah untuk pemula.</p>
     <div class="spark-info-actions">
-      <SparkButton href="/core">Mulai belajar</SparkButton>
+      <SparkButton href="/core">Mulai dari Lesson Pertama</SparkButton>
       <SparkButton href="/docs" variant="secondary">Baca docs</SparkButton>
     </div>
   </div>

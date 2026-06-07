@@ -108,7 +108,7 @@
         <strong>Lokal</strong>
       </div>
       <div>
-        <span>Hub</span>
+        <span>Hub Spark</span>
         <strong>{hubAccess.unlocked ? 'Terbuka' : 'Bertahap'}</strong>
       </div>
     </div>

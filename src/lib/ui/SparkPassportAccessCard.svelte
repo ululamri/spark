@@ -19,7 +19,7 @@
     },
     {
       icon: 'flask-conical',
-      title: 'Practice Lab',
+      title: 'Praktik di Lab',
       value: `${learningState.completedLabIds.length} lab`,
       copy: 'Simulasi dan readiness sebelum aksi teknis.'
     },

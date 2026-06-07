@@ -49,7 +49,7 @@ export const sparkMessages: SparkMessage[] = [
     preview: 'Bangun fondasi sebelum masuk Lab, Passport, dan Hub.',
     body:
       'Mulai dari dasar blockchain, lalu lanjut ke keamanan dompet, Starknet, latihan aman, dan Passport. Tidak perlu terburu-buru. Spark membantu kamu membaca langkah berikutnya tanpa harus menebak halaman mana yang harus dibuka.',
-    time: 'Hari ini',
+    time: 'Ringkasan hari ini',
     href: '/core',
     cta: 'Mulai Core Beginner',
     tone: 'blue',
@@ -94,12 +94,12 @@ export const sparkMessages: SparkMessage[] = [
     id: 'hub-gateway-warning',
     kind: 'hub',
     title: 'Hub untuk eksplorasi lanjutan',
-    preview: 'Buka Hub setelah dasar belajar dan keamanan mulai terbentuk.',
+    preview: 'Jelajahi Resource Saat Siap setelah dasar belajar dan keamanan mulai terbentuk.',
     body:
       'Hub berisi resource, aplikasi, tools, komunitas, dan jalur lanjutan. Untuk pemula, Hub paling aman dibuka setelah memahami Core dan mencoba Lab. Spark tetap memberi konteks agar eksplorasi tidak terasa lepas arah.',
     time: 'Hub',
     href: '/hub',
-    cta: 'Jelajahi Hub',
+    cta: 'Jelajahi Resource Saat Siap',
     tone: 'green',
     icon: 'compass',
     priority: 'low',
@@ -181,13 +181,13 @@ export function createSparkNotifications(input: {
     {
       id: hubUnlocked ? 'priority-hub-ready' : 'priority-next-learning',
       kind: 'Penting',
-      title: hubUnlocked ? 'Hub mulai cocok untukmu' : 'Lanjutkan belajar',
+      title: hubUnlocked ? 'Hub mulai cocok untukmu' : 'Mulai Core Beginner',
       copy: hubUnlocked
         ? 'Fondasi belajarmu cukup untuk mulai melihat resource Starknet di Hub.'
         : `${input.completedLessons} pelajaran selesai. Ambil satu langkah kecil lagi hari ini.`,
       href: hubUnlocked ? '/hub' : '/dashboard',
       tone: hubUnlocked ? 'green' : 'blue',
-      status: hubUnlocked ? 'Jelajahi Hub' : 'Lanjutkan',
+      status: hubUnlocked ? 'Jelajahi Resource Saat Siap' : 'Lanjutkan',
       priority: 'high',
       icon: hubUnlocked ? 'compass' : 'sparkles'
     },
@@ -205,7 +205,7 @@ export function createSparkNotifications(input: {
     {
       id: 'practice-lab-status',
       kind: 'Lab',
-      title: input.completedLabs > 0 ? 'Latihan mulai berjalan' : 'Coba Lab saat siap',
+      title: input.completedLabs > 0 ? 'Latihan mulai berjalan' : 'Mulai Simulasi Aman saat siap',
       copy: input.completedLabs > 0
         ? `${input.completedLabs} lab selesai. Latihan aman membantu membentuk Passport.`
         : 'Setelah dasar belajar cukup, buka Lab untuk latihan dompet dan transaksi edukatif.',
@@ -237,7 +237,7 @@ export function createSparkNotifications(input: {
         : 'Masuk agar perjalanan belajarmu mudah dilanjutkan.',
       href: input.userName ? '/profile' : '/login',
       tone: 'blue',
-      status: input.userName ? 'Lihat Passport' : 'Masuk untuk Lanjutkan',
+      status: input.userName ? 'Lihat Passport Saya' : 'Masuk untuk Lanjutkan',
       priority: 'low',
       icon: input.userName ? 'user-round' : 'login'
     }

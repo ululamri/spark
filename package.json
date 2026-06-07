@@ -12,7 +12,8 @@
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
     "audit:public-copy": "node src/scripts/audit-public-copy-contract.mjs",
-    "audit:pass68b": "node src/scripts/audit-pass68b-public-microcopy.mjs"
+    "audit:pass68b": "node src/scripts/audit-pass68b-public-microcopy.mjs",
+    "audit:pass68c": "node src/scripts/audit-pass68c-main-journey-copy.mjs"
   },
   "dependencies": {
     "@lucide/svelte": "latest",

@@ -93,10 +93,10 @@
           ? 'Level ini sudah lulus dan siap menjadi bukti kesiapan.'
           : result
             ? 'Belum lulus. Silakan baca ulang materi atau ulangi latihan sebelum mencoba lagi.'
-            : 'Jawab semua pertanyaan untuk melihat hasil ujian.'}
+            : 'Pastikan semua soal terjawab, lalu kirim untuk melihat hasil.'}
     </p>
     <SparkButton onclick={submit} disabled={!canSubmit || result?.passed || locked}>
-      {result?.passed ? 'Sudah lulus' : result ? 'Coba lagi nanti' : 'Kirim jawaban'}
+      {result?.passed ? 'Sudah lulus' : result ? 'Coba lagi nanti' : 'Kirim & Lihat Hasil'}
     </SparkButton>
   </div>
 </article>

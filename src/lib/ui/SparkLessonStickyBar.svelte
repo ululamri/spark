@@ -44,7 +44,7 @@
   <div class="sticky-lesson-actions">
     {#if completed}
       {#if nextSlug}
-        <SparkButton href={`/lesson/${nextSlug}`}>Lanjut</SparkButton>
+        <SparkButton href={`/lesson/${nextSlug}`}>Lanjutkan</SparkButton>
       {:else}
         <SparkButton href="/lab">Buka Lab</SparkButton>
       {/if}

@@ -53,7 +53,7 @@
 
       <div class="hub-actions">
         <SparkButton href={locked ? '/profile' : resource.url} variant={locked ? 'secondary' : 'primary'}>
-          {locked ? 'Cek Passport' : 'Buka Resource'}
+          {locked ? 'Lihat langkah agar siap' : 'Buka Resource'}
         </SparkButton>
         <button class:active={saved} class="save-resource" type="button" onclick={() => toggleHubResource(resource.id)}>
           {saved ? '✓ Tersimpan' : '+ Simpan'}

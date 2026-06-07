@@ -97,7 +97,7 @@
           <button type="button" onclick={() => selectTab('workshop')}>
             <span><SparkIcon name="calendar" size={17} /></span>
             <div>
-              <strong>Lihat Workshop</strong>
+              <strong>Jelajahi Workshop Tersedia</strong>
               <small>Aktivitas, kapasitas, dan fasilitator.</small>
             </div>
             <SparkIcon name="chevron-right" size={14} />
@@ -106,7 +106,7 @@
           <button type="button" onclick={() => selectTab('cohort')}>
             <span><SparkIcon name="users" size={17} /></span>
             <div>
-              <strong>Lihat Cohort</strong>
+              <strong>Temukan Cohort Belajar</strong>
               <small>Kelompok belajar dan impact lokal.</small>
             </div>
             <SparkIcon name="chevron-right" size={14} />
@@ -115,7 +115,7 @@
           <button type="button" onclick={() => selectTab('diskusi')}>
             <span><SparkIcon name="messages" size={17} /></span>
             <div>
-              <strong>Buka Diskusi</strong>
+              <strong>Masuk ke Ruang Tanya</strong>
               <small>Tanya, koordinasi workshop, dan berbagi progress.</small>
             </div>
             <SparkIcon name="chevron-right" size={14} />

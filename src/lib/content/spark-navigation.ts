@@ -61,7 +61,7 @@ export const sparkNavItems: SparkNavItem[] = [
     href: '/passport',
     label: 'Kesiapan',
     shortLabel: 'Passport',
-    copy: 'Lihat Passport dan bukti belajarmu',
+    copy: 'Lihat Passport Saya dan bukti belajarmu',
     icon: 'passport',
     primary: true
   },

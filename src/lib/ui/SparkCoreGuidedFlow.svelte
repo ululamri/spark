@@ -48,14 +48,14 @@
         <span>{completedCount}/{totalCount} materi selesai</span>
       </div>
 
-      <h1 id="core-guided-title">Lanjutkan belajar dari langkah yang paling aman.</h1>
+      <h1 id="core-guided-title">Mulai Core Beginner dari langkah yang paling aman.</h1>
       <p>
         Core membantu kamu memahami blockchain, crypto, Web3, keamanan wallet, dan Starknet secara bertahap.
         Fokusnya sederhana: pahami fondasi dulu, lalu praktik saat sudah siap.
       </p>
 
       <div class="core-guided-actions">
-        <SparkButton href={`/lesson/${nextLesson.slug}`}>Lanjutkan belajar</SparkButton>
+        <SparkButton href={`/lesson/${nextLesson.slug}`}>Mulai Core Beginner</SparkButton>
         <a class="core-link-action" href="#core-path">Lihat jalur</a>
       </div>
     </div>
@@ -179,7 +179,7 @@
         <strong id="core-discussion-title">Masih ada yang ganjal?</strong>
         <p>Silakan bawa pertanyaan ke Diskusi. Cocok untuk minta contoh lain, bertanya soal istilah, atau membahas materi bersama komunitas.</p>
       </div>
-      <SparkButton href="/community?tab=diskusi" variant="secondary">Tanya di Diskusi</SparkButton>
+      <SparkButton href="/community?tab=diskusi" variant="secondary">Tanya ke Komunitas</SparkButton>
     </div>
   </section>
 

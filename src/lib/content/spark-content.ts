@@ -173,7 +173,7 @@ export const sparkModules: SparkModule[] = [
     subtitle: 'Wajib sebelum praktik',
     description: 'Seed phrase, private key, signature, scam awareness, dan kebiasaan aman sebelum menyentuh testnet.',
     tone: 'green',
-    unlockHint: 'Wajib sebelum Practice Lab.',
+    unlockHint: 'Wajib sebelum Praktik di Lab.',
     lessons: [
       {
         id: 'wallet-is-not-bank',

@@ -13,13 +13,13 @@
 
 <section class="lab-command-center">
   <div>
-    <span class="spark-eyebrow">Practice Lab</span>
+    <span class="spark-eyebrow">Praktik di Lab</span>
     <h1>Ruang praktik aman sebelum masuk teknis sungguhan.</h1>
     <p>Lab mengubah pemahaman menjadi simulasi, readiness, proof-of-practice, dan jembatan menuju Starknet tanpa memaksa pemula mengambil risiko terlalu cepat.</p>
 
     <div class="lab-command-actions">
       <SparkButton href="#lab-modules">Mulai Lab</SparkButton>
-      <SparkButton href="/profile" variant="secondary">Lihat Passport</SparkButton>
+      <SparkButton href="/profile" variant="secondary">Lihat Passport Saya</SparkButton>
     </div>
   </div>
 

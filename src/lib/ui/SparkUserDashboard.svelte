@@ -36,7 +36,7 @@
       return {
         href: '/core',
         title: 'Mulai lesson pertama',
-        copy: 'Bangun fondasi blockchain sebelum masuk Practice Lab.',
+        copy: 'Bangun fondasi blockchain sebelum masuk Praktik di Lab.',
         cta: 'Mulai Core',
         icon: 'book-open'
       };
@@ -45,7 +45,7 @@
     if (learningState.completedLabIds.length === 0) {
       return {
         href: '/lab',
-        title: 'Buka Practice Lab',
+        title: 'Buka Praktik di Lab',
         copy: 'Ubah pemahaman menjadi simulasi dan proof-of-practice.',
         cta: 'Buka Lab',
         icon: 'flask-conical'
@@ -65,18 +65,18 @@
     if (readiness < 75) {
       return {
         href: '/profile',
-        title: 'Cek Passport',
+        title: 'Lihat langkah agar siap',
         copy: 'Lihat detail readiness dan sinyal belajar di halaman Profile & Passport.',
-        cta: 'Lihat Passport',
+        cta: 'Lihat Passport Saya',
         icon: 'badge'
       };
     }
 
     return {
       href: '/hub',
-      title: 'Jelajahi Hub',
+      title: 'Jelajahi Resource Saat Siap',
       copy: 'Readiness cukup untuk masuk gateway resource dan ekosistem.',
-      cta: 'Buka Hub',
+      cta: 'Jelajahi Resource Saat Siap',
       icon: 'compass'
     };
   });
@@ -91,7 +91,7 @@
       <p>{userHandle} · {modeLabel} · ini ruang kerja harian untuk lanjut belajar dan praktik.</p>
       <div class="dashboard-badges">
         <SparkTrustBadge label="Ruang kerja harian" tone="beta" />
-        <SparkTrustBadge label="Data lokal" tone="local" />
+        <SparkTrustBadge label="Catatan perangkat" tone="local" />
         <SparkTrustBadge label={hubAccess.unlocked ? 'Hub siap' : 'Hub bertahap'} tone={hubAccess.unlocked ? 'safe' : 'target'} />
       </div>
     </div>
@@ -155,7 +155,7 @@
       <a href="/lab">
         <span><SparkIcon name="flask-conical" size={16} /></span>
         <div>
-          <strong>Practice Lab</strong>
+          <strong>Praktik di Lab</strong>
           <small>{learningState.completedLabIds.length} lab selesai</small>
         </div>
         <em>›</em>

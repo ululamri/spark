@@ -8,7 +8,7 @@
   <title>Dashboard — Karyra Spark</title>
 </svelte:head>
 
-<SparkProtectedRoute title="Masuk untuk membuka Dashboard" copy="Dashboard berisi fokus belajar, progress, dan langkah berikutnya yang tersimpan untuk akun kamu.">
+<SparkProtectedRoute title="Masuk untuk melihat progres" copy="Dashboard berisi fokus belajar, progress, dan langkah berikutnya yang tersimpan untuk akun kamu.">
   <SparkDashboardOperatingBoard />
 
   <section class="spark-section compact-flow-section">

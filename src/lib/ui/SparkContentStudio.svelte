@@ -209,7 +209,7 @@
                 <option value="keamanan">Keamanan</option>
                 <option value="workshop">Workshop</option>
                 <option value="passport">Passport</option>
-                <option value="hub">Hub</option>
+                <option value="hub">Hub Spark</option>
                 <option value="akun">Akun</option>
               </select>
             </label>
@@ -247,7 +247,7 @@
           <div class="studio-form-grid">
             <label>Kategori
               <select value={activeResource.category} onchange={(event) => updateHubResource(activeResource.id, { category: inputValue(event) as ManagedHubResource['category'] })}>
-                <option value="mulai">Mulai</option>
+                <option value="mulai">Mulai sekarang</option>
                 <option value="wallet">Wallet</option>
                 <option value="cairo">Cairo</option>
                 <option value="tool">Tool</option>

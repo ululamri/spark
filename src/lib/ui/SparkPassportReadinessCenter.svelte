@@ -146,7 +146,7 @@
 
       <div class="passport-actions">
         <SparkButton href={nextStep.href}>{nextStep.cta}</SparkButton>
-        <SparkButton href="#passport-proof" variant="secondary">Lihat bukti</SparkButton>
+        <SparkButton href="#passport-proof" variant="secondary">Lihat rincian bukti belajar</SparkButton>
       </div>
     </div>
 
@@ -166,7 +166,7 @@
       <SparkPassportGauge value={readiness} label="Passport" copy="Readiness" />
       <div>
         <span class="spark-eyebrow">Status saat ini</span>
-        <strong>{eligibility.eligible ? `${eligibility.levelLabel} siap diterbitkan` : 'Belum memenuhi syarat'}</strong>
+        <strong>{eligibility.eligible ? `${eligibility.levelLabel} siap diterbitkan` : 'Masih dalam perjalanan'}</strong>
         <p>{nextStep.copy}</p>
       </div>
     </aside>

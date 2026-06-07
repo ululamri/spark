@@ -7,6 +7,6 @@
   <title>Pesan — Karyra Spark</title>
 </svelte:head>
 
-<SparkProtectedRoute title="Masuk untuk membuka Pesan" copy="Pesan dan arahan pribadi hanya ditampilkan setelah kamu masuk.">
+<SparkProtectedRoute title="Masuk untuk membaca pesan belajar" copy="Pesan dan arahan pribadi hanya ditampilkan setelah kamu masuk.">
   <SparkInboxShell />
 </SparkProtectedRoute>

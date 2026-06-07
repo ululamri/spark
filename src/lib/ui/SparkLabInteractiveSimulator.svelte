@@ -27,7 +27,7 @@
 
   function finishSimulation() {
     completeLab('safe-wallet-check');
-    pushToast({ title: 'Simulasi selesai', copy: 'Wallet safety checklist masuk sebagai sinyal Practice Lab.', tone: 'success' });
+    pushToast({ title: 'Simulasi selesai', copy: 'Wallet safety checklist masuk sebagai sinyal Praktik di Lab.', tone: 'success' });
   }
 </script>
 

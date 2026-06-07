@@ -130,7 +130,7 @@
       <p>Profil berisi identitas akun. Passport Spark dipisahkan sebagai bukti kesiapan belajar dan latihan.</p>
       <div class="profile-actions">
         <SparkButton onclick={openEditor}>Edit profil</SparkButton>
-        <SparkButton href="/passport" variant="secondary">Buka Passport</SparkButton>
+        <SparkButton href="/passport" variant="secondary">Lihat Passport Saya</SparkButton>
       </div>
     </div>
   </aside>
@@ -211,7 +211,7 @@
 
     <div class="profile-edit-actions">
       <SparkButton variant="ghost" onclick={() => (editOpen = false)}>Batal</SparkButton>
-      <SparkButton onclick={() => void saveEditor()} loading={profileSaving} disabled={profileSaving}>Simpan</SparkButton>
+      <SparkButton onclick={() => void saveEditor()} loading={profileSaving} disabled={profileSaving}>Simpan perubahan</SparkButton>
     </div>
   </div>
 {/if}

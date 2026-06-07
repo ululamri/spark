@@ -74,7 +74,7 @@
   );
 
   const nextHref = $derived(readiness >= 75 ? '/hub' : completedLabs === 0 ? '/lab' : `/lesson/${getRecommendedLessonSlug()}`);
-  const nextLabel = $derived(readiness >= 75 ? 'Buka Hub' : completedLabs === 0 ? 'Coba Lab' : 'Lanjut belajar');
+  const nextLabel = $derived(readiness >= 75 ? 'Jelajahi Resource Saat Siap' : completedLabs === 0 ? 'Mulai Simulasi Aman' : 'Lanjut belajar');
   const nextCopy = $derived(readiness >= 75 ? 'Jelajahi resource Starknet yang sudah diberi label keamanan.' : completedLabs === 0 ? 'Latihan singkat membantu kamu memahami praktik tanpa risiko.' : 'Satu pelajaran kecil cukup untuk hari ini.');
 
   const activities = $derived(createProfileActivities({ completedLessons, completedLabs, workshops: registeredWorkshops, resources: savedResources, bookmarks: learningState.bookmarkSlugs.length }));
@@ -187,7 +187,7 @@
     <h2>{nextLabel}</h2>
     <p>{nextCopy}</p>
   </div>
-  <SparkButton href={nextHref}>Mulai</SparkButton>
+  <SparkButton href={nextHref}>Mulai sekarang</SparkButton>
 </section>
 
 <section class="my-space-tabs">
@@ -323,7 +323,7 @@
         <label class="my-form-wide"><span>Bio singkat</span><textarea bind:value={editBio} maxlength="160" rows="3" placeholder="Ceritakan perjalanan belajar kamu."></textarea></label>
       </div>
       <div class="my-editor-actions">
-        <SparkButton onclick={saveEditor}>Simpan</SparkButton>
+        <SparkButton onclick={saveEditor}>Simpan perubahan</SparkButton>
         <SparkButton variant="secondary" onclick={() => (editOpen = false)}>Batal</SparkButton>
       </div>
     </SparkCard>

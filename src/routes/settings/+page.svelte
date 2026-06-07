@@ -7,6 +7,6 @@
   <title>Pengaturan — Karyra Spark</title>
 </svelte:head>
 
-<SparkProtectedRoute title="Masuk untuk membuka Pengaturan" copy="Pengaturan menyimpan preferensi tampilan, cara belajar, dan akses akun kamu.">
+<SparkProtectedRoute title="Masuk untuk membuka pengaturan akun" copy="Pengaturan menyimpan preferensi tampilan, cara belajar, dan akses akun kamu.">
   <SparkSettingsControlCenter />
 </SparkProtectedRoute>

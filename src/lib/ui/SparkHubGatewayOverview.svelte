@@ -21,7 +21,7 @@
         <p>{access.copy}</p>
         <div class="spark-hero-actions">
           <SparkButton href={access.href}>{access.cta}</SparkButton>
-          <SparkButton href="/profile" variant="secondary">Lihat Passport</SparkButton>
+          <SparkButton href="/profile" variant="secondary">Lihat Passport Saya</SparkButton>
         </div>
       </div>
     </div>

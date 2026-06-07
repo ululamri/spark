@@ -65,8 +65,8 @@
         Lab bukan playground teknis mentah. Lab adalah ruang praktik bertingkat: Beginner untuk kebiasaan aman, Intermediate untuk wallet dan transaksi, Advanced untuk kesiapan Starknet.
       </p>
       <div class="leveling-actions">
-        <a href="#lab-level-exam">Buka ujian Lab</a>
-        <SparkButton href="/community?tab=diskusi" variant="secondary">Tanya di Diskusi</SparkButton>
+        <a href="#lab-level-exam">Kerjakan ujian Lab</a>
+        <SparkButton href="/community?tab=diskusi" variant="secondary">Tanya ke Komunitas</SparkButton>
       </div>
     </div>
 

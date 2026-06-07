@@ -41,7 +41,7 @@
   const title = $derived(mode === 'login' ? 'Masuk ke Spark' : 'Buat ruang belajar');
   const copy = $derived(
     mode === 'login'
-      ? 'Lanjutkan belajar, buka Passport, dan ikuti progress dari satu tempat.'
+      ? 'Masuk untuk melanjutkan materi, melihat progres, dan membuka langkah belajar berikutnya.'
       : 'Daftar untuk menyimpan progress, Passport, dan pilihan belajar.'
   );
 
@@ -110,7 +110,7 @@
       <span><SparkIcon name={mode === 'login' ? 'login' : 'key'} size={19} /></span>
       <div>
         <h2>{mode === 'login' ? 'Masuk' : 'Daftar'}</h2>
-        <p>{mode === 'login' ? 'Gunakan email dan kata sandi.' : 'Buat akses belajar baru.'}</p>
+        <p>{mode === 'login' ? 'Masuk untuk melanjutkan materi, melihat progres, dan membuka langkah belajar berikutnya.' : 'Buat akun gratis agar progresmu tersimpan dan kamu langsung tahu langkah belajar berikutnya.'}</p>
       </div>
     </div>
 
@@ -163,7 +163,7 @@
     <div class="auth-actions pass35-auth-actions">
       <SparkButton onclick={submitForm} loading={submitting} disabled={submitting}>{submitting ? 'Memproses...' : mode === 'login' ? 'Masuk untuk Lanjutkan' : 'Buat Akun & Mulai Belajar'}</SparkButton>
       <SparkButton href={mode === 'login' ? `/register?next=${encodeURIComponent(nextHref)}` : `/login?next=${encodeURIComponent(nextHref)}`} variant="ghost" disabled={submitting}>
-        {mode === 'login' ? 'Belum punya akun? Buat gratis' : 'Sudah punya akun? Masuk'}
+        {mode === 'login' ? 'Belum punya akun? Buat gratis' : 'Saya sudah punya akun Masuk'}
       </SparkButton>
     </div>
 

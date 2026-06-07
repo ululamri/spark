@@ -19,10 +19,10 @@
   const progress = $derived(getLearningProgressPercent());
 
   const daily = $derived.by(() => {
-    if (getCompletedLessonCount() === 0) return { title: 'Mulai dari fondasi', copy: 'Ambil satu lesson pendek sebelum masuk Lab atau Hub.', href: '/core', cta: 'Buka Core', icon: 'book-open' };
+    if (getCompletedLessonCount() === 0) return { title: 'Langkah berikutnya: mulai Core Beginner', copy: 'Mulai satu lesson pendek agar tahu langkah berikutnya.', href: '/core', cta: 'Mulai Core Beginner', icon: 'book-open' };
     if (learningState.completedLabIds.length === 0) return { title: 'Coba latihan aman', copy: 'Ubah pemahaman menjadi praktik ringan tanpa risiko.', href: '/lab', cta: 'Buka Lab', icon: 'flask-conical' };
     if (gatewayState.registeredWorkshopIds.length === 0) return { title: 'Temukan komunitas', copy: 'Workshop dan cohort membantu belajar lebih terarah.', href: '/community', cta: 'Komunitas', icon: 'users' };
-    return { title: 'Jelajahi Hub', copy: 'Simpan resource ekosistem yang sesuai dengan kesiapanmu.', href: '/hub', cta: 'Buka Hub', icon: 'compass' };
+    return { title: 'Jelajahi Resource Saat Siap', copy: 'Simpan resource ekosistem yang sesuai dengan kesiapanmu.', href: '/hub', cta: 'Jelajahi Resource Saat Siap', icon: 'compass' };
   });
 
   const lanes = $derived([
@@ -37,7 +37,7 @@
   <div class="ops-main-card spark-dashboard-card">
     <div class="spark-dashboard-userline">
       <span>{userName.slice(0, 1)}</span>
-      <div><small>Hari ini</small><strong>{userName}</strong></div>
+      <div><small>Ringkasan hari ini</small><strong>{userName}</strong></div>
       <a href="/profile">{readiness}% Passport</a>
     </div>
 

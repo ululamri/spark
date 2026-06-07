@@ -23,7 +23,7 @@
 
 
 <section class="spark-info-grid">
-  <SparkCard><SparkIcon name="book-open" size={19} /><h2>Mulai belajar</h2><p>Buka Learn, pilih pelajaran dasar, lalu selesaikan satu langkah kecil sebelum lanjut ke Lab.</p><a href="/core">Buka Learn</a></SparkCard>
+  <SparkCard><SparkIcon name="book-open" size={19} /><h2>Mulai dari Lesson Pertama</h2><p>Buka Learn, pilih pelajaran dasar, lalu selesaikan satu langkah kecil sebelum lanjut ke Lab.</p><a href="/core">Buka Learn</a></SparkCard>
   <SparkCard><SparkIcon name="shield" size={19} /><h2>Keamanan dulu</h2><p>Spark tidak meminta seed phrase, private key, atau akses aset. Fokus awalnya adalah pemahaman dan simulasi aman.</p><a href="/faq">Baca FAQ</a></SparkCard>
   <SparkCard><SparkIcon name="messages" size={19} /><h2>Pesan & pemberitahuan</h2><p>Lonceng berisi update singkat. Inbox menyimpan pesan yang lebih lengkap untuk dibaca nanti.</p><a href="/inbox">Buka Inbox</a></SparkCard>
 </section>

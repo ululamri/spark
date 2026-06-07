@@ -33,6 +33,7 @@
   import '$lib/styles/pass-35b-foundation-ui-consolidation.css';
   import '$lib/styles/pass-35b-patch-1-surface-rhythm-repair.css';
   import '$lib/styles/pass-68a-public-trust-copy-contract.css';
+  import '$lib/styles/pass-68c-main-journey-copy-sweep.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();
