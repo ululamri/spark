@@ -11,7 +11,7 @@
   import SparkSimpleFooter from '$ui/SparkSimpleFooter.svelte';
   import { appState, markPersistenceReady } from '$lib/state/app-state.svelte';
   import { initTheme, themeState } from '$lib/state/theme-state.svelte';
-  import { betaSession, hydrateBetaSessionFromBackend, restoreBetaSession, saveBetaSession } from '$state/beta-session-state.svelte';
+  import { betaSession, restoreBetaSession, saveBetaSession } from '$state/beta-session-state.svelte';
   import { gatewayState, restoreGatewaySnapshot, saveGatewaySnapshot } from '$state/gateway-state.svelte';
   import { learningState, restoreLearningSnapshot, saveLearningSnapshot } from '$state/learning-state.svelte';
   import { messageState, restoreMessageState, saveMessageState } from '$state/message-state.svelte';
@@ -28,7 +28,6 @@
     restoreGatewaySnapshot();
     restoreMessageState();
     markPersistenceReady();
-    void hydrateBetaSessionFromBackend();
   });
 
   $effect(() => {
@@ -36,7 +35,6 @@
     betaSession.user?.id;
     betaSession.user?.name;
     betaSession.user?.handle;
-    betaSession.user?.status;
     saveBetaSession(betaSession.user);
   });
 

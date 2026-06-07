@@ -5,8 +5,7 @@
   import SparkCard from './SparkCard.svelte';
   import SparkIcon from './SparkIcon.svelte';
   import SparkTrustBadge from './SparkTrustBadge.svelte';
-  import { loginWithBackend, registerWithBackend, SparkApiError } from '$lib/api/spark-api-client';
-  import { betaSession, getModeLabel, useBackendSession, type BetaUserMode } from '$state/beta-session-state.svelte';
+  import { betaSession, getModeLabel, startLearningSession, type BetaUserMode } from '$state/beta-session-state.svelte';
   import { setExperience, setLearnerIdentity } from '$state/learning-state.svelte';
   import { pushToast } from '$state/app-state.svelte';
 
@@ -21,7 +20,6 @@
   let password = $state('');
   let selectedMode = $state<BetaUserMode>('beginner');
   let formError = $state('');
-  let submitting = $state(false);
   let redirecting = $state(false);
 
   const modeOptions: { key: BetaUserMode; label: string; copy: string }[] = [
@@ -38,7 +36,6 @@
       ? 'Lanjutkan belajar, buka Passport, dan ikuti progress dari satu tempat.'
       : 'Daftar untuk menyimpan progress, Passport, dan pilihan belajar.'
   );
-  const submitLabel = $derived(submitting ? (mode === 'login' ? 'Memeriksa...' : 'Membuat akun...') : mode === 'login' ? 'Masuk' : 'Daftar');
 
   $effect(() => {
     if (!betaSession.ready || !betaSession.user || redirecting) return;
@@ -50,19 +47,7 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
   }
 
-  function userFacingAuthError(error: unknown) {
-    if (error instanceof SparkApiError) {
-      if (error.status === 401) return 'Email atau kata sandi belum cocok.';
-      if (error.status === 409) return 'Email ini sudah terdaftar. Coba masuk.';
-      if (error.status === 400) return 'Periksa kembali email, nama, dan kata sandi.';
-    }
-
-    return 'Belum bisa terhubung ke Spark API. Coba lagi sebentar.';
-  }
-
   async function submitForm() {
-    if (submitting) return;
-
     const trimmedName = name.trim();
     const trimmedEmail = email.trim().toLowerCase();
 
@@ -78,35 +63,22 @@
       return;
     }
 
-    if (password.length < 8) {
-      formError = 'Kata sandi minimal 8 karakter.';
+    if (password.length < 6) {
+      formError = 'Kata sandi minimal 6 karakter.';
       return;
     }
 
-    submitting = true;
+    const user = startLearningSession({ name: trimmedName, email: trimmedEmail, mode: selectedMode });
+    setLearnerIdentity(user.id);
+    setExperience(user.mode);
 
-    try {
-      const response =
-        mode === 'login'
-          ? await loginWithBackend({ email: trimmedEmail, password })
-          : await registerWithBackend({ email: trimmedEmail, password, display_name: trimmedName });
+    pushToast({
+      title: mode === 'login' ? 'Masuk berhasil' : 'Ruang belajar dibuat',
+      copy: `Ritme belajar: ${getModeLabel(user.mode)}.`,
+      tone: 'success'
+    });
 
-      const user = useBackendSession(response.user, selectedMode);
-      setLearnerIdentity(user.id);
-      setExperience(user.mode);
-
-      pushToast({
-        title: mode === 'login' ? 'Masuk berhasil' : 'Ruang belajar dibuat',
-        copy: `Ritme belajar: ${getModeLabel(user.mode)}.`,
-        tone: 'success'
-      });
-
-      await goto(nextHref, { replaceState: true });
-    } catch (error) {
-      formError = userFacingAuthError(error);
-    } finally {
-      submitting = false;
-    }
+    await goto(nextHref, { replaceState: true });
   }
 </script>
 
@@ -131,18 +103,18 @@
       {#if mode === 'register'}
         <label>
           <span>Nama</span>
-          <input bind:value={name} type="text" placeholder="Nama kamu" autocomplete="name" disabled={submitting} />
+          <input bind:value={name} type="text" placeholder="Nama kamu" autocomplete="name" />
         </label>
       {/if}
 
       <label>
         <span>Email</span>
-        <input bind:value={email} type="email" placeholder="nama@email.com" autocomplete="email" disabled={submitting} />
+        <input bind:value={email} type="email" placeholder="nama@email.com" autocomplete="email" />
       </label>
 
       <label>
         <span>Kata sandi</span>
-        <input bind:value={password} type="password" placeholder="Minimal 8 karakter" autocomplete={mode === 'login' ? 'current-password' : 'new-password'} disabled={submitting} />
+        <input bind:value={password} type="password" placeholder="Minimal 6 karakter" autocomplete={mode === 'login' ? 'current-password' : 'new-password'} />
       </label>
     </div>
 
@@ -151,7 +123,7 @@
     {:else}
       <div class="pass35-mode-picker" aria-label="Pilih ritme belajar">
         {#each modeOptions as item}
-          <button type="button" class:active={selectedMode === item.key} onclick={() => (selectedMode = item.key)} disabled={submitting}>
+          <button type="button" class:active={selectedMode === item.key} onclick={() => (selectedMode = item.key)}>
             <strong>{item.label}</strong>
             <small>{item.copy}</small>
           </button>
@@ -160,13 +132,13 @@
     {/if}
 
     <div class="auth-actions pass35-auth-actions">
-      <SparkButton onclick={submitForm}>{submitLabel}</SparkButton>
+      <SparkButton onclick={submitForm}>{mode === 'login' ? 'Masuk' : 'Daftar'}</SparkButton>
       <SparkButton href={mode === 'login' ? `/register?next=${encodeURIComponent(nextHref)}` : `/login?next=${encodeURIComponent(nextHref)}`} variant="ghost">
         {mode === 'login' ? 'Buat akun' : 'Sudah punya akun?'}
       </SparkButton>
     </div>
 
-    <p class="pass35-auth-note">Akun Spark sekarang tersimpan di server staging.</p>
+    <p class="pass35-auth-note">Ritme belajar dapat diubah dari Pengaturan.</p>
   </SparkCard>
 
   <div class="auth-hero-panel pass35-auth-intro pass40b-auth-intro">

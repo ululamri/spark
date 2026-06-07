@@ -1,10 +1,3 @@
-import {
-  currentBackendUser,
-  isUnauthorized,
-  logoutFromBackend,
-  type BackendAuthUser
-} from '$lib/api/spark-api-client';
-
 export type BetaUserRole = 'learner' | 'facilitator' | 'explorer';
 export type BetaUserMode = 'beginner' | 'guided' | 'explorer';
 export type BetaUserStatus = 'local-session' | 'backend-session';
@@ -31,7 +24,6 @@ const LEGACY_STORAGE_KEYS = ['karyra-spark-beta-session-v1'];
 
 export const betaSession = $state({
   ready: false,
-  hydrating: false,
   user: null as BetaUser | null
 });
 
@@ -89,22 +81,6 @@ function safeParseSession(raw: string | null) {
   }
 }
 
-export function backendUserToBetaUser(user: BackendAuthUser, mode: BetaUserMode = betaSession.user?.mode ?? 'beginner'): BetaUser {
-  const email = normalizeEmail(user.email);
-  const name = user.display_name?.trim() || titleFromEmail(email);
-
-  return {
-    id: user.id,
-    name,
-    handle: user.handle?.trim() || normalizeHandle(email || name),
-    email,
-    role: mode === 'explorer' ? 'explorer' : 'learner',
-    mode,
-    status: 'backend-session',
-    createdAt: betaSession.user?.createdAt || new Date().toISOString()
-  };
-}
-
 export function restoreBetaSession() {
   if (typeof window === 'undefined') return;
 
@@ -114,28 +90,6 @@ export function restoreBetaSession() {
 
   betaSession.user = safeParseSession(window.localStorage.getItem(STORAGE_KEY));
   betaSession.ready = true;
-}
-
-export async function hydrateBetaSessionFromBackend() {
-  if (typeof window === 'undefined') return;
-
-  betaSession.hydrating = true;
-
-  try {
-    const response = await currentBackendUser();
-    const user = backendUserToBetaUser(response.user);
-    betaSession.user = user;
-    betaSession.ready = true;
-    saveBetaSession(user);
-  } catch (error) {
-    if (isUnauthorized(error) && betaSession.user?.status === 'backend-session') {
-      betaSession.user = null;
-      saveBetaSession(null);
-    }
-  } finally {
-    betaSession.hydrating = false;
-    betaSession.ready = true;
-  }
 }
 
 export function saveBetaSession(user: BetaUser | null) {
@@ -171,21 +125,7 @@ export function startLearningSession(input: SessionInput) {
   return user;
 }
 
-export function useBackendSession(user: BackendAuthUser, mode?: BetaUserMode) {
-  const sessionUser = backendUserToBetaUser(user, mode);
-  betaSession.user = sessionUser;
-  betaSession.ready = true;
-  saveBetaSession(sessionUser);
-  return sessionUser;
-}
-
-export async function logoutBetaSession() {
-  try {
-    await logoutFromBackend();
-  } catch {
-    // Keep logout user-first. Local state is cleared even when the network request fails.
-  }
-
+export function logoutBetaSession() {
   betaSession.user = null;
   betaSession.ready = true;
   saveBetaSession(null);
