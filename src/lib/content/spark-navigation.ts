@@ -14,18 +14,18 @@ export const sparkNavItems: SparkNavItem[] = [
   {
     key: 'gateway',
     href: '/',
-    label: 'Home',
-    shortLabel: 'Home',
-    copy: 'Mulai mengenal Spark',
+    label: 'Beranda',
+    shortLabel: 'Beranda',
+    copy: 'Mulai dari jalur aman Spark',
     icon: 'home',
     primary: true
   },
   {
     key: 'dashboard',
     href: '/dashboard',
-    label: 'Dashboard',
-    shortLabel: 'Dashboard',
-    copy: 'Ringkasan belajar hari ini',
+    label: 'Ringkasan',
+    shortLabel: 'Saya',
+    copy: 'Lanjutkan progres belajarmu',
     icon: 'dashboard',
     primary: true
   },
@@ -34,16 +34,16 @@ export const sparkNavItems: SparkNavItem[] = [
     href: '/core',
     label: 'Belajar',
     shortLabel: 'Belajar',
-    copy: 'Mulai dari dasar blockchain dan Starknet',
+    copy: 'Mulai Core Beginner dari dasar',
     icon: 'book-open',
     primary: true
   },
   {
     key: 'lab',
     href: '/lab',
-    label: 'Lab',
+    label: 'Praktik',
     shortLabel: 'Lab',
-    copy: 'Coba latihan aman sebelum menjelajah',
+    copy: 'Mulai simulasi aman tanpa aset nyata',
     icon: 'flask-conical',
     primary: true
   },
@@ -52,16 +52,16 @@ export const sparkNavItems: SparkNavItem[] = [
     href: '/community',
     label: 'Komunitas',
     shortLabel: 'Komunitas',
-    copy: 'Workshop, cohort, dan diskusi',
+    copy: 'Ikuti workshop, cohort, dan diskusi',
     icon: 'users',
     primary: true
   },
   {
     key: 'passport',
     href: '/passport',
-    label: 'Passport',
+    label: 'Kesiapan',
     shortLabel: 'Passport',
-    copy: 'Bukti kesiapan dan perjalanan belajar',
+    copy: 'Lihat Passport dan bukti belajarmu',
     icon: 'passport',
     primary: true
   },
@@ -70,16 +70,16 @@ export const sparkNavItems: SparkNavItem[] = [
     href: '/profile',
     label: 'Profil',
     shortLabel: 'Profil',
-    copy: 'Identitas akun pribadi',
+    copy: 'Kelola identitas belajarmu',
     icon: 'user-round',
     primary: false
   },
   {
     key: 'hub',
     href: '/hub',
-    label: 'Hub',
+    label: 'Jelajahi',
     shortLabel: 'Hub',
-    copy: 'Rujukan dan jalur eksplorasi Starknet',
+    copy: 'Temukan resource saat kamu siap',
     icon: 'compass',
     primary: false
   },
@@ -88,7 +88,7 @@ export const sparkNavItems: SparkNavItem[] = [
     href: '/settings',
     label: 'Pengaturan',
     shortLabel: 'Atur',
-    copy: 'Tampilan, ritme belajar, dan bantuan',
+    copy: 'Atur akun, tampilan, dan bantuan',
     icon: 'settings',
     primary: false
   }

@@ -10,7 +10,8 @@
     "preview": "vite preview --host 0.0.0.0",
     "start": "node build",
     "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "audit:public-copy": "node src/scripts/audit-public-copy-contract.mjs"
   },
   "dependencies": {
     "@lucide/svelte": "latest",

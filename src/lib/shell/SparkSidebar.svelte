@@ -1,6 +1,5 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import { getHubUrl } from '$lib/config/spark-topology';
   import { isNavActive, sparkNavItems } from '$lib/content/spark-navigation';
   import { getLearningProgressPercent, getReadinessScore } from '$state/learning-state.svelte';
   import SparkIcon from '$ui/SparkIcon.svelte';
@@ -8,9 +7,9 @@
 
 <aside class="spark-sidebar">
   <div class="spark-sidebar-head">
-    <span>Gateway</span>
-    <strong>Blockchain, Web3, Starknet.</strong>
-    <p>Belajar, praktik, komunitas, Passport, dan Hub dalam satu wadah.</p>
+    <span>Jalur Spark</span>
+    <strong>Belajar dulu, praktik aman, lalu jelajahi Starknet.</strong>
+    <p>Ikuti langkah kecil yang jelas sampai kamu siap masuk ekosistem.</p>
   </div>
 
   <nav class="spark-sidebar-nav" aria-label="Navigasi utama">
@@ -28,21 +27,21 @@
   <a class="spark-sidebar-status" href="/passport">
     <div class="spark-ring" style={`--value: ${getReadinessScore()}`}>{getReadinessScore()}%</div>
     <div>
-      <strong>Passport Spark</strong>
-      <p>{getLearningProgressPercent()}% belajar · lihat kesiapanmu.</p>
+      <strong>Lihat Kesiapan Saya</strong>
+      <p>{getLearningProgressPercent()}% belajar · cek langkah berikutnya.</p>
     </div>
   </a>
 
-  <a class="spark-sidebar-hub" href={getHubUrl('/')}>
+  <a class="spark-sidebar-hub" href="/hub">
     <span><SparkIcon name="compass" size={18} /></span>
     <span>
-      <strong>Hub Gateway</strong>
-      <small>Rujukan, aplikasi, tools, dan komunitas setelah siap.</small>
+      <strong>Jelajahi Hub</strong>
+      <small>Temukan resource Starknet sesuai kesiapanmu.</small>
     </span>
   </a>
 
   <a class="spark-sidebar-settings" href="/settings" class:active={isNavActive(page.url.pathname, '/settings')}>
     <SparkIcon name="settings" size={17} />
-    <span>Pengaturan</span>
+    <span>Pengaturan Akun</span>
   </a>
 </aside>

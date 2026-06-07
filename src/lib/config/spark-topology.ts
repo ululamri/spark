@@ -54,7 +54,17 @@ export function getService(key: SparkServiceKey) {
 
 export function getHubUrl(path = '/') {
   const base = getService('hub')?.url ?? sparkEnv.PUBLIC_SPARK_HUB_URL;
-  return new URL(path, base).toString();
+  const suffix = path === '/' ? '' : path.startsWith('/') ? path : `/${path}`;
+
+  try {
+    const url = new URL(base);
+    if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return `/hub${suffix}`;
+    const basePath = url.pathname === '/' ? '/hub' : url.pathname.replace(/\/$/, '');
+    url.pathname = `${basePath}${suffix}`;
+    return url.toString();
+  } catch {
+    return `/hub${suffix}`;
+  }
 }
 
 export function getApiUrl(path = '/') {

@@ -16,10 +16,10 @@
 <header class="spark-topbar production-topbar topbar-v35b1">
   <SparkBrand />
 
-  <div class="spark-topbar-center production-search-hint">
-    <SparkIcon name="search" size={16} />
-    <span>Cari materi, latihan, pesan, atau rujukan</span>
-  </div>
+  <a class="spark-topbar-center production-search-hint production-next-action" href="/core" aria-label="Mulai dari Core Beginner">
+    <SparkIcon name="book-open" size={16} />
+    <span>Mulai dari Core Beginner</span>
+  </a>
 
   <div class="spark-topbar-actions">
     {#if signedIn}
@@ -33,7 +33,7 @@
       <div class="desktop-only"><SparkAccountMenu /></div>
     {:else}
       <div class="desktop-only"><SparkThemeToggle compact /></div>
-      <a class="spark-btn secondary desktop-only" href="/login">Masuk</a>
+      <a class="spark-btn secondary desktop-only" href="/login">Masuk untuk Lanjutkan</a>
     {/if}
 
     <button class="spark-icon-btn mobile-only" type="button" aria-label="Menu" aria-expanded={appState.mobileMenuOpen} onclick={() => (appState.mobileMenuOpen = !appState.mobileMenuOpen)}>
