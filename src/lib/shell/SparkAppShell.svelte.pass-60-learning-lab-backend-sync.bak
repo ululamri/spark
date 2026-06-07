@@ -13,14 +13,13 @@
   import { initTheme, themeState } from '$lib/state/theme-state.svelte';
   import { betaSession, hydrateBackendSession, restoreBetaSession, saveBetaSession } from '$state/beta-session-state.svelte';
   import { gatewayState, restoreGatewaySnapshot, saveGatewaySnapshot } from '$state/gateway-state.svelte';
-  import { hydrateLearningBackendSnapshot, learningState, restoreLearningSnapshot, saveLearningSnapshot } from '$state/learning-state.svelte';
+  import { learningState, restoreLearningSnapshot, saveLearningSnapshot } from '$state/learning-state.svelte';
   import { messageState, restoreMessageState, saveMessageState } from '$state/message-state.svelte';
 
   type Props = { children: Snippet };
   let { children }: Props = $props();
 
   const signedIn = $derived(Boolean(betaSession.user));
-  let progressHydratedForUserId = $state('');
 
   onMount(() => {
     initTheme();
@@ -30,18 +29,6 @@
     restoreMessageState();
     markPersistenceReady();
     void hydrateBackendSession();
-  });
-
-
-  $effect(() => {
-    if (!betaSession.ready || !betaSession.user?.id) {
-      progressHydratedForUserId = '';
-      return;
-    }
-
-    if (progressHydratedForUserId === betaSession.user.id) return;
-    progressHydratedForUserId = betaSession.user.id;
-    void hydrateLearningBackendSnapshot();
   });
 
   $effect(() => {

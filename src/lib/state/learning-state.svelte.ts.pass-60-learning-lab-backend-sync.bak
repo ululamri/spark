@@ -1,17 +1,7 @@
 import { sparkModules } from '$content/spark-content';
-import {
-  getMyLabAttempts,
-  getMyLessonProgress,
-  isExpectedSessionMiss,
-  recordCoreCheckpointResult,
-  recordLabAttempt,
-  saveLessonProgress,
-  type SparkBackendLevel
-} from '$lib/api/spark-progress-api';
 import { enqueueSyncEvent } from '$lib/sync/sync-event-queue.svelte';
 
 export type ExperienceLevel = 'unknown' | 'beginner' | 'guided' | 'explorer';
-export type BackendSyncStatus = 'idle' | 'hydrating' | 'saving' | 'synced' | 'offline' | 'error';
 
 const STORAGE_KEY = 'karyra-spark-learning-state-v3';
 
@@ -28,133 +18,10 @@ export const learningState = $state({
   notes: {} as Record<string, string>,
   walletStatus: 'not-required' as 'not-required' | 'ready' | 'connected',
   lastSavedAt: '',
-  lastSyncedAt: '',
-  backendHydrated: false,
-  backendSyncStatus: 'idle' as BackendSyncStatus,
-  backendSyncMessage: ''
+  lastSyncedAt: ''
 });
 
 export type LearningSnapshot = typeof learningState;
-
-function unique(values: string[]) {
-  return Array.from(new Set(values.filter(Boolean)));
-}
-
-function currentBackendLevel(): SparkBackendLevel {
-  if (learningState.experience === 'explorer') return 'advanced';
-  if (learningState.experience === 'guided') return 'intermediate';
-  return 'beginner';
-}
-
-function setBackendSync(status: BackendSyncStatus, message = '') {
-  learningState.backendSyncStatus = status;
-  learningState.backendSyncMessage = message;
-}
-
-function handleSyncError(error: unknown) {
-  if (isExpectedSessionMiss(error)) {
-    setBackendSync('idle', 'Masuk untuk menyimpan progress ke akun Spark.');
-    return;
-  }
-
-  const message = error instanceof Error ? error.message : 'Progress belum bisa disinkronkan ke Spark API.';
-  setBackendSync('offline', message);
-}
-
-async function syncLessonCompletion(slug: string, wasCompleted: boolean) {
-  setBackendSync('saving');
-  try {
-    await saveLessonProgress(slug, {
-      level: currentBackendLevel(),
-      status: 'completed',
-      progress_percent: 100,
-      completed: true,
-      payload: {
-        source: 'spark-web.learning.completeLesson',
-        slug,
-        was_completed_before: wasCompleted,
-        synced_at: new Date().toISOString()
-      }
-    });
-    markSynced();
-    setBackendSync('synced');
-  } catch (error) {
-    handleSyncError(error);
-  }
-}
-
-async function syncCheckpointAnswer(slug: string, optionId: string, correct: boolean) {
-  setBackendSync('saving');
-  try {
-    await recordCoreCheckpointResult(`${slug}-checkpoint`, {
-      lesson_id: slug,
-      level: currentBackendLevel(),
-      score: correct ? 100 : 0,
-      passed: correct,
-      payload: {
-        source: 'spark-web.learning.answerCheckpoint',
-        lesson_slug: slug,
-        option_id: optionId,
-        correct,
-        synced_at: new Date().toISOString()
-      }
-    });
-    markSynced();
-    setBackendSync('synced');
-  } catch (error) {
-    handleSyncError(error);
-  }
-}
-
-async function syncLabCompletion(id: string, wasCompleted: boolean) {
-  setBackendSync('saving');
-  try {
-    await recordLabAttempt({
-      lab_id: id,
-      level: currentBackendLevel(),
-      status: 'passed',
-      score: 100,
-      safety_score: 100,
-      payload: {
-        source: 'spark-web.lab.completeLab',
-        lab_id: id,
-        was_completed_before: wasCompleted,
-        synced_at: new Date().toISOString()
-      }
-    });
-    markSynced();
-    setBackendSync('synced');
-  } catch (error) {
-    handleSyncError(error);
-  }
-}
-
-export async function hydrateLearningBackendSnapshot() {
-  if (typeof window === 'undefined') return;
-
-  setBackendSync('hydrating');
-  try {
-    const [progress, labs] = await Promise.all([getMyLessonProgress(), getMyLabAttempts()]);
-
-    const completedLessons = progress.items
-      .filter((item) => item.status === 'completed' || item.completed_at)
-      .map((item) => item.lesson_id);
-
-    const completedLabs = labs.items
-      .filter((item) => item.status === 'passed' || item.completed_at)
-      .map((item) => item.lab_id);
-
-    learningState.completedLessonSlugs = unique([...learningState.completedLessonSlugs, ...completedLessons]);
-    learningState.completedLabIds = unique([...learningState.completedLabIds, ...completedLabs]);
-    learningState.backendHydrated = true;
-    markSynced();
-    saveLearningSnapshot();
-    setBackendSync('synced');
-  } catch (error) {
-    learningState.backendHydrated = true;
-    handleSyncError(error);
-  }
-}
 
 export function setLearnerIdentity(learnerId: string) {
   learningState.learnerId = learnerId;
@@ -201,7 +68,6 @@ export function completeLesson(slug: string) {
     subjectId: slug,
     payload: { slug, wasCompleted }
   });
-  void syncLessonCompletion(slug, wasCompleted);
 }
 
 export function completeLab(id: string) {
@@ -216,7 +82,6 @@ export function completeLab(id: string) {
     subjectId: id,
     payload: { id, wasCompleted }
   });
-  void syncLabCompletion(id, wasCompleted);
 }
 
 export function toggleBookmark(slug: string) {
@@ -252,7 +117,6 @@ export function answerCheckpoint(slug: string, optionId: string, correct: boolea
     [slug]: { optionId, correct }
   };
 
-  void syncCheckpointAnswer(slug, optionId, correct);
   if (correct) completeLesson(slug);
 }
 
@@ -310,10 +174,7 @@ export function createLearningSnapshot() {
     notes: learningState.notes,
     walletStatus: learningState.walletStatus,
     lastSavedAt: new Date().toISOString(),
-    lastSyncedAt: learningState.lastSyncedAt,
-    backendHydrated: learningState.backendHydrated,
-    backendSyncStatus: learningState.backendSyncStatus,
-    backendSyncMessage: learningState.backendSyncMessage
+    lastSyncedAt: learningState.lastSyncedAt
   };
 }
 
@@ -338,7 +199,6 @@ export function restoreLearningSnapshot() {
     if (snapshot.walletStatus) learningState.walletStatus = snapshot.walletStatus;
     if (snapshot.lastSavedAt) learningState.lastSavedAt = snapshot.lastSavedAt;
     if (snapshot.lastSyncedAt) learningState.lastSyncedAt = snapshot.lastSyncedAt;
-    if (typeof snapshot.backendHydrated === 'boolean') learningState.backendHydrated = snapshot.backendHydrated;
   } catch {
     // Ignore corrupted local snapshot.
   }
