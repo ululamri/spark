@@ -8,7 +8,6 @@
   import { sparkModules } from '$content/spark-content';
   import { coreLevelExams, getExam, sparkLevelDefinitions } from '$lib/leveling/leveling-model';
   import {
-    getExamResult,
     getHighestPassedLevel,
     getTrackLevelStatus,
     levelingState,
@@ -48,19 +47,6 @@
     return Math.round((completedForLevel(level) / total) * 100);
   }
 
-  function isLevelComplete(level: SparkLevel) {
-    const total = totalForLevel(level);
-    return total > 0 && completedForLevel(level) >= total;
-  }
-
-  function remainingForLevel(level: SparkLevel) {
-    return Math.max(0, totalForLevel(level) - completedForLevel(level));
-  }
-
-  function firstLessonSlugFor(level: SparkLevel) {
-    return modulesFor(level)[0]?.lessons[0]?.slug ?? nextLessonSlug;
-  }
-
   function openLevel(level: SparkLevel) {
     if (getTrackLevelStatus('core', level) === 'locked') return;
     setSelectedLevel('core', level);
@@ -80,11 +66,11 @@
       </div>
       <h1>Belajar bertingkat, bukan sekadar menyelesaikan daftar materi.</h1>
       <p>
-        Mulai dari lesson kecil, pahami fondasi, lalu buka ujian saat materi level sudah selesai. Core membantu kamu bergerak pelan, aman, dan jelas sebelum masuk Lab atau Hub.
+        Core sekarang dibagi menjadi Beginner, Intermediate, dan Advanced. Setiap level punya materi utama dan ujian akhir agar Passport nanti punya dasar kesiapan yang lebih kuat.
       </p>
       <div class="leveling-actions">
-        <SparkButton href={`/lesson/${nextLessonSlug}`}>{completedLessons > 0 ? 'Lanjutkan Lesson Berikutnya' : 'Mulai dari Lesson Pertama'}</SparkButton>
-        <a href="#core-selected-level-title">Lihat materi level ini</a>
+        <SparkButton href={`/lesson/${nextLessonSlug}`}>Mulai Core Beginner</SparkButton>
+        <a href="#core-level-exam">Kerjakan ujian saat siap</a>
       </div>
     </div>
 
@@ -130,7 +116,7 @@
         <h2 id="core-selected-level-title">{selectedDefinition.label}: {selectedDefinition.title}</h2>
         <p>{selectedDefinition.copy}</p>
       </div>
-      <SparkButton href={`/lesson/${firstLessonSlugFor(selectedLevel)}`} variant="secondary">{isLevelComplete(selectedLevel) ? 'Review Materi Level Ini' : completedForLevel(selectedLevel) > 0 ? 'Lanjutkan Materi Level Ini' : 'Mulai Materi Level Ini'}</SparkButton>
+      <SparkButton href={`/lesson/${modulesFor(selectedLevel)[0]?.lessons[0]?.slug ?? nextLessonSlug}`} variant="secondary">Buka materi level ini</SparkButton>
     </div>
 
     <div class="level-module-list">
@@ -151,30 +137,10 @@
     <div class="level-section-head compact">
       <span class="spark-eyebrow">Ujian akhir Core</span>
       <h2 id="core-exam-title">Buktikan pemahaman sebelum naik level.</h2>
-      <p>Ujian terbuka setelah semua materi level ini selesai. Kamu tetap bisa review materi kapan saja.</p>
+      <p>Hasil ujian ini nanti menjadi salah satu dasar Passport Spark.</p>
     </div>
     {#if selectedExam}
-      {#if getTrackLevelStatus('core', selectedLevel) === 'locked'}
-        <article class="level-exam-gate locked" aria-live="polite">
-          <span><SparkIcon name="lock" size={20} /></span>
-          <div>
-            <h3>Ujian level ini belum terbuka.</h3>
-            <p>Selesaikan dan luluskan level sebelumnya dulu, lalu kembali untuk membuka ujian ini.</p>
-          </div>
-          <SparkButton href={`/lesson/${firstLessonSlugFor(selectedLevel)}`} variant="secondary">Lihat Materi</SparkButton>
-        </article>
-      {:else if !isLevelComplete(selectedLevel) && !getExamResult(selectedExam.id)?.passed}
-        <article class="level-exam-gate" aria-live="polite">
-          <span><SparkIcon name="book-open" size={20} /></span>
-          <div>
-            <h3>Selesaikan materi dulu untuk membuka ujian.</h3>
-            <p>Masih ada <strong>{remainingForLevel(selectedLevel)} materi</strong> di level ini. Ujian akan lebih berguna setelah fondasinya selesai.</p>
-          </div>
-          <SparkButton href={`/lesson/${firstLessonSlugFor(selectedLevel)}`} variant="secondary">Lanjutkan Materi</SparkButton>
-        </article>
-      {:else}
-        <SparkLevelExamCard exam={selectedExam} />
-      {/if}
+      <SparkLevelExamCard exam={selectedExam} locked={getTrackLevelStatus('core', selectedLevel) === 'locked'} />
     {/if}
   </section>
 

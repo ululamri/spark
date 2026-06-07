@@ -9,7 +9,6 @@
   import { pushToast } from '$state/app-state.svelte';
   import { getExam, labLevelExams, sparkLevelDefinitions } from '$lib/leveling/leveling-model';
   import {
-    getExamResult,
     getHighestPassedLevel,
     getTrackLevelStatus,
     levelingState,
@@ -39,19 +38,6 @@
     return Math.round((completedForLevel(level) / labs.length) * 100);
   }
 
-  function isLevelComplete(level: SparkLevel) {
-    const labs = labsFor(level);
-    return labs.length > 0 && completedForLevel(level) >= labs.length;
-  }
-
-  function remainingForLevel(level: SparkLevel) {
-    return Math.max(0, labsFor(level).length - completedForLevel(level));
-  }
-
-  function firstLabActionFor(level: SparkLevel) {
-    return labsFor(level)[0]?.action ?? 'Mulai Simulasi Aman';
-  }
-
   function openLevel(level: SparkLevel) {
     if (getTrackLevelStatus('lab', level) === 'locked') return;
     setSelectedLevel('lab', level);
@@ -59,7 +45,7 @@
 
   function markLabDone(id: string, title: string) {
     completeLab(id);
-    pushToast({ title: 'Latihan selesai', copy: `${title} tercatat sebagai praktik amanmu.`, tone: 'success' });
+    pushToast({ title: 'Latihan selesai', copy: `${title} masuk ke hasil Lab kamu.`, tone: 'success' });
   }
 
   onMount(() => {
@@ -76,11 +62,11 @@
       </div>
       <h1>Latihan aman dengan level yang jelas.</h1>
       <p>
-        Mulai dari simulasi sederhana, kenali risiko, lalu buka ujian saat latihan level sudah selesai. Lab membantumu praktik tanpa aset nyata dan tanpa tekanan transaksi.
+        Lab bukan playground teknis mentah. Lab adalah ruang praktik bertingkat: Beginner untuk kebiasaan aman, Intermediate untuk wallet dan transaksi, Advanced untuk kesiapan Starknet.
       </p>
       <div class="leveling-actions">
-        <SparkButton href="#lab-selected-title">Mulai Simulasi Aman</SparkButton>
-        <a href="/community?tab=diskusi">Tanya ke Komunitas</a>
+        <a href="#lab-level-exam">Kerjakan ujian Lab</a>
+        <SparkButton href="/community?tab=diskusi" variant="secondary">Tanya ke Komunitas</SparkButton>
       </div>
     </div>
 
@@ -157,30 +143,10 @@
     <div class="level-section-head compact">
       <span class="spark-eyebrow">Ujian akhir Lab</span>
       <h2 id="lab-exam-title">Buktikan kemampuan praktik sebelum naik level.</h2>
-      <p>Ujian terbuka setelah latihan level ini selesai. Kamu bisa mengulang latihan sebelum menjawab soal.</p>
+      <p>Hasil ujian Lab nanti menjadi bukti praktik aman untuk Passport Spark.</p>
     </div>
     {#if selectedExam}
-      {#if getTrackLevelStatus('lab', selectedLevel) === 'locked'}
-        <article class="level-exam-gate locked" aria-live="polite">
-          <span><SparkIcon name="lock" size={20} /></span>
-          <div>
-            <h3>Ujian Lab ini belum terbuka.</h3>
-            <p>Selesaikan dan luluskan level sebelumnya dulu, lalu kembali untuk membuka ujian ini.</p>
-          </div>
-          <SparkButton href="#lab-selected-title" variant="secondary">Lihat Latihan</SparkButton>
-        </article>
-      {:else if !isLevelComplete(selectedLevel) && !getExamResult(selectedExam.id)?.passed}
-        <article class="level-exam-gate" aria-live="polite">
-          <span><SparkIcon name="flask" size={20} /></span>
-          <div>
-            <h3>Selesaikan latihan dulu untuk membuka ujian.</h3>
-            <p>Masih ada <strong>{remainingForLevel(selectedLevel)} latihan</strong> di level ini. Mulai dari: {firstLabActionFor(selectedLevel)}.</p>
-          </div>
-          <SparkButton href="#lab-selected-title" variant="secondary">Lanjutkan Latihan</SparkButton>
-        </article>
-      {:else}
-        <SparkLevelExamCard exam={selectedExam} />
-      {/if}
+      <SparkLevelExamCard exam={selectedExam} locked={getTrackLevelStatus('lab', selectedLevel) === 'locked'} />
     {/if}
   </section>
 </section>

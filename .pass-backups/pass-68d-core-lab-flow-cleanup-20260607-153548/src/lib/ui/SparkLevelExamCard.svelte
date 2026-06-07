@@ -7,7 +7,6 @@
     calculateExamScore,
     getDraftAnswers,
     getExamResult,
-    resetLevelExam,
     submitLevelExam
   } from '$lib/leveling/leveling-state.svelte';
   import type { LevelExam } from '$lib/leveling/leveling-types';
@@ -33,11 +32,6 @@
   function submit() {
     if (!canSubmit) return;
     submitLevelExam(exam);
-  }
-
-  function resetExam() {
-    if (locked || result?.passed) return;
-    resetLevelExam(exam.id);
   }
 </script>
 
@@ -98,16 +92,12 @@
         : result?.passed
           ? 'Level ini sudah lulus dan siap menjadi bukti kesiapan.'
           : result
-            ? 'Belum lulus. Review materi atau latihan dulu, lalu ulangi saat sudah siap.'
+            ? 'Belum lulus. Silakan baca ulang materi atau ulangi latihan sebelum mencoba lagi.'
             : 'Pastikan semua soal terjawab, lalu kirim untuk melihat hasil.'}
     </p>
-    {#if result && !result.passed}
-      <SparkButton onclick={resetExam} variant="secondary" disabled={locked}>Ulangi Setelah Review</SparkButton>
-    {:else}
-      <SparkButton onclick={submit} disabled={!canSubmit || result?.passed || locked}>
-        {result?.passed ? 'Sudah lulus' : 'Kirim & Lihat Hasil'}
-      </SparkButton>
-    {/if}
+    <SparkButton onclick={submit} disabled={!canSubmit || result?.passed || locked}>
+      {result?.passed ? 'Sudah lulus' : result ? 'Coba lagi nanti' : 'Kirim & Lihat Hasil'}
+    </SparkButton>
   </div>
 </article>
 
