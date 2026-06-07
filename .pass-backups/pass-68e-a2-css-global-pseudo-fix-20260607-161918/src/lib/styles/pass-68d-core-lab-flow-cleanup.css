@@ -58,7 +58,7 @@
   white-space: nowrap;
 }
 
-[data-theme='dark'] .level-exam-gate h3 {
+:global([data-theme='dark']) .level-exam-gate h3 {
   color: #fff;
 }
 

@@ -35,7 +35,6 @@
   import '$lib/styles/pass-68a-public-trust-copy-contract.css';
   import '$lib/styles/pass-68c-main-journey-copy-sweep.css';
   import '$lib/styles/pass-68d-core-lab-flow-cleanup.css';
-  import '$lib/styles/pass-68e-passport-explainability-preview.css';
   import SparkAppShell from '$shell/SparkAppShell.svelte';
 
   let { children } = $props();

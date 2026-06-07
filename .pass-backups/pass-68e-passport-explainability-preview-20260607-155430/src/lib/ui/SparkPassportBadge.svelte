@@ -12,7 +12,7 @@
   let {
     levelLabel = 'Belum terbit',
     statusLabel = 'Draft',
-    verificationLabel = 'Belajar mandiri',
+    verificationLabel = 'Self-attested',
     proofCode = 'SPK-PREVIEW',
     locked = false
   }: Props = $props();

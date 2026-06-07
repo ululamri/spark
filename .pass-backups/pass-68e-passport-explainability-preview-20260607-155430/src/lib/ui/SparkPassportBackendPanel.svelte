@@ -56,20 +56,17 @@
   }
 
   function eventLabel(value: string) {
-    const normalized = value.toLowerCase();
-    if (normalized.includes('learning')) return 'Bukti belajar tercatat';
-    if (normalized.includes('practice')) return 'Bukti praktik tercatat';
-    if (normalized.includes('safety')) return 'Bukti keamanan tercatat';
-    if (normalized.includes('readiness')) return 'Kesiapan diperbarui';
-    if (normalized.includes('passport')) return 'Passport diperbarui';
-    return 'Aktivitas belajar tercatat';
+    return value
+      .replace(/^proof_of_/, 'proof ')
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
   function missingLabel(value: string) {
     if (value.includes('core level exam')) return 'Lulus ujian Core level terkait';
     if (value.includes('lab practice')) return 'Selesaikan praktik Lab level terkait';
     if (value.includes('lab safety')) return 'Capai safety score Lab minimal 70';
-    if (value.includes('evidence') && value.includes('root')) return 'Kumpulkan bukti belajar dari aktivitasmu';
+    if (value.includes('evidence root')) return 'Kumpulkan bukti belajar dari aktivitasmu';
     return value;
   }
 
@@ -126,12 +123,12 @@
       <span class="spark-eyebrow">Jejak belajar</span>
       <h2 id="passport-backend-title">Passport membaca bukti belajar yang tersimpan aman.</h2>
       <p>
-        Panel ini memakai catatan belajar, praktik Lab, dan status Passport yang tersimpan aman. Detail sensitif tetap tidak dibagikan ke jaringan publik.
+        Panel ini memakai catatan belajar, praktik Lab, dan status Passport yang tersimpan aman. Data mentah tetap tidak ditaruh on-chain.
       </p>
     </div>
 
     <div class="passport-backend-actions">
-      <SparkButton onclick={loadPassportReadModel} variant="secondary" loading={loading}>Perbarui</SparkButton>
+      <SparkButton onclick={loadPassportReadModel} variant="secondary" loading={loading}>Refresh</SparkButton>
       <SparkButton onclick={issueBackendPassport} disabled={!canIssue || issued} loading={issuing}>
         {issued ? 'Passport aktif' : 'Terbitkan Passport'}
       </SparkButton>
@@ -177,10 +174,10 @@
 
     {#if activeLevel}
       <div class="passport-backend-proof-row" aria-label="Syarat Passport">
-        <div class:done={activeLevel.proof_of_learning}><span>{activeLevel.proof_of_learning ? '✓' : '•'}</span> Belajar</div>
-        <div class:done={activeLevel.proof_of_practice}><span>{activeLevel.proof_of_practice ? '✓' : '•'}</span> Praktik</div>
-        <div class:done={activeLevel.proof_of_safety}><span>{activeLevel.proof_of_safety ? '✓' : '•'}</span> Keamanan</div>
-        <div class:done={activeLevel.proof_of_readiness}><span>{activeLevel.proof_of_readiness ? '✓' : '•'}</span> Kesiapan</div>
+        <div class:done={activeLevel.proof_of_learning}><span>{activeLevel.proof_of_learning ? '✓' : '•'}</span> Learning</div>
+        <div class:done={activeLevel.proof_of_practice}><span>{activeLevel.proof_of_practice ? '✓' : '•'}</span> Practice</div>
+        <div class:done={activeLevel.proof_of_safety}><span>{activeLevel.proof_of_safety ? '✓' : '•'}</span> Safety</div>
+        <div class:done={activeLevel.proof_of_readiness}><span>{activeLevel.proof_of_readiness ? '✓' : '•'}</span> Readiness</div>
       </div>
 
       {#if activeLevel.missing.length > 0}
@@ -210,7 +207,7 @@
               <span>{event.track ?? 'bukti'}</span>
               <div>
                 <strong>{eventLabel(event.event_type)}</strong>
-                <small>Kode catatan · {shortHash(event.event_hash)}</small>
+                <small>{event.subject_id} · {shortHash(event.event_hash)}</small>
               </div>
             </article>
           {/each}

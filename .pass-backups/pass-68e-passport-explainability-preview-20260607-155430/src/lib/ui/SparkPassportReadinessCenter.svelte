@@ -128,39 +128,6 @@
   ]);
 
   const proofSignalCards = $derived(getPassportProofSignals(evidenceBundle));
-  const explainabilitySteps = $derived([
-    {
-      title: 'Core Beginner',
-      done: hasPassedExam('core', 'beginner'),
-      copy: hasPassedExam('core', 'beginner')
-        ? 'Pemahaman dasar sudah tercatat dari Core Beginner.'
-        : 'Selesaikan lesson dan ujian Core Beginner agar Passport punya dasar pemahaman yang jelas.',
-      href: '/core',
-      cta: hasPassedExam('core', 'beginner') ? 'Lihat Core' : 'Selesaikan Core Beginner',
-      icon: hasPassedExam('core', 'beginner') ? 'check' : 'book-open'
-    },
-    {
-      title: 'Lab Beginner',
-      done: hasPassedExam('lab', 'beginner'),
-      copy: hasPassedExam('lab', 'beginner')
-        ? 'Latihan aman sudah tercatat sebagai bukti praktik awal.'
-        : 'Mulai Lab Beginner agar Passport bisa membaca kemampuan praktik aman.',
-      href: '/lab',
-      cta: hasPassedExam('lab', 'beginner') ? 'Lihat Lab' : 'Mulai Lab Beginner',
-      icon: hasPassedExam('lab', 'beginner') ? 'check' : 'flask-conical'
-    },
-    {
-      title: 'Partisipasi komunitas',
-      done: registeredWorkshops > 0,
-      optional: true,
-      copy: registeredWorkshops > 0
-        ? `${registeredWorkshops} workshop sudah masuk ke perjalanan belajarmu.`
-        : 'Opsional, tapi membantu Passport menunjukkan bahwa kamu juga terhubung dengan komunitas belajar.',
-      href: '/community',
-      cta: registeredWorkshops > 0 ? 'Lihat Komunitas' : 'Temukan Workshop',
-      icon: registeredWorkshops > 0 ? 'check' : 'users'
-    }
-  ]);
 </script>
 
 <section class="passport-shell" data-karyra-passport="proof-foundation">
@@ -172,9 +139,9 @@
         <SparkTrustBadge label={eligibility.verificationLabel} tone={verificationTier === 'community_verified' ? 'safe' : 'local'} />
       </div>
 
-      <h1>Lihat kesiapanmu dengan jelas.</h1>
+      <h1>Passport sebagai bukti kesiapan.</h1>
       <p>
-        Passport Spark merangkum pelajaran, latihan aman, dan partisipasi komunitas menjadi gambaran kesiapan yang mudah dibaca. Kamu bisa melihat apa yang sudah tercatat dan langkah berikutnya tanpa bahasa teknis.
+        Passport Spark merangkum bukti dari Core, Lab, dan partisipasi komunitas. Tujuannya bukan sekadar sertifikat visual, tetapi proof-of-readiness yang siap diperkuat di Starknet.
       </p>
 
       <div class="passport-actions">
@@ -186,7 +153,7 @@
     <aside class="passport-badge-card" aria-label="Badge Passport Spark">
       <SparkPassportBadge
         levelLabel={eligibility.levelLabel}
-        statusLabel={eligibility.eligible ? 'Siap terbit' : 'Dalam perjalanan'}
+        statusLabel={eligibility.eligible ? 'Eligible' : 'Draft'}
         verificationLabel={eligibility.verificationLabel}
         proofCode={proofPreview.passportId}
         locked={!eligibility.eligible}
@@ -196,7 +163,7 @@
 
   <section class="passport-status-layout">
     <aside class="passport-score-card">
-      <SparkPassportGauge value={readiness} label="Kesiapan" copy="Perjalanan" />
+      <SparkPassportGauge value={readiness} label="Passport" copy="Readiness" />
       <div>
         <span class="spark-eyebrow">Status saat ini</span>
         <strong>{eligibility.eligible ? `${eligibility.levelLabel} siap diterbitkan` : 'Masih dalam perjalanan'}</strong>
@@ -211,32 +178,6 @@
         <p>{nextStep.copy}</p>
       </div>
       <SparkButton href={nextStep.href}>{nextStep.cta}</SparkButton>
-    </div>
-  </section>
-
-
-  <section class="passport-explainability-card" aria-labelledby="passport-explainability-title">
-    <div class="passport-section-head compact">
-      <span class="spark-eyebrow">{eligibility.eligible ? 'Passport siap' : 'Kenapa belum terbit?'}</span>
-      <h2 id="passport-explainability-title">{eligibility.eligible ? 'Bukti utama sudah cukup.' : 'Lengkapi bukti utama berikut dulu.'}</h2>
-      <p>{eligibility.eligible ? 'Kamu sudah melewati syarat utama. Rincian di bawah membantu melihat bukti yang membentuk Passport.' : 'Passport tidak dibuat dari klaim manual. Ia menunggu bukti belajar dan praktik yang benar-benar kamu selesaikan.'}</p>
-    </div>
-
-    <div class="passport-explainability-list">
-      {#each explainabilitySteps as step}
-        <article class="passport-explainability-item" class:done={step.done} class:pending={!step.done} class:optional={step.optional}>
-          <span><SparkIcon name={step.icon} size={18} /></span>
-          <div>
-            <small>{step.done ? 'Tercatat' : step.optional ? 'Opsional' : 'Belum lengkap'}</small>
-            <strong>{step.title}</strong>
-            <p>{step.copy}</p>
-          </div>
-          <footer>
-            <SparkButton href={step.href} variant={step.done ? 'secondary' : 'primary'}>{step.cta}</SparkButton>
-            {#if step.optional}<em>Memperkuat konteks Passport</em>{/if}
-          </footer>
-        </article>
-      {/each}
     </div>
   </section>
 
@@ -261,7 +202,7 @@
       <span class="spark-eyebrow">Kumpulan bukti Spark</span>
       <h2 id="passport-proof-family-title">Passport dirangkum dari beberapa bukti, bukan satu klaim.</h2>
       <p>
-        Kesiapan adalah hasil akhir. Di bawahnya ada bukti belajar, praktik aman, partisipasi, eksplorasi, dan kontribusi yang dirangkum agar mudah dipahami.
+        Kesiapan adalah hasil akhir. Di bawahnya ada bukti belajar, praktik aman, partisipasi, eksplorasi, dan kontribusi yang akan dirangkum saat akun tersinkron penuh.
       </p>
     </div>
 
@@ -286,20 +227,20 @@
 
   <section class="passport-proof-card" id="passport-proof">
     <div class="passport-section-head">
-      <span class="spark-eyebrow">Rincian bukti</span>
-      <h2>Bukti belajar tersusun otomatis.</h2>
+      <span class="spark-eyebrow">Dasar bukti</span>
+      <h2>Bukti tidak berasal dari klaim manual user.</h2>
       <p>
-        Spark menyusun bukti dari hasil Core, Lab, dan aktivitas pendukung. Kamu melihat ringkasannya saja; detail sensitif tetap dibatasi.
+        Spark menyusun bukti dari hasil ujian Core dan Lab. Versi produksi akan merangkum catatan belajar, menyimpan bukti dengan aman, lalu menautkan status Passport ke Starknet saat waktunya siap.
       </p>
     </div>
 
     <div class="proof-meta-grid">
       <div>
-        <small>Penerbit</small>
+        <small>Issuer</small>
         <strong>Karyra Spark</strong>
       </div>
       <div>
-        <small>Rencana jaringan</small>
+        <small>Target chain</small>
         <strong>{proofPreview.targetChain}</strong>
       </div>
       <div>
@@ -307,8 +248,8 @@
         <strong>{proofPreview.evidenceRoot}</strong>
       </div>
       <div>
-        <small>Badge digital</small>
-        <strong>{proofPreview.badgeStatus === 'locked' ? 'Belum terbuka' : 'Masuk roadmap grant'}</strong>
+        <small>Badge NFT</small>
+        <strong>{proofPreview.badgeStatus === 'locked' ? 'Terkunci' : 'Roadmap grant'}</strong>
       </div>
     </div>
   </section>
@@ -316,7 +257,7 @@
   <section class="passport-level-card">
     <div class="passport-section-head compact">
       <span class="spark-eyebrow">Level Passport</span>
-      <h2>Level naik setelah Core dan Lab terkait lulus.</h2>
+      <h2>Level naik hanya saat Core dan Lab level terkait lulus.</h2>
     </div>
 
     <div class="passport-level-list">
@@ -341,13 +282,13 @@
     </article>
     <article>
       <span><SparkIcon name="network" size={20} /></span>
-      <strong>Rencana Starknet</strong>
-      <p>Ringkasan bukti disiapkan agar nanti bisa terhubung ke Starknet, dimulai dari tahap uji sebelum target akhir.</p>
+      <strong>Catatan Starknet</strong>
+      <p>Ringkasan bukti dan status Passport disiapkan agar bisa dicatat ke Starknet. Sepolia untuk uji, mainnet sebagai target akhir.</p>
     </article>
     <article>
       <span><SparkIcon name="badge" size={20} /></span>
-      <strong>Badge digital</strong>
-      <p>Badge visual Passport disiapkan menjadi kredensial digital saat grant dan infrastruktur siap.</p>
+      <strong>NFT badge</strong>
+      <p>Badge visual Passport disiapkan menjadi NFT/non-transferable credential saat grant dan infrastruktur siap.</p>
     </article>
   </section>
 

@@ -70,9 +70,9 @@ export function getVerificationTier(registeredWorkshops: number): PassportVerifi
 }
 
 export function getVerificationLabel(tier: PassportVerificationTier) {
-  if (tier === 'community_verified') return 'Diverifikasi komunitas';
-  if (tier === 'identity_verified_placeholder') return 'Identitas terverifikasi';
-  return 'Belajar mandiri';
+  if (tier === 'community_verified') return 'Community-verified';
+  if (tier === 'identity_verified_placeholder') return 'Identity-verified';
+  return 'Self-attested';
 }
 
 export function getIssueStatus(readinessLevel: SparkLevel | null): PassportIssueStatus {
@@ -95,35 +95,35 @@ export function getNextPassportStep(input: {
   if (!input.coreBeginnerPassed) {
     return {
       title: 'Selesaikan Core Beginner',
-      copy: 'Kamu perlu lulus ujian Core Beginner agar Passport punya dasar pemahaman yang jelas.',
+      copy: 'Passport membutuhkan bukti pemahaman dasar sebelum bisa diterbitkan.',
       href: '/core',
-      cta: 'Selesaikan Core Beginner'
+      cta: 'Buka Core'
     };
   }
 
   if (!input.labBeginnerPassed) {
     return {
-      title: 'Mulai Lab Beginner',
-      copy: 'Latihan aman membantu Passport membaca kemampuan praktik, bukan hanya pemahaman dari bacaan.',
+      title: 'Luluskan Lab Beginner',
+      copy: 'Latihan aman menjadi bukti praktik, bukan hanya bukti membaca.',
       href: '/lab',
-      cta: 'Mulai Lab Beginner'
+      cta: 'Buka Lab'
     };
   }
 
   if (input.readinessLevel === 'advanced') {
     return {
-      title: 'Siap jelajahi Hub lanjutan',
-      copy: 'Fondasi dan latihanmu sudah cukup untuk membuka eksplorasi Starknet yang lebih serius.',
+      title: 'Siap ke Hub lanjutan',
+      copy: 'Passport Advanced menjadi jalur menuju eksplorasi Starknet yang lebih serius.',
       href: '/hub',
-      cta: 'Jelajahi Hub Lanjutan'
+      cta: 'Buka Hub'
     };
   }
 
   return {
     title: 'Passport siap disiapkan',
-    copy: 'Bukti Core dan Lab sudah cukup untuk membangun Passport awal. Lihat rincian agar kamu tahu apa yang tercatat.',
+    copy: 'Bukti Core dan Lab sudah cukup untuk fondasi Passport. Penerbitan on-chain masuk tahap grant roadmap.',
     href: '/passport#passport-proof',
-    cta: 'Lihat Rincian Bukti'
+    cta: 'Lihat bukti'
   };
 }
 
