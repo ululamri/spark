@@ -5,8 +5,14 @@
   import SparkCard from './SparkCard.svelte';
   import SparkIcon from './SparkIcon.svelte';
   import SparkTrustBadge from './SparkTrustBadge.svelte';
-  import { loginWithBackend, registerWithBackend, SparkApiError } from '$lib/api/spark-api-client';
-  import { betaSession, getModeLabel, useBackendSession, type BetaUserMode } from '$state/beta-session-state.svelte';
+  import {
+    authErrorMessage,
+    betaSession,
+    getModeLabel,
+    loginBackendSession,
+    registerBackendSession,
+    type BetaUserMode
+  } from '$state/beta-session-state.svelte';
   import { setExperience, setLearnerIdentity } from '$state/learning-state.svelte';
   import { pushToast } from '$state/app-state.svelte';
 
@@ -21,8 +27,8 @@
   let password = $state('');
   let selectedMode = $state<BetaUserMode>('beginner');
   let formError = $state('');
-  let submitting = $state(false);
   let redirecting = $state(false);
+  let submitting = $state(false);
 
   const modeOptions: { key: BetaUserMode; label: string; copy: string }[] = [
     { key: 'beginner', label: 'Pemula', copy: 'Bahasa sederhana' },
@@ -38,26 +44,15 @@
       ? 'Lanjutkan belajar, buka Passport, dan ikuti progress dari satu tempat.'
       : 'Daftar untuk menyimpan progress, Passport, dan pilihan belajar.'
   );
-  const submitLabel = $derived(submitting ? (mode === 'login' ? 'Memeriksa...' : 'Membuat akun...') : mode === 'login' ? 'Masuk' : 'Daftar');
 
   $effect(() => {
     if (!betaSession.ready || !betaSession.user || redirecting) return;
     redirecting = true;
-    void goto('/dashboard', { replaceState: true });
+    void goto(nextHref, { replaceState: true });
   });
 
   function isEmail(value: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
-  }
-
-  function userFacingAuthError(error: unknown) {
-    if (error instanceof SparkApiError) {
-      if (error.status === 401) return 'Email atau kata sandi belum cocok.';
-      if (error.status === 409) return 'Email ini sudah terdaftar. Coba masuk.';
-      if (error.status === 400) return 'Periksa kembali email, nama, dan kata sandi.';
-    }
-
-    return 'Belum bisa terhubung ke Spark API. Coba lagi sebentar.';
   }
 
   async function submitForm() {
@@ -86,12 +81,11 @@
     submitting = true;
 
     try {
-      const response =
+      const user =
         mode === 'login'
-          ? await loginWithBackend({ email: trimmedEmail, password })
-          : await registerWithBackend({ email: trimmedEmail, password, display_name: trimmedName });
+          ? await loginBackendSession({ email: trimmedEmail, password, mode: selectedMode })
+          : await registerBackendSession({ name: trimmedName, email: trimmedEmail, password, mode: selectedMode });
 
-      const user = useBackendSession(response.user, selectedMode);
       setLearnerIdentity(user.id);
       setExperience(user.mode);
 
@@ -103,7 +97,7 @@
 
       await goto(nextHref, { replaceState: true });
     } catch (error) {
-      formError = userFacingAuthError(error);
+      formError = authErrorMessage(error);
     } finally {
       submitting = false;
     }
@@ -127,7 +121,14 @@
       </div>
     {/if}
 
-    <div class="auth-input-grid pass35-auth-inputs">
+    {#if betaSession.lastError && !formError}
+      <div class="pass35-form-error" role="status">
+        <SparkIcon name="shield" size={15} />
+        <span>{betaSession.lastError}</span>
+      </div>
+    {/if}
+
+    <div class="auth-input-grid pass35-auth-inputs" aria-busy={submitting}>
       {#if mode === 'register'}
         <label>
           <span>Nama</span>
@@ -160,13 +161,13 @@
     {/if}
 
     <div class="auth-actions pass35-auth-actions">
-      <SparkButton onclick={submitForm}>{submitLabel}</SparkButton>
-      <SparkButton href={mode === 'login' ? `/register?next=${encodeURIComponent(nextHref)}` : `/login?next=${encodeURIComponent(nextHref)}`} variant="ghost">
+      <SparkButton onclick={submitForm} loading={submitting} disabled={submitting}>{submitting ? 'Memproses...' : mode === 'login' ? 'Masuk' : 'Daftar'}</SparkButton>
+      <SparkButton href={mode === 'login' ? `/register?next=${encodeURIComponent(nextHref)}` : `/login?next=${encodeURIComponent(nextHref)}`} variant="ghost" disabled={submitting}>
         {mode === 'login' ? 'Buat akun' : 'Sudah punya akun?'}
       </SparkButton>
     </div>
 
-    <p class="pass35-auth-note">Akun Spark sekarang tersimpan di server staging.</p>
+    <p class="pass35-auth-note">Akun tersimpan aman lewat sesi backend Spark.</p>
   </SparkCard>
 
   <div class="auth-hero-panel pass35-auth-intro pass40b-auth-intro">

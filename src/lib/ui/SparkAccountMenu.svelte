@@ -8,20 +8,24 @@
   import { pushToast } from '$state/app-state.svelte';
 
   let open = $state(false);
+  let loggingOut = $state(false);
 
   function close() {
     open = false;
   }
 
   async function logout() {
-    logoutBetaSession();
+    if (loggingOut) return;
+    loggingOut = true;
+    await logoutBetaSession();
     close();
     pushToast({
       title: 'Keluar dari akun',
-      copy: 'Silakan masuk lagi kapan saja.',
+      copy: 'Sesi backend Spark sudah ditutup.',
       tone: 'info'
     });
     await goto('/');
+    loggingOut = false;
   }
 </script>
 
@@ -58,7 +62,7 @@
         <a href="/passport" onclick={close}><SparkIcon name="passport" size={16} /> Passport</a>
         <a href="/profile" onclick={close}><SparkIcon name="user-round" size={16} /> Profil</a>
         <a href="/settings" onclick={close}><SparkIcon name="settings" size={16} /> Pengaturan</a>
-        <button type="button" onclick={logout}><SparkIcon name="logout" size={16} /> Keluar</button>
+        <button type="button" onclick={logout} disabled={loggingOut}><SparkIcon name="logout" size={16} /> {loggingOut ? 'Keluar...' : 'Keluar'}</button>
       </nav>
     </div>
   {/if}

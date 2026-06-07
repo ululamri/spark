@@ -1,10 +1,3 @@
-import {
-  currentBackendUser,
-  isUnauthorized,
-  logoutFromBackend,
-  type BackendAuthUser
-} from '$lib/api/spark-api-client';
-
 export type BetaUserRole = 'learner' | 'facilitator' | 'explorer';
 export type BetaUserMode = 'beginner' | 'guided' | 'explorer';
 export type BetaUserStatus = 'local-session' | 'backend-session';
@@ -23,16 +16,42 @@ export type BetaUser = {
 export type SessionInput = {
   name?: string;
   email: string;
+  password?: string;
   mode?: BetaUserMode;
+};
+
+type BackendAuthUser = {
+  id: string;
+  email: string;
+  display_name: string;
+  handle?: string | null;
+};
+
+type BackendAuthResponse = {
+  user: BackendAuthUser;
 };
 
 const STORAGE_KEY = 'karyra-spark-session-v2';
 const LEGACY_STORAGE_KEYS = ['karyra-spark-beta-session-v1'];
+const AUTH_BASE = '/v1/auth';
+
+export class SparkAuthError extends Error {
+  status: number;
+  userMessage: string;
+
+  constructor(status: number, userMessage: string, rawMessage?: string) {
+    super(rawMessage || userMessage);
+    this.name = 'SparkAuthError';
+    this.status = status;
+    this.userMessage = userMessage;
+  }
+}
 
 export const betaSession = $state({
   ready: false,
   hydrating: false,
-  user: null as BetaUser | null
+  user: null as BetaUser | null,
+  lastError: null as string | null
 });
 
 function normalizeEmail(value: string) {
@@ -89,20 +108,79 @@ function safeParseSession(raw: string | null) {
   }
 }
 
-export function backendUserToBetaUser(user: BackendAuthUser, mode: BetaUserMode = betaSession.user?.mode ?? 'beginner'): BetaUser {
+function setCurrentUser(user: BetaUser | null) {
+  betaSession.user = user;
+  betaSession.ready = true;
+  betaSession.lastError = null;
+  saveBetaSession(user);
+}
+
+function modeForBackendUser(email: string, preferredMode?: BetaUserMode) {
+  if (preferredMode) return preferredMode;
+  if (betaSession.user?.email && normalizeEmail(betaSession.user.email) === normalizeEmail(email)) return betaSession.user.mode;
+  return 'beginner';
+}
+
+function toBetaUser(user: BackendAuthUser, preferredMode?: BetaUserMode): BetaUser {
   const email = normalizeEmail(user.email);
-  const name = user.display_name?.trim() || titleFromEmail(email);
+  const mode = modeForBackendUser(email, preferredMode);
 
   return {
     id: user.id,
-    name,
-    handle: user.handle?.trim() || normalizeHandle(email || name),
+    name: user.display_name?.trim() || titleFromEmail(email),
+    handle: user.handle?.trim() || normalizeHandle(email),
     email,
     role: mode === 'explorer' ? 'explorer' : 'learner',
     mode,
     status: 'backend-session',
-    createdAt: betaSession.user?.createdAt || new Date().toISOString()
+    createdAt: betaSession.user?.id === user.id ? betaSession.user.createdAt : new Date().toISOString()
   };
+}
+
+function mapApiError(status: number, rawMessage: string) {
+  const message = rawMessage.toLowerCase();
+
+  if (status === 401) return 'Email atau kata sandi belum cocok.';
+  if (status === 409 || message.includes('already registered')) return 'Email ini sudah terdaftar. Masuk dengan akun tersebut atau gunakan email lain.';
+  if (message.includes('password must be')) return 'Kata sandi minimal 8 karakter dan maksimal 128 karakter.';
+  if (message.includes('valid email')) return 'Gunakan email yang valid.';
+  if (status >= 500) return 'Spark API sedang belum stabil. Coba lagi sebentar.';
+
+  return rawMessage.replace(/^bad request:\s*/i, '').replace(/^conflict:\s*/i, '') || 'Permintaan belum bisa diproses. Periksa kembali data yang kamu isi.';
+}
+
+async function requestJson<T>(path: string, init: RequestInit = {}) {
+  const headers = new Headers(init.headers);
+  headers.set('Accept', 'application/json');
+
+  let response: Response;
+  try {
+    response = await fetch(path, {
+      ...init,
+      headers,
+      credentials: 'include'
+    });
+  } catch {
+    throw new SparkAuthError(0, 'Belum bisa terhubung ke Spark API. Coba lagi sebentar.', 'network error');
+  }
+
+  if (response.status === 204) return null as T;
+
+  const contentType = response.headers.get('content-type') ?? '';
+  const body = contentType.includes('application/json') ? await response.json().catch(() => null) : null;
+
+  if (!response.ok) {
+    const rawMessage = typeof body?.error === 'string' ? body.error : response.statusText || 'request failed';
+    throw new SparkAuthError(response.status, mapApiError(response.status, rawMessage), rawMessage);
+  }
+
+  return body as T;
+}
+
+export function authErrorMessage(error: unknown, fallback = 'Belum bisa terhubung ke Spark API. Coba lagi sebentar.') {
+  if (error instanceof SparkAuthError) return error.userMessage;
+  if (error instanceof Error && error.message) return error.message;
+  return fallback;
 }
 
 export function restoreBetaSession() {
@@ -116,28 +194,6 @@ export function restoreBetaSession() {
   betaSession.ready = true;
 }
 
-export async function hydrateBetaSessionFromBackend() {
-  if (typeof window === 'undefined') return;
-
-  betaSession.hydrating = true;
-
-  try {
-    const response = await currentBackendUser();
-    const user = backendUserToBetaUser(response.user);
-    betaSession.user = user;
-    betaSession.ready = true;
-    saveBetaSession(user);
-  } catch (error) {
-    if (isUnauthorized(error) && betaSession.user?.status === 'backend-session') {
-      betaSession.user = null;
-      saveBetaSession(null);
-    }
-  } finally {
-    betaSession.hydrating = false;
-    betaSession.ready = true;
-  }
-}
-
 export function saveBetaSession(user: BetaUser | null) {
   if (typeof window === 'undefined') return;
 
@@ -147,6 +203,70 @@ export function saveBetaSession(user: BetaUser | null) {
   }
 
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+}
+
+export async function hydrateBackendSession() {
+  if (typeof window === 'undefined') return betaSession.user;
+
+  betaSession.hydrating = true;
+  betaSession.lastError = null;
+
+  try {
+    const response = await requestJson<BackendAuthResponse>(`${AUTH_BASE}/me`);
+    const user = toBetaUser(response.user);
+    setCurrentUser(user);
+    return user;
+  } catch (error) {
+    if (error instanceof SparkAuthError && error.status === 401) {
+      setCurrentUser(null);
+      return null;
+    }
+
+    betaSession.lastError = authErrorMessage(error);
+    if (!betaSession.user || betaSession.user.status === 'backend-session') {
+      setCurrentUser(null);
+    }
+    return betaSession.user;
+  } finally {
+    betaSession.ready = true;
+    betaSession.hydrating = false;
+  }
+}
+
+export async function registerBackendSession(input: SessionInput) {
+  const email = normalizeEmail(input.email);
+  const displayName = input.name?.trim();
+
+  const response = await requestJson<BackendAuthResponse>(`${AUTH_BASE}/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email,
+      password: input.password,
+      display_name: displayName
+    })
+  });
+
+  const user = toBetaUser(response.user, input.mode);
+  setCurrentUser(user);
+  return user;
+}
+
+export async function loginBackendSession(input: SessionInput) {
+  const email = normalizeEmail(input.email);
+
+  const response = await requestJson<BackendAuthResponse>(`${AUTH_BASE}/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email,
+      password: input.password
+    })
+  });
+
+  const user = toBetaUser(response.user, input.mode);
+  setCurrentUser(user);
+  return user;
 }
 
 export function startLearningSession(input: SessionInput) {
@@ -165,30 +285,22 @@ export function startLearningSession(input: SessionInput) {
     createdAt: new Date().toISOString()
   };
 
-  betaSession.user = user;
-  betaSession.ready = true;
-  saveBetaSession(user);
+  setCurrentUser(user);
   return user;
-}
-
-export function useBackendSession(user: BackendAuthUser, mode?: BetaUserMode) {
-  const sessionUser = backendUserToBetaUser(user, mode);
-  betaSession.user = sessionUser;
-  betaSession.ready = true;
-  saveBetaSession(sessionUser);
-  return sessionUser;
 }
 
 export async function logoutBetaSession() {
   try {
-    await logoutFromBackend();
+    await requestJson<null>(`${AUTH_BASE}/logout`, { method: 'POST' });
   } catch {
-    // Keep logout user-first. Local state is cleared even when the network request fails.
+    // Logout must remain reliable for the user even when the API is temporarily unreachable.
+  } finally {
+    setCurrentUser(null);
   }
+}
 
-  betaSession.user = null;
-  betaSession.ready = true;
-  saveBetaSession(null);
+export function clearLocalSession() {
+  setCurrentUser(null);
 }
 
 export function isSignedIn() {

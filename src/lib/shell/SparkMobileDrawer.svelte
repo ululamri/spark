@@ -1,12 +1,14 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
   import { fade, fly } from 'svelte/transition';
   import { sparkMessages } from '$lib/messaging/spark-messaging-model';
-  import { appState } from '$state/app-state.svelte';
+  import { appState, pushToast } from '$state/app-state.svelte';
   import { betaSession, getModeLabel, logoutBetaSession } from '$state/beta-session-state.svelte';
   import { messageState } from '$state/message-state.svelte';
   import SparkIcon from '$ui/SparkIcon.svelte';
   import SparkThemeToggle from '$ui/SparkThemeToggle.svelte';
 
+  let loggingOut = $state(false);
   const unreadMessages = $derived(sparkMessages.filter((message) => !messageState.readMessageIds.includes(message.id)).length);
 
   const accountLinks = $derived(
@@ -34,9 +36,14 @@
     appState.mobileMenuOpen = false;
   }
 
-  function logout() {
-    logoutBetaSession();
+  async function logout() {
+    if (loggingOut) return;
+    loggingOut = true;
+    await logoutBetaSession();
     close();
+    pushToast({ title: 'Keluar dari akun', copy: 'Sesi backend Spark sudah ditutup.', tone: 'info' });
+    await goto('/');
+    loggingOut = false;
   }
 </script>
 
@@ -88,9 +95,9 @@
       {/each}
 
       {#if betaSession.user}
-        <button class="drawer-logout" type="button" onclick={logout}>
+        <button class="drawer-logout" type="button" onclick={logout} disabled={loggingOut}>
           <span><SparkIcon name="logout" size={17} /></span>
-          <div><strong>Keluar</strong></div>
+          <div><strong>{loggingOut ? 'Keluar...' : 'Keluar'}</strong></div>
           <SparkIcon name="chevron-right" size={14} />
         </button>
       {/if}

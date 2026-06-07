@@ -21,9 +21,10 @@
   let redirecting = $state(false);
   const nextHref = $derived(`${page.url.pathname}${page.url.search}`);
   const loginHref = $derived(`/login?next=${encodeURIComponent(nextHref)}`);
+  const checkingSession = $derived(betaSession.hydrating && !betaSession.user);
 
   $effect(() => {
-    if (!betaSession.ready || betaSession.user || redirecting) return;
+    if (!betaSession.ready || betaSession.hydrating || betaSession.user || redirecting) return;
     redirecting = true;
     setTimeout(() => {
       void goto(loginHref, { replaceState: true });
@@ -33,6 +34,15 @@
 
 {#if betaSession.user}
   {@render children()}
+{:else if checkingSession}
+  <section class="spark-auth-gate pass35-auth-gate" aria-live="polite">
+    <div>
+      <span><SparkIcon name="shield" size={22} /></span>
+      <p class="spark-eyebrow">Memeriksa sesi</p>
+      <h1>Menghubungkan akun Spark</h1>
+      <p>Kami sedang memastikan sesi backend kamu masih aktif.</p>
+    </div>
+  </section>
 {:else}
   <section class="spark-auth-gate pass35-auth-gate" aria-live="polite">
     <div>
