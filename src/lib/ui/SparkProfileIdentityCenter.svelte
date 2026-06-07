@@ -5,11 +5,14 @@
   import SparkTrustBadge from './SparkTrustBadge.svelte';
   import { betaSession, getModeLabel } from '$state/beta-session-state.svelte';
   import { pushToast } from '$state/app-state.svelte';
+  import { getBackendProfile, updateBackendProfile } from '$lib/api/spark-profile-api';
   import {
     profileState,
     restoreProfileState,
     setAvatarImageData,
     updateProfileIdentity,
+    applyBackendProfileSnapshot,
+    createProfileUpdatePayload,
     type SparkProfileVisibility
   } from '$state/profile-state.svelte';
 
@@ -19,10 +22,28 @@
   let editBio = $state('');
   let editLocation = $state('');
   let editVisibility = $state<SparkProfileVisibility>('community');
+  let profileLoading = $state(false);
+  let profileSaving = $state(false);
+  let profileError = $state('');
 
   onMount(() => {
-    restoreProfileState();
+    void hydrateProfile();
   });
+
+  async function hydrateProfile() {
+    restoreProfileState();
+    profileLoading = true;
+    profileError = '';
+
+    try {
+      const profile = await getBackendProfile();
+      if (profile) applyBackendProfileSnapshot(profile);
+    } catch (error) {
+      profileError = error instanceof Error ? error.message : 'Profil belum bisa dibaca dari Spark API.';
+    } finally {
+      profileLoading = false;
+    }
+  }
 
   const displayName = $derived(profileState.displayName || betaSession.user?.name || 'Pengguna Karyra');
   const handle = $derived(profileState.handle || betaSession.user?.handle || '@karyra');
@@ -42,10 +63,23 @@
     editOpen = true;
   }
 
-  function saveEditor() {
+  async function saveEditor() {
+    profileSaving = true;
+    profileError = '';
+
     updateProfileIdentity({ displayName: editName, handle: editHandle, bio: editBio, location: editLocation, visibility: editVisibility });
-    editOpen = false;
-    pushToast({ title: 'Profil diperbarui', copy: 'Perubahan profil sudah disimpan.', tone: 'success' });
+
+    try {
+      const profile = await updateBackendProfile(createProfileUpdatePayload());
+      applyBackendProfileSnapshot(profile);
+      editOpen = false;
+      pushToast({ title: 'Profil diperbarui', copy: 'Perubahan profil sudah disimpan ke akun kamu.', tone: 'success' });
+    } catch (error) {
+      profileError = error instanceof Error ? error.message : 'Profil belum bisa disimpan ke Spark API.';
+      pushToast({ title: 'Profil belum tersimpan', copy: profileError, tone: 'warning' });
+    } finally {
+      profileSaving = false;
+    }
   }
 
   function handleAvatarUpload(event: Event) {
@@ -85,6 +119,7 @@
       <SparkTrustBadge label="Profil" tone="beta" />
       <h1>{displayName}</h1>
       <p>{handle} · {visibilityText}</p>
+      {#if profileLoading}<small>Sedang memuat profil akun...</small>{/if}
     </div>
   </div>
 
@@ -145,6 +180,10 @@
       <button type="button" aria-label="Tutup" onclick={() => (editOpen = false)}><SparkIcon name="x" size={17} /></button>
     </div>
 
+    {#if profileError}
+      <div class="profile-form-error" role="alert">{profileError}</div>
+    {/if}
+
     <label>
       <span>Nama</span>
       <input bind:value={editName} />
@@ -172,7 +211,7 @@
 
     <div class="profile-edit-actions">
       <SparkButton variant="ghost" onclick={() => (editOpen = false)}>Batal</SparkButton>
-      <SparkButton onclick={saveEditor}>Simpan</SparkButton>
+      <SparkButton onclick={() => void saveEditor()} loading={profileSaving} disabled={profileSaving}>Simpan</SparkButton>
     </div>
   </div>
 {/if}
@@ -252,6 +291,16 @@
 
   .profile-avatar-card h1,
   .profile-bio-card h2,
+  .profile-form-error {
+    padding: 10px 12px;
+    border: 1px solid rgba(239, 68, 68, .22);
+    border-radius: 14px;
+    color: #991b1b;
+    background: rgba(254, 226, 226, .72);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
   .profile-edit-dialog h2 {
     margin: 6px 0 0;
     color: var(--spark-navy);

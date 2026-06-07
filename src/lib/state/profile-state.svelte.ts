@@ -113,3 +113,47 @@ export function declineFriendRequest(friendId: string) {
   profileState.friendRequestIds = profileState.friendRequestIds.filter((id) => id !== friendId);
   saveProfileState();
 }
+
+export type BackendProfileSnapshot = {
+  display_name?: string | null;
+  handle?: string | null;
+  bio?: string | null;
+  location?: string | null;
+  visibility?: SparkProfileVisibility | string | null;
+  avatar_preset?: SparkProfileAvatarPreset | string | null;
+  avatar_url?: string | null;
+  updated_at?: string | null;
+};
+
+function isProfileVisibility(value: unknown): value is SparkProfileVisibility {
+  return value === 'private' || value === 'community' || value === 'public';
+}
+
+function isAvatarPreset(value: unknown): value is SparkProfileAvatarPreset {
+  return value === 'spark' || value === 'trophy' || value === 'coffee' || value === 'explorer' || value === 'mentor';
+}
+
+export function applyBackendProfileSnapshot(profile: BackendProfileSnapshot) {
+  if (typeof profile.display_name === 'string') profileState.displayName = profile.display_name;
+  if (typeof profile.handle === 'string') profileState.handle = profile.handle;
+  if (typeof profile.bio === 'string') profileState.bio = profile.bio;
+  if (typeof profile.location === 'string') profileState.location = profile.location;
+  if (isProfileVisibility(profile.visibility)) profileState.visibility = profile.visibility;
+  if (isAvatarPreset(profile.avatar_preset)) profileState.avatarPreset = profile.avatar_preset;
+  if (typeof profile.avatar_url === 'string') profileState.avatarImageData = profile.avatar_url;
+  if (typeof profile.updated_at === 'string') profileState.lastSavedAt = profile.updated_at;
+  saveProfileState();
+}
+
+export function createProfileUpdatePayload() {
+  return {
+    display_name: profileState.displayName,
+    handle: profileState.handle,
+    bio: profileState.bio,
+    location: profileState.location,
+    visibility: profileState.visibility,
+    avatar_preset: profileState.avatarPreset,
+    avatar_url: profileState.avatarImageData.startsWith('http') ? profileState.avatarImageData : ''
+  };
+}
+
