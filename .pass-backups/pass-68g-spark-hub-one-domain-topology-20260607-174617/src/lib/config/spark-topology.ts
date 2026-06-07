@@ -29,7 +29,7 @@ export const sparkServices: SparkService[] = [
     key: 'hub',
     label: 'Spark Hub',
     url: sparkEnv.PUBLIC_SPARK_HUB_URL,
-    description: 'Gateway eksplorasi resource, apps, tools, komunitas, dan misi ekosistem.',
+    description: 'Gateway eksplorasi resource, apps, tools, games, komunitas, dan misi ekosistem.',
     public: true
   },
   {
@@ -52,33 +52,18 @@ export function getService(key: SparkServiceKey) {
   return sparkServices.find((service) => service.key === key);
 }
 
-function normalizeHubSuffix(path = '/') {
-  let suffix = path.trim() || '/';
-  if (!suffix.startsWith('/')) suffix = `/${suffix}`;
-  if (suffix === '/' || suffix === '/hub') return '';
-  if (suffix.startsWith('/hub/')) return suffix.slice('/hub'.length);
-  return suffix;
-}
-
-function joinPath(basePath: string, suffix: string) {
-  const cleanBase = basePath === '/' ? '/hub' : basePath.replace(/\/$/, '');
-  if (!suffix) return cleanBase || '/hub';
-  return `${cleanBase}${suffix}`.replace(/\/+/g, '/');
-}
-
 export function getHubUrl(path = '/') {
   const base = getService('hub')?.url ?? sparkEnv.PUBLIC_SPARK_HUB_URL;
-  const suffix = normalizeHubSuffix(path);
-
-  if (base.startsWith('/')) return joinPath(base, suffix);
+  const suffix = path === '/' ? '' : path.startsWith('/') ? path : `/${path}`;
 
   try {
     const url = new URL(base);
-    if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return joinPath('/hub', suffix);
-    url.pathname = joinPath(url.pathname, suffix);
+    if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return `/hub${suffix}`;
+    const basePath = url.pathname === '/' ? '/hub' : url.pathname.replace(/\/$/, '');
+    url.pathname = `${basePath}${suffix}`;
     return url.toString();
   } catch {
-    return joinPath('/hub', suffix);
+    return `/hub${suffix}`;
   }
 }
 

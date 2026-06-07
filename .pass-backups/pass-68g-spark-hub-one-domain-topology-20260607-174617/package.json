@@ -16,8 +16,7 @@
     "audit:pass68c": "node src/scripts/audit-pass68c-main-journey-copy.mjs",
     "audit:pass68d": "node src/scripts/audit-pass68d-core-lab-flow.mjs",
     "audit:pass68e": "node src/scripts/audit-pass68e-passport-explainability.mjs",
-    "audit:pass68e-css": "node src/scripts/audit-pass68e-css-global-pseudo.mjs",
-    "audit:hub-topology": "node src/scripts/audit-hub-topology.mjs"
+    "audit:pass68e-css": "node src/scripts/audit-pass68e-css-global-pseudo.mjs"
   },
   "dependencies": {
     "@lucide/svelte": "latest",
