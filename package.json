@@ -21,7 +21,8 @@
     "audit:pass68k": "node src/scripts/audit-pass68k-desktop-layout.mjs",
     "audit:pass68l": "node src/scripts/audit-pass68l-beta-signal.mjs",
     "audit:pass69a": "node src/scripts/audit-pass69a-core-lessons.mjs",
-    "audit:pass69b": "node src/scripts/audit-pass69b-no-studio.mjs"
+    "audit:pass69b": "node src/scripts/audit-pass69b-no-studio.mjs",
+    "audit:pass69c": "node src/scripts/audit-pass69c-public-url-safety.mjs"
   },
   "dependencies": {
     "@lucide/svelte": "latest",
