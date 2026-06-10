@@ -472,6 +472,34 @@
 		align-items: flex-start;
 	}
 
+	.passport-backend-events-head > div {
+		display: grid;
+		gap: 4px;
+	}
+
+	.passport-backend-events-head p,
+	.passport-backend-event-list p {
+		margin: 0;
+		color: var(--spark-muted);
+		line-height: 1.6;
+	}
+
+	.passport-backend-safety-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.passport-backend-safety-list span {
+		padding: 7px 10px;
+		border: 1px solid rgba(22, 163, 74, 0.18);
+		border-radius: 999px;
+		background: rgba(240, 253, 244, 0.82);
+		color: #166534;
+		font-size: 12px;
+		font-weight: 850;
+	}
+
 	.passport-backend-event-list article {
 		align-items: flex-start;
 	}
