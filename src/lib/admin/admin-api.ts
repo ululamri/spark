@@ -211,6 +211,7 @@ export type AdminSystem = {
     no_private_key_handling: boolean;
     no_seed_phrase_handling: boolean;
   };
+  data_source?: AdminDataSource;
 };
 
 function trimSlash(value: string) {
@@ -239,6 +240,7 @@ function adminToken() {
 
 async function requestAdmin<T>(fetcher: typeof fetch, path: string): Promise<AdminSuccessEnvelope<T>> {
   const response = await fetcher(adminBaseUrl() + path, {
+    cache: 'no-store',
     headers: {
       accept: 'application/json',
       'x-karyra-admin-token': adminToken()
