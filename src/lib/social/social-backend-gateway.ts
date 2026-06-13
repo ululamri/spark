@@ -5,6 +5,7 @@ import type { SocialComment, SocialDraftInput, SocialMediaAttachment, SocialPost
 
 const API_BASE = (import.meta.env.PUBLIC_API_BASE || import.meta.env.PUBLIC_SPARK_API_BASE || '').replace(/\/$/, '');
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const MAX_SOCIAL_UPLOAD_BYTES = 8 * 1024 * 1024;
 
 export const socialBackendStatus = {
   ready: false,
@@ -57,6 +58,22 @@ type BackendMediaAttachment = {
   size_bytes: number;
   public_url?: string | null;
   created_at: string;
+};
+
+type BackendMediaAsset = {
+  id: string;
+  original_file_name: string;
+  mime_type: string;
+  size_bytes: number;
+  public_url?: string | null;
+  created_at: string;
+};
+
+type BackendUploadIntent = {
+  asset: BackendMediaAsset;
+  upload_method: string;
+  upload_url: string;
+  presigned: boolean;
 };
 
 type BackendHydratedComment = {
@@ -173,14 +190,14 @@ function reactionCount(reactions: Record<string, number>, keys: string[]) {
   return keys.reduce((total, key) => total + (Number(reactions[key]) || 0), 0);
 }
 
-function transformMedia(item: BackendMediaAttachment): SocialMediaAttachment {
+function transformMedia(item: BackendMediaAttachment | BackendMediaAsset): SocialMediaAttachment {
   return {
     id: item.id,
-    fileName: item.original_file_name,
-    mimeType: item.mime_type,
-    sizeBytes: item.size_bytes,
-    publicUrl: publicApiUrl(item.public_url),
-    createdAt: item.created_at
+    fileName: 'original_file_name' in item ? item.original_file_name : item.id,
+    mimeType: 'mime_type' in item ? item.mime_type : 'application/octet-stream',
+    sizeBytes: 'size_bytes' in item ? item.size_bytes : 0,
+    publicUrl: publicApiUrl('public_url' in item ? item.public_url : undefined),
+    createdAt: 'created_at' in item ? item.created_at : new Date().toISOString()
   };
 }
 
@@ -227,6 +244,14 @@ function registerProfiles(items: BackendHydratedPost[]) {
   );
 }
 
+function validateSocialUploadFile(file: File) {
+  const mimeType = file.type || 'application/octet-stream';
+  const allowed = mimeType.startsWith('image/') || mimeType === 'application/pdf' || mimeType.startsWith('text/');
+  if (!allowed) throw new Error('File harus berupa gambar, PDF, atau teks.');
+  if (file.size <= 0) throw new Error('File kosong tidak bisa diunggah.');
+  if (file.size > MAX_SOCIAL_UPLOAD_BYTES) throw new Error('Ukuran file maksimal 8 MB.');
+}
+
 export function isBackendSocialId(id: string) {
   return UUID_PATTERN.test(id);
 }
@@ -252,6 +277,45 @@ export async function hydrateSocialFeedFromBackend() {
   } finally {
     socialBackendStatus.syncing = false;
   }
+}
+
+export async function uploadSocialMediaFile(file: File) {
+  validateSocialUploadFile(file);
+
+  const intent = await apiPost<BackendUploadIntent>(
+    '/v1/media/upload-intents',
+    {
+      purpose: 'community',
+      file_name: file.name || 'spark-upload.bin',
+      mime_type: file.type || 'application/octet-stream',
+      size_bytes: file.size,
+      private: false,
+      metadata: { source: 'social-composer' }
+    },
+    'Upload intent media belum bisa dibuat.'
+  );
+
+  if (!intent) throw new Error('Login diperlukan untuk mengunggah media.');
+
+  const uploadResponse = await fetch(intent.upload_url, {
+    method: intent.upload_method || 'PUT',
+    headers: { 'Content-Type': file.type || 'application/octet-stream' },
+    body: file
+  });
+
+  if (!uploadResponse.ok) {
+    throw new Error('Upload ke storage gagal. Periksa CORS MinIO/Garage dan signed URL.');
+  }
+
+  const completed = await apiPost<BackendMediaAsset>(
+    `/v1/media/assets/${encodeURIComponent(intent.asset.id)}/complete`,
+    { size_bytes: file.size },
+    'Media sudah terunggah, tetapi belum bisa ditandai complete.'
+  );
+
+  if (!completed) throw new Error('Login diperlukan untuk menyelesaikan upload media.');
+
+  return transformMedia(completed);
 }
 
 export async function createBackendSocialPost(input: SocialDraftInput) {
