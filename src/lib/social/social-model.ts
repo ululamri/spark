@@ -62,6 +62,45 @@ export const socialProfiles: SocialProfile[] = [
   }
 ];
 
+let backendSocialProfiles: SocialProfile[] = [];
+
+function avatarLabelFromName(name: string) {
+  const letters = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
+  return letters || 'S';
+}
+
+export function registerBackendSocialProfiles(profiles: SocialProfile[]) {
+  const byId = new Map(backendSocialProfiles.map((profile) => [profile.id, profile]));
+  for (const profile of profiles) byId.set(profile.id, profile);
+  backendSocialProfiles = Array.from(byId.values());
+}
+
+export function backendProfileFromApi(input: {
+  user_id: string;
+  display_name: string;
+  handle?: string | null;
+  bio?: string;
+  location?: string;
+  visibility?: string;
+}): SocialProfile {
+  const name = input.display_name?.trim() || 'Pengguna Spark';
+  return {
+    id: input.user_id,
+    name,
+    handle: input.handle?.trim() || `@${input.user_id.slice(0, 8)}`,
+    role: 'learner',
+    location: input.location?.trim() || 'Komunitas Spark',
+    bio: input.bio?.trim().slice(0, 180) || 'Profil komunitas Spark.',
+    avatarLabel: avatarLabelFromName(name).slice(0, 3),
+    trusted: input.visibility === 'public'
+  };
+}
+
 export const socialSeedPosts: SocialPost[] = [
   {
     id: 'seed-progress-core',
@@ -134,5 +173,5 @@ export const socialSeedComments: Record<string, SocialComment[]> = {
 };
 
 export function getSocialProfile(profileId: string) {
-  return socialProfiles.find((profile) => profile.id === profileId) ?? socialProfiles[0];
+  return backendSocialProfiles.find((profile) => profile.id === profileId) ?? socialProfiles.find((profile) => profile.id === profileId) ?? socialProfiles[0];
 }
