@@ -11,7 +11,7 @@
   import { getSocialProfile, SOCIAL_VIEWER_ID, socialPostKindLabels } from '$lib/social/social-model';
   import { evaluateSocialComment } from '$lib/social/social-policy';
   import { socialState } from '$lib/social/social-state.svelte';
-  import type { SocialPost, SocialReactionKind } from '$lib/social/social-types';
+  import type { SocialMediaAttachment, SocialPost, SocialReactionKind } from '$lib/social/social-types';
 
   type Props = { post: SocialPost };
   let { post }: Props = $props();
@@ -23,6 +23,7 @@
   const comments = $derived(socialState.comments[post.id] ?? []);
   const followed = $derived(socialState.followedProfileIds.includes(post.authorId));
   const commentPolicy = $derived(evaluateSocialComment(commentDraft));
+  const media = $derived(post.media ?? []);
 
   const reactions: { key: SocialReactionKind; label: string; icon: string }[] = [
     { key: 'support', label: 'Dukung', icon: 'heart' },
@@ -32,9 +33,19 @@
 
   function addComment() {
     if (!commentPolicy.canKirim) return;
-    addSocialComment({ postId: post.id, body: commentDraft });
+    void addSocialComment({ postId: post.id, body: commentDraft });
     commentDraft = '';
     showComments = true;
+  }
+
+  function isImageMedia(item: SocialMediaAttachment) {
+    return item.mimeType.startsWith('image/') && Boolean(item.publicUrl);
+  }
+
+  function mediaSizeLabel(sizeBytes: number) {
+    if (sizeBytes >= 1024 * 1024) return `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
+    if (sizeBytes >= 1024) return `${Math.round(sizeBytes / 1024)} KB`;
+    return `${sizeBytes} B`;
   }
 
   async function copyShareLink() {
@@ -56,16 +67,36 @@
         <strong>{author.name}</strong>
         {#if author.trusted}<em>verified</em>{/if}
       </div>
-      <small>{author.handle} · {socialPostKindLabels[post.kind]} · lokal</small>
+      <small>{author.handle} · {socialPostKindLabels[post.kind]} · komunitas</small>
     </div>
     {#if post.authorId !== SOCIAL_VIEWER_ID}
-      <button type="button" class:active={followed} class="follow-btn" onclick={() => toggleSocialFollow(post.authorId)}>
+      <button type="button" class:active={followed} class="follow-btn" onclick={() => void toggleSocialFollow(post.authorId)}>
         {followed ? 'Diikuti' : 'Ikuti'}
       </button>
     {/if}
   </header>
 
   <p class="post-body">{post.body}</p>
+
+  {#if media.length > 0}
+    <div class="media-grid" aria-label="Lampiran media">
+      {#each media as item (item.id)}
+        {#if isImageMedia(item)}
+          <a class="media-image" href={item.publicUrl} target="_blank" rel="noreferrer" aria-label={`Buka ${item.fileName}`}>
+            <img src={item.publicUrl} alt={item.fileName} loading="lazy" />
+          </a>
+        {:else}
+          <a class="media-file" href={item.publicUrl ?? '#'} target="_blank" rel="noreferrer" aria-label={`Buka ${item.fileName}`}>
+            <SparkIcon name="document" size={15} />
+            <span>
+              <strong>{item.fileName}</strong>
+              <small>{item.mimeType} · {mediaSizeLabel(item.sizeBytes)}</small>
+            </span>
+          </a>
+        {/if}
+      {/each}
+    </div>
+  {/if}
 
   {#if post.tags.length > 0}
     <div class="tag-row">
@@ -80,7 +111,7 @@
       <button
         type="button"
         class:active={post.viewer.reaction === reaction.key}
-        onclick={() => toggleSocialReaction(post.id, reaction.key)}
+        onclick={() => void toggleSocialReaction(post.id, reaction.key)}
       >
         <SparkIcon name={reaction.icon} size={14} /> {reaction.label} <span>{post.stats[reaction.key]}</span>
       </button>
@@ -118,10 +149,10 @@
   {/if}
 
   <footer class="post-tools">
-    <small>{post.status === 'local' ? 'Tersimpan aman · belum penyimpanan akun' : post.status}</small>
+    <small>{post.status === 'local' ? 'Tersimpan lokal' : post.status === 'synced' ? 'Tersinkron ke Spark API' : post.status}</small>
     <div>
-      <button type="button" onclick={() => hideSocialPost(post.id)}>Sembunyikan</button>
-      <button type="button" disabled={post.viewer.reported} onclick={() => reportSocialPost(post.id, 'unsafe')}>
+      <button type="button" onclick={() => void hideSocialPost(post.id)}>Sembunyikan</button>
+      <button type="button" disabled={post.viewer.reported} onclick={() => void reportSocialPost(post.id, 'unsafe')}>
         {post.viewer.reported ? 'Dilaporkan' : 'Report'}
       </button>
     </div>
@@ -219,6 +250,59 @@
   }
 
   :global([data-theme='dark']) .post-body { color: #e5edff; }
+
+  .media-grid {
+    display: grid;
+    gap: 8px;
+  }
+
+  .media-image,
+  .media-file {
+    overflow: hidden;
+    border: 1px solid var(--spark-line);
+    border-radius: 18px;
+    background: rgba(248, 251, 255, 0.72);
+  }
+
+  :global([data-theme='dark']) .media-image,
+  :global([data-theme='dark']) .media-file { background: rgba(255,255,255,.045); }
+
+  .media-image img {
+    display: block;
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+  }
+
+  .media-file {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+    padding: 11px;
+    color: var(--spark-blue-strong);
+    text-decoration: none;
+  }
+
+  .media-file span {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .media-file strong {
+    overflow: hidden;
+    color: var(--spark-navy);
+    font-size: 12.5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :global([data-theme='dark']) .media-file strong { color: #fff; }
+
+  .media-file small {
+    color: var(--spark-muted);
+    font-size: 11px;
+  }
 
   .tag-row,
   .post-actions,
