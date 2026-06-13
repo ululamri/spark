@@ -4,7 +4,7 @@ import { socialState } from './social-state.svelte';
 import type { SocialComment, SocialDraftInput, SocialPost, SocialPostKind, SocialReactionKind, SocialReportReason } from './social-types';
 
 const API_BASE = (import.meta.env.PUBLIC_API_BASE || import.meta.env.PUBLIC_SPARK_API_BASE || '').replace(/\/$/, '');
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const socialBackendStatus = {
   ready: false,
