@@ -1,3 +1,15 @@
+import {
+  createBackendSocialComment,
+  createBackendSocialPost,
+  deleteBackendSocialReaction,
+  followBackendSocialProfile,
+  hideBackendSocialPost,
+  hydrateSocialFeedFromBackend,
+  isBackendSocialId,
+  reportBackendSocialPost,
+  setBackendSocialReaction,
+  unfollowBackendSocialProfile
+} from './social-backend-gateway';
 import { createSocialEvent, createSocialId } from './social-events';
 import { enqueueSyncEvent } from '$lib/sync/sync-event-queue.svelte';
 import type { SyncEventName } from '$lib/sync/sync-types';
@@ -17,7 +29,11 @@ function pushEvent(event: ReturnType<typeof createSocialEvent>) {
   });
 }
 
-export function createSocialPost(input: SocialDraftInput) {
+function markPostStatus(postId: string, status: SocialPost['status']) {
+  socialState.posts = socialState.posts.map((post) => (post.id === postId ? { ...post, status } : post));
+}
+
+export async function createSocialPost(input: SocialDraftInput) {
   const policy = evaluateSocialDraft(input.body);
   if (!policy.canKirim) return;
 
@@ -31,7 +47,7 @@ export function createSocialPost(input: SocialDraftInput) {
     createdAt: new Date().toISOString(),
     stats: { support: 0, helpful: 0, inspiring: 0, comments: 0, shares: 0 },
     viewer: { hidden: false, reported: false },
-    status: 'local'
+    status: 'pending'
   };
 
   socialState.posts = [post, ...socialState.posts];
@@ -41,20 +57,34 @@ export function createSocialPost(input: SocialDraftInput) {
       kind: 'post.created',
       targetId: post.id,
       title: 'Postingan terkirim',
-      copy: 'Postingan sudah muncul di Ruang Diskusi.',
+      copy: 'Postingan sedang disinkronkan ke Ruang Diskusi.',
       href: `/community#${post.id}`
     })
   );
+
+  try {
+    const created = await createBackendSocialPost({ ...input, body: policy.normalized });
+    if (created) {
+      await hydrateSocialFeedFromBackend();
+    } else {
+      markPostStatus(post.id, 'local');
+    }
+  } catch {
+    markPostStatus(post.id, 'failed');
+  }
 }
 
-export function toggleSocialReaction(postId: string, reaction: SocialReactionKind) {
+export async function toggleSocialReaction(postId: string, reaction: SocialReactionKind) {
+  let previous: SocialReactionKind | undefined;
+  let nextReaction: SocialReactionKind | undefined;
+
   socialState.posts = socialState.posts.map((post) => {
     if (post.id !== postId) return post;
 
-    const previous = post.viewer.reaction;
+    previous = post.viewer.reaction;
     const stats = { ...post.stats };
     if (previous) stats[previous] = Math.max(0, stats[previous] - 1);
-    const nextReaction = previous === reaction ? undefined : reaction;
+    nextReaction = previous === reaction ? undefined : reaction;
     if (nextReaction) stats[nextReaction] += 1;
 
     return { ...post, stats, viewer: { ...post.viewer, reaction: nextReaction } };
@@ -69,9 +99,21 @@ export function toggleSocialReaction(postId: string, reaction: SocialReactionKin
       href: `/community#${postId}`
     })
   );
+
+  if (!isBackendSocialId(postId)) return;
+
+  try {
+    if (nextReaction) {
+      await setBackendSocialReaction(postId, nextReaction);
+    } else if (previous) {
+      await deleteBackendSocialReaction(postId, previous);
+    }
+  } catch {
+    // Keep optimistic local state. The sync event remains queued for audit.
+  }
 }
 
-export function addSocialComment(input: SocialCommentInput) {
+export async function addSocialComment(input: SocialCommentInput) {
   const policy = evaluateSocialComment(input.body);
   if (!policy.canKirim) return;
 
@@ -81,7 +123,7 @@ export function addSocialComment(input: SocialCommentInput) {
     authorId: SOCIAL_VIEWER_ID,
     body: policy.normalized,
     createdAt: new Date().toISOString(),
-    status: 'local'
+    status: 'pending'
   };
 
   const existing = socialState.comments[input.postId] ?? [];
@@ -95,13 +137,26 @@ export function addSocialComment(input: SocialCommentInput) {
       kind: 'comment.created',
       targetId: input.postId,
       title: 'Komentar terkirim',
-      copy: 'Komentar sudah muncul di percakapan ini.',
+      copy: 'Komentar sedang disinkronkan.',
       href: `/community#${input.postId}`
     })
   );
+
+  if (!isBackendSocialId(input.postId)) return;
+
+  try {
+    const created = await createBackendSocialComment(input.postId, policy.normalized);
+    if (created) await hydrateSocialFeedFromBackend();
+  } catch {
+    const comments = socialState.comments[input.postId] ?? [];
+    socialState.comments = {
+      ...socialState.comments,
+      [input.postId]: comments.map((item) => (item.id === comment.id ? { ...item, status: 'failed' } : item))
+    };
+  }
 }
 
-export function toggleSocialFollow(profileId: string) {
+export async function toggleSocialFollow(profileId: string) {
   if (profileId === SOCIAL_VIEWER_ID) return;
   const followed = socialState.followedProfileIds.includes(profileId);
   socialState.followedProfileIds = followed
@@ -117,9 +172,21 @@ export function toggleSocialFollow(profileId: string) {
       href: '/community?tab=diskusi#diskusi'
     })
   );
+
+  if (!isBackendSocialId(profileId)) return;
+
+  try {
+    if (followed) {
+      await unfollowBackendSocialProfile(profileId);
+    } else {
+      await followBackendSocialProfile(profileId);
+    }
+  } catch {
+    // Keep optimistic local state.
+  }
 }
 
-export function hideSocialPost(postId: string) {
+export async function hideSocialPost(postId: string) {
   socialState.posts = socialState.posts.map((post) =>
     post.id === postId ? { ...post, viewer: { ...post.viewer, hidden: true } } : post
   );
@@ -132,9 +199,12 @@ export function hideSocialPost(postId: string) {
       href: '/community?tab=diskusi#diskusi'
     })
   );
+
+  if (!isBackendSocialId(postId)) return;
+  await hideBackendSocialPost(postId).catch(() => undefined);
 }
 
-export function reportSocialPost(postId: string, reason: SocialReportReason = 'other') {
+export async function reportSocialPost(postId: string, reason: SocialReportReason = 'other') {
   socialState.posts = socialState.posts.map((post) =>
     post.id === postId ? { ...post, viewer: { ...post.viewer, reported: true } } : post
   );
@@ -147,6 +217,9 @@ export function reportSocialPost(postId: string, reason: SocialReportReason = 'o
       href: '/community?tab=diskusi#diskusi'
     })
   );
+
+  if (!isBackendSocialId(postId)) return;
+  await reportBackendSocialPost(postId, reason).catch(() => undefined);
 }
 
 export function shareSocialPost(postId: string) {
