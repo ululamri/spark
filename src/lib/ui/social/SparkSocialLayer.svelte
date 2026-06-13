@@ -5,6 +5,7 @@
   import SparkSocialComposer from './SparkSocialComposer.svelte';
   import SparkSocialPostCard from './SparkSocialPostCard.svelte';
   import SparkSocialSafetyPanel from './SparkSocialSafetyPanel.svelte';
+  import { hydrateSocialFeedFromBackend } from '$lib/social/social-backend-gateway';
   import { socialPostKindLabels } from '$lib/social/social-model';
   import {
     markSocialEventsRead,
@@ -19,6 +20,7 @@
 
   onMount(() => {
     restoreSocialState();
+    void hydrateSocialFeedFromBackend();
   });
 
   $effect(() => {
@@ -39,19 +41,19 @@
   );
 </script>
 
-<div class="social-layer" data-karyra-social-layer="pass38-discussion">
+<div class="social-layer" data-karyra-social-layer="public-social-api-bridge">
   <div class="social-layer-head">
     <SparkSectionHeader
       eyebrow="Diskusi komunitas"
       title="Tanya, koordinasi, dan berbagi progress."
-      copy="Ruang diskusi lokal untuk pertanyaan, ajakan workshop, rujukan aman, catatan belajar, dan showcase Lab. Data masih tersimpan lokal dan siap disambungkan ke backend nanti."
+      copy="Ruang diskusi publik untuk pertanyaan, koordinasi workshop, rujukan aman, catatan belajar, dan showcase Lab. Feed dibaca dari Spark API saat backend tersedia, lalu jatuh kembali ke cache lokal bila jaringan belum siap."
     />
 
     <div class="social-event-card">
       <span><SparkIcon name="bell" size={17} /></span>
       <div>
         <strong>{socialUnreadEventCount} aktivitas baru</strong>
-        <small>Aktivitas ini menjadi jalur notifikasi dan sinkronisasi backend nanti.</small>
+        <small>Aktivitas ini menjadi jejak sinkronisasi feed, komentar, reaksi, follow, hide, dan report.</small>
       </div>
       <button type="button" onclick={markSocialEventsRead}>Tandai</button>
     </div>
