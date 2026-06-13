@@ -25,12 +25,22 @@ export const socialProfileSchema = z.object({
   trusted: z.boolean().default(false)
 });
 
+export const socialMediaAttachmentSchema = z.object({
+  id: z.string().min(1),
+  fileName: z.string().min(1).max(160),
+  mimeType: z.string().min(1).max(128),
+  sizeBytes: z.number().int().nonnegative(),
+  publicUrl: z.string().min(1).optional(),
+  createdAt: z.string().min(1)
+});
+
 export const socialPostSchema = z.object({
   id: z.string().min(1),
   authorId: z.string().min(1),
   kind: socialPostKindSchema,
   body: z.string().min(1).max(720),
   tags: z.array(z.string().min(1).max(32)).max(8),
+  media: z.array(socialMediaAttachmentSchema).max(8).optional(),
   visibility: socialVisibilitySchema,
   createdAt: z.string().min(1),
   updatedAt: z.string().optional(),
