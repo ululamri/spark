@@ -3,6 +3,7 @@ import type {
   socialCommentSchema,
   socialEventKindSchema,
   socialEventSchema,
+  socialMediaAttachmentSchema,
   socialPostKindSchema,
   socialPostSchema,
   socialProfileSchema,
@@ -18,6 +19,7 @@ export type SocialSyncStatus = z.infer<typeof socialSyncStatusSchema>;
 export type SocialReactionKind = z.infer<typeof socialReactionKindSchema>;
 export type SocialEventKind = z.infer<typeof socialEventKindSchema>;
 export type SocialProfile = z.infer<typeof socialProfileSchema>;
+export type SocialMediaAttachment = z.infer<typeof socialMediaAttachmentSchema>;
 export type SocialPost = z.infer<typeof socialPostSchema>;
 export type SocialComment = z.infer<typeof socialCommentSchema>;
 export type SocialEvent = z.infer<typeof socialEventSchema>;
@@ -30,6 +32,7 @@ export type SocialDraftInput = {
   kind: SocialPostKind;
   tags?: string[];
   visibility?: SocialVisibility;
+  mediaAssetIds?: string[];
 };
 
 export type SocialCommentInput = {
