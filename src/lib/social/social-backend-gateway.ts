@@ -51,16 +51,7 @@ type BackendComment = {
   created_at: string;
 };
 
-type BackendMediaAttachment = {
-  id: string;
-  original_file_name: string;
-  mime_type: string;
-  size_bytes: number;
-  public_url?: string | null;
-  created_at: string;
-};
-
-type BackendMediaAsset = {
+type BackendMedia = {
   id: string;
   original_file_name: string;
   mime_type: string;
@@ -70,7 +61,7 @@ type BackendMediaAsset = {
 };
 
 type BackendUploadIntent = {
-  asset: BackendMediaAsset;
+  asset: BackendMedia;
   upload_method: string;
   upload_url: string;
   presigned: boolean;
@@ -79,7 +70,7 @@ type BackendUploadIntent = {
 type BackendHydratedComment = {
   comment: BackendComment;
   author: BackendProfile;
-  media?: BackendMediaAttachment[];
+  media?: BackendMedia[];
   stats: BackendStats;
   viewer: BackendViewer;
 };
@@ -87,7 +78,7 @@ type BackendHydratedComment = {
 type BackendHydratedPost = {
   post: BackendPost;
   author: BackendProfile;
-  media?: BackendMediaAttachment[];
+  media?: BackendMedia[];
   stats: BackendStats;
   viewer: BackendViewer;
   comments: BackendHydratedComment[];
@@ -190,14 +181,14 @@ function reactionCount(reactions: Record<string, number>, keys: string[]) {
   return keys.reduce((total, key) => total + (Number(reactions[key]) || 0), 0);
 }
 
-function transformMedia(item: BackendMediaAttachment | BackendMediaAsset): SocialMediaAttachment {
+function transformMedia(item: BackendMedia): SocialMediaAttachment {
   return {
     id: item.id,
-    fileName: 'original_file_name' in item ? item.original_file_name : item.id,
-    mimeType: 'mime_type' in item ? item.mime_type : 'application/octet-stream',
-    sizeBytes: 'size_bytes' in item ? item.size_bytes : 0,
-    publicUrl: publicApiUrl('public_url' in item ? item.public_url : undefined),
-    createdAt: 'created_at' in item ? item.created_at : new Date().toISOString()
+    fileName: item.original_file_name,
+    mimeType: item.mime_type,
+    sizeBytes: item.size_bytes,
+    publicUrl: publicApiUrl(item.public_url),
+    createdAt: item.created_at
   };
 }
 
@@ -307,7 +298,7 @@ export async function uploadSocialMediaFile(file: File) {
     throw new Error('Upload ke storage gagal. Periksa CORS MinIO/Garage dan signed URL.');
   }
 
-  const completed = await apiPost<BackendMediaAsset>(
+  const completed = await apiPost<BackendMedia>(
     `/v1/media/assets/${encodeURIComponent(intent.asset.id)}/complete`,
     { size_bytes: file.size },
     'Media sudah terunggah, tetapi belum bisa ditandai complete.'
