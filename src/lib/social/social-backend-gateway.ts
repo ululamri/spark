@@ -4,7 +4,13 @@ import { socialState } from './social-state.svelte';
 import type { SocialComment, SocialDraftInput, SocialPost, SocialPostKind, SocialReactionKind, SocialReportReason } from './social-types';
 
 const API_BASE = (import.meta.env.PUBLIC_API_BASE || import.meta.env.PUBLIC_SPARK_API_BASE || '').replace(/\/$/, '');
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export const socialBackendStatus = {
+  ready: false,
+  syncing: false,
+  error: ''
+};
 
 type BackendProfile = {
   user_id: string;
@@ -13,8 +19,6 @@ type BackendProfile = {
   bio: string;
   location: string;
   visibility: string;
-  avatar_preset?: string;
-  avatar_url?: string | null;
 };
 
 type BackendStats = {
@@ -23,7 +27,6 @@ type BackendStats = {
 };
 
 type BackendViewer = {
-  has_reacted: boolean;
   reaction_kinds: string[];
   is_following_author: boolean;
   is_hidden: boolean;
@@ -35,8 +38,6 @@ type BackendPost = {
   kind: string;
   body: string;
   visibility: string;
-  status: string;
-  published_at: string;
   created_at: string;
   updated_at: string;
 };
@@ -47,7 +48,6 @@ type BackendComment = {
   author_user_id: string;
   body: string;
   created_at: string;
-  updated_at: string;
 };
 
 type BackendHydratedComment = {
@@ -67,7 +67,6 @@ type BackendHydratedPost = {
 
 type BackendFeedResponse = {
   items: BackendHydratedPost[];
-  next_cursor?: string | null;
 };
 
 function apiUrl(path: string) {
@@ -159,7 +158,8 @@ function reactionCount(reactions: Record<string, number>, keys: string[]) {
 
 function transformPost(item: BackendHydratedPost): SocialPost {
   const kind = backendKindToSocialKind(item.post.kind);
-  const reaction = item.viewer.reaction_kinds.map(backendReactionToSocialReaction).find(Boolean);
+  const reaction = item.viewer.reaction_kinds.map(backendReactionToSocialReaction).find((value): value is SocialReactionKind => Boolean(value));
+
   return {
     id: item.post.id,
     authorId: item.author.user_id,
@@ -176,11 +176,7 @@ function transformPost(item: BackendHydratedPost): SocialPost {
       comments: item.stats.comments,
       shares: 0
     },
-    viewer: {
-      reaction,
-      hidden: item.viewer.is_hidden,
-      reported: false
-    },
+    viewer: { reaction, hidden: item.viewer.is_hidden, reported: false },
     status: 'synced'
   };
 }
@@ -209,8 +205,8 @@ export function isBackendSocialId(id: string) {
 export async function hydrateSocialFeedFromBackend() {
   if (typeof window === 'undefined') return false;
 
-  socialState.backendSyncing = true;
-  socialState.backendError = '';
+  socialBackendStatus.syncing = true;
+  socialBackendStatus.error = '';
 
   try {
     const feed = await apiGet<BackendFeedResponse>('/v1/social/feed?limit=30', 'Feed komunitas belum bisa dibaca dari Spark API.');
@@ -218,82 +214,49 @@ export async function hydrateSocialFeedFromBackend() {
 
     registerProfiles(feed.items);
     socialState.posts = feed.items.map(transformPost);
-    socialState.comments = Object.fromEntries(
-      feed.items.map((item) => [item.post.id, item.comments.map(transformComment)])
-    );
-    socialState.backendReady = true;
+    socialState.comments = Object.fromEntries(feed.items.map((item) => [item.post.id, item.comments.map(transformComment)]));
+    socialBackendStatus.ready = true;
     return true;
   } catch (error) {
-    socialState.backendError = error instanceof Error ? error.message : 'Feed komunitas belum bisa disinkronkan.';
+    socialBackendStatus.error = error instanceof Error ? error.message : 'Feed komunitas belum bisa disinkronkan.';
     return false;
   } finally {
-    socialState.backendSyncing = false;
+    socialBackendStatus.syncing = false;
   }
 }
 
 export async function createBackendSocialPost(input: SocialDraftInput) {
   return apiPost<BackendHydratedPost>(
     '/v1/social/posts',
-    {
-      kind: socialKindToBackendKind(input.kind),
-      body: input.body,
-      visibility: input.visibility ?? 'community',
-      media_asset_ids: []
-    },
+    { kind: socialKindToBackendKind(input.kind), body: input.body, visibility: input.visibility ?? 'community', media_asset_ids: [] },
     'Postingan belum bisa dikirim ke Spark API.'
   );
 }
 
 export async function createBackendSocialComment(postId: string, body: string) {
-  return apiPost<BackendHydratedComment>(
-    `/v1/social/posts/${encodeURIComponent(postId)}/comments`,
-    { body, media_asset_ids: [] },
-    'Komentar belum bisa dikirim ke Spark API.'
-  );
+  return apiPost<BackendHydratedComment>(`/v1/social/posts/${encodeURIComponent(postId)}/comments`, { body, media_asset_ids: [] }, 'Komentar belum bisa dikirim ke Spark API.');
 }
 
 export async function setBackendSocialReaction(postId: string, reaction: SocialReactionKind) {
-  return apiPost<{ ok: boolean }>(
-    `/v1/social/posts/${encodeURIComponent(postId)}/reactions`,
-    { kind: socialReactionToBackendReaction(reaction) },
-    'Reaksi belum bisa disimpan ke Spark API.'
-  );
+  return apiPost<{ ok: boolean }>(`/v1/social/posts/${encodeURIComponent(postId)}/reactions`, { kind: socialReactionToBackendReaction(reaction) }, 'Reaksi belum bisa disimpan ke Spark API.');
 }
 
 export async function deleteBackendSocialReaction(postId: string, reaction: SocialReactionKind) {
-  return apiDelete(
-    `/v1/social/posts/${encodeURIComponent(postId)}/reactions/${encodeURIComponent(socialReactionToBackendReaction(reaction))}`,
-    'Reaksi belum bisa dilepas dari Spark API.'
-  );
+  return apiDelete(`/v1/social/posts/${encodeURIComponent(postId)}/reactions/${encodeURIComponent(socialReactionToBackendReaction(reaction))}`, 'Reaksi belum bisa dilepas dari Spark API.');
 }
 
 export async function hideBackendSocialPost(postId: string) {
-  return apiPost<{ ok: boolean }>(
-    `/v1/social/posts/${encodeURIComponent(postId)}/hide`,
-    {},
-    'Post belum bisa disembunyikan di Spark API.'
-  );
+  return apiPost<{ ok: boolean }>(`/v1/social/posts/${encodeURIComponent(postId)}/hide`, {}, 'Post belum bisa disembunyikan di Spark API.');
 }
 
 export async function reportBackendSocialPost(postId: string, reason: SocialReportReason) {
-  return apiPost<{ id: string }>(
-    `/v1/social/posts/${encodeURIComponent(postId)}/report`,
-    { reason: reportReasonToBackendReason(reason), details: '' },
-    'Laporan belum bisa dikirim ke Spark API.'
-  );
+  return apiPost<{ id: string }>(`/v1/social/posts/${encodeURIComponent(postId)}/report`, { reason: reportReasonToBackendReason(reason), details: '' }, 'Laporan belum bisa dikirim ke Spark API.');
 }
 
 export async function followBackendSocialProfile(profileId: string) {
-  return apiPost<{ ok: boolean }>(
-    `/v1/social/profiles/${encodeURIComponent(profileId)}/follow`,
-    {},
-    'Profil belum bisa diikuti dari Spark API.'
-  );
+  return apiPost<{ ok: boolean }>(`/v1/social/profiles/${encodeURIComponent(profileId)}/follow`, {}, 'Profil belum bisa diikuti dari Spark API.');
 }
 
 export async function unfollowBackendSocialProfile(profileId: string) {
-  return apiDelete(
-    `/v1/social/profiles/${encodeURIComponent(profileId)}/follow`,
-    'Profil belum bisa dilepas dari Spark API.'
-  );
+  return apiDelete(`/v1/social/profiles/${encodeURIComponent(profileId)}/follow`, 'Profil belum bisa dilepas dari Spark API.');
 }
