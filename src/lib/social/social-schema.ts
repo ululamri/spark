@@ -38,7 +38,7 @@ export const socialPostSchema = z.object({
   id: z.string().min(1),
   authorId: z.string().min(1),
   kind: socialPostKindSchema,
-  body: z.string().min(1).max(720),
+  body: z.string().min(1).max(4000),
   tags: z.array(z.string().min(1).max(32)).max(8),
   media: z.array(socialMediaAttachmentSchema).max(8).optional(),
   visibility: socialVisibilitySchema,
@@ -63,7 +63,7 @@ export const socialCommentSchema = z.object({
   id: z.string().min(1),
   postId: z.string().min(1),
   authorId: z.string().min(1),
-  body: z.string().min(1).max(360),
+  body: z.string().min(1).max(2000),
   createdAt: z.string().min(1),
   status: socialSyncStatusSchema
 });
