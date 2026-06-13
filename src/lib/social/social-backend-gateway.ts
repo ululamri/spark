@@ -1,7 +1,7 @@
 import { backendProfileFromApi, registerBackendSocialProfiles } from './social-model';
 import { extractSocialTags } from './social-policy';
 import { socialState } from './social-state.svelte';
-import type { SocialComment, SocialDraftInput, SocialPost, SocialPostKind, SocialReactionKind, SocialReportReason } from './social-types';
+import type { SocialComment, SocialDraftInput, SocialMediaAttachment, SocialPost, SocialPostKind, SocialReactionKind, SocialReportReason } from './social-types';
 
 const API_BASE = (import.meta.env.PUBLIC_API_BASE || import.meta.env.PUBLIC_SPARK_API_BASE || '').replace(/\/$/, '');
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -50,9 +50,19 @@ type BackendComment = {
   created_at: string;
 };
 
+type BackendMediaAttachment = {
+  id: string;
+  original_file_name: string;
+  mime_type: string;
+  size_bytes: number;
+  public_url?: string | null;
+  created_at: string;
+};
+
 type BackendHydratedComment = {
   comment: BackendComment;
   author: BackendProfile;
+  media?: BackendMediaAttachment[];
   stats: BackendStats;
   viewer: BackendViewer;
 };
@@ -60,6 +70,7 @@ type BackendHydratedComment = {
 type BackendHydratedPost = {
   post: BackendPost;
   author: BackendProfile;
+  media?: BackendMediaAttachment[];
   stats: BackendStats;
   viewer: BackendViewer;
   comments: BackendHydratedComment[];
@@ -71,6 +82,12 @@ type BackendFeedResponse = {
 
 function apiUrl(path: string) {
   return `${API_BASE}${path}`;
+}
+
+function publicApiUrl(path?: string | null) {
+  if (!path) return undefined;
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  return apiUrl(path.startsWith('/') ? path : `/${path}`);
 }
 
 async function readJson<T>(response: Response): Promise<T> {
@@ -156,6 +173,17 @@ function reactionCount(reactions: Record<string, number>, keys: string[]) {
   return keys.reduce((total, key) => total + (Number(reactions[key]) || 0), 0);
 }
 
+function transformMedia(item: BackendMediaAttachment): SocialMediaAttachment {
+  return {
+    id: item.id,
+    fileName: item.original_file_name,
+    mimeType: item.mime_type,
+    sizeBytes: item.size_bytes,
+    publicUrl: publicApiUrl(item.public_url),
+    createdAt: item.created_at
+  };
+}
+
 function transformPost(item: BackendHydratedPost): SocialPost {
   const kind = backendKindToSocialKind(item.post.kind);
   const reaction = item.viewer.reaction_kinds.map(backendReactionToSocialReaction).find((value): value is SocialReactionKind => Boolean(value));
@@ -166,6 +194,7 @@ function transformPost(item: BackendHydratedPost): SocialPost {
     kind,
     body: item.post.body,
     tags: extractSocialTags(item.post.body, kind),
+    media: (item.media ?? []).map(transformMedia),
     visibility: item.post.visibility === 'public' ? 'public' : 'community',
     createdAt: item.post.created_at,
     updatedAt: item.post.updated_at,
@@ -228,7 +257,7 @@ export async function hydrateSocialFeedFromBackend() {
 export async function createBackendSocialPost(input: SocialDraftInput) {
   return apiPost<BackendHydratedPost>(
     '/v1/social/posts',
-    { kind: socialKindToBackendKind(input.kind), body: input.body, visibility: input.visibility ?? 'community', media_asset_ids: [] },
+    { kind: socialKindToBackendKind(input.kind), body: input.body, visibility: input.visibility ?? 'community', media_asset_ids: input.mediaAssetIds ?? [] },
     'Postingan belum bisa dikirim ke Spark API.'
   );
 }
