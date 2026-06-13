@@ -104,6 +104,15 @@ async function readJson<T>(response: Response): Promise<T> {
   return JSON.parse(text) as T;
 }
 
+async function readApiError(response: Response, fallback: string) {
+  try {
+    const body = await readJson<{ error?: string }>(response);
+    return body.error?.trim() || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 async function apiGet<T>(path: string, fallback: string): Promise<T | null> {
   const response = await fetch(apiUrl(path), {
     credentials: 'include',
@@ -111,7 +120,7 @@ async function apiGet<T>(path: string, fallback: string): Promise<T | null> {
   });
 
   if (response.status === 401) return null;
-  if (!response.ok) throw new Error(fallback);
+  if (!response.ok) throw new Error(await readApiError(response, fallback));
   return readJson<T>(response);
 }
 
@@ -127,7 +136,7 @@ async function apiPost<T>(path: string, payload: Record<string, unknown>, fallba
   });
 
   if (response.status === 401) return null;
-  if (!response.ok) throw new Error(fallback);
+  if (!response.ok) throw new Error(await readApiError(response, fallback));
   return readJson<T>(response);
 }
 
@@ -139,7 +148,7 @@ async function apiDelete(path: string, fallback: string): Promise<boolean> {
   });
 
   if (response.status === 401) return false;
-  if (!response.ok) throw new Error(fallback);
+  if (!response.ok) throw new Error(await readApiError(response, fallback));
   return true;
 }
 
@@ -283,7 +292,7 @@ export async function uploadSocialMediaFile(file: File) {
       private: false,
       metadata: { source: 'social-composer' }
     },
-    'Upload intent media belum bisa dibuat.'
+    'Media upload belum tersedia. Post text-only tetap bisa dikirim.'
   );
 
   if (!intent) throw new Error('Login diperlukan untuk mengunggah media.');
@@ -295,7 +304,7 @@ export async function uploadSocialMediaFile(file: File) {
   });
 
   if (!uploadResponse.ok) {
-    throw new Error('Upload ke storage gagal. Periksa CORS MinIO/Garage dan signed URL.');
+    throw new Error('Media belum bisa diunggah ke storage. Post text-only tetap bisa dikirim.');
   }
 
   const completed = await apiPost<BackendMedia>(
