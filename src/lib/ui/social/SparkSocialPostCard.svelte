@@ -82,8 +82,8 @@
     <div class="media-grid" aria-label="Lampiran media">
       {#each media as item (item.id)}
         {#if isImageMedia(item)}
-          <a class="media-image" href={item.publicUrl} target="_blank" rel="noreferrer" aria-label={`Buka ${item.fileName}`}>
-            <img src={item.publicUrl} alt={item.fileName} loading="lazy" />
+          <a class="media-image" href={item.publicUrl ?? '#'} target="_blank" rel="noreferrer" aria-label={`Buka ${item.fileName}`}>
+            <img src={item.publicUrl ?? ''} alt={item.fileName} loading="lazy" />
           </a>
         {:else}
           <a class="media-file" href={item.publicUrl ?? '#'} target="_blank" rel="noreferrer" aria-label={`Buka ${item.fileName}`}>
