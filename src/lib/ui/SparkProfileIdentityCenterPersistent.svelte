@@ -4,7 +4,7 @@
   import SparkIcon from './SparkIcon.svelte';
   import SparkTrustBadge from './SparkTrustBadge.svelte';
   import { uploadPublicMediaFile } from '$lib/api/spark-media-api';
-  import { getBackendProfile, updateBackendProfile } from '$lib/api/spark-profile-api';
+  import { getBackendProfile, setBackendProfileAvatar, updateBackendProfile } from '$lib/api/spark-profile-api';
   import { pushToast } from '$state/app-state.svelte';
   import { betaSession, getModeLabel } from '$state/beta-session-state.svelte';
   import {
@@ -87,10 +87,9 @@
     error = '';
     try {
       const asset = await uploadPublicMediaFile(file, 'avatar');
-      if (!asset.public_url) throw new Error('Object storage belum mengembalikan URL foto profil.');
-      setAvatarImageData(asset.public_url);
-      const profile = await updateBackendProfile({ avatar_url: asset.public_url, avatar_preset: profileState.avatarPreset });
+      const profile = await setBackendProfileAvatar(asset.id);
       applyBackendProfileSnapshot(profile);
+      if (profile.avatar_url) setAvatarImageData(profile.avatar_url);
       pushToast({ title: 'Foto profil tersimpan', copy: 'Foto profil sudah tersimpan permanen dan akan muncul di perangkat lain.', tone: 'success' });
     } catch (err) {
       error = err instanceof Error ? err.message : 'Foto profil belum bisa diunggah.';
