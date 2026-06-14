@@ -1,7 +1,7 @@
 import { backendProfileFromApi, registerBackendSocialProfiles } from './social-model';
 import { extractSocialTags } from './social-policy';
 import { socialState } from './social-state.svelte';
-import type { SocialComment, SocialDraftInput, SocialMediaAttachment, SocialPost, SocialPostKind, SocialReactionKind, SocialReportReason } from './social-types';
+import type { SocialComment, SocialDraftInput, SocialMediaAttachment, SocialPost, SocialPostKind, SocialProfile, SocialReactionKind, SocialReportReason } from './social-types';
 
 const API_BASE = (import.meta.env.PUBLIC_API_BASE || import.meta.env.PUBLIC_SPARK_API_BASE || '').replace(/\/$/, '');
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -254,6 +254,20 @@ function validateSocialUploadFile(file: File) {
 
 export function isBackendSocialId(id: string) {
   return UUID_PATTERN.test(id);
+}
+
+export async function fetchBackendSocialProfile(profileId: string): Promise<SocialProfile | null> {
+  if (!isBackendSocialId(profileId)) return null;
+
+  const profile = await apiGet<BackendProfile>(
+    `/v1/social/profiles/${encodeURIComponent(profileId)}`,
+    'Profil komunitas belum bisa dibaca.'
+  );
+  if (!profile) return null;
+
+  const normalized = backendProfileFromApi(profile);
+  registerBackendSocialProfiles([normalized]);
+  return normalized;
 }
 
 export async function hydrateSocialFeedFromBackend() {
