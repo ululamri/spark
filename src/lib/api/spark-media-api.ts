@@ -75,9 +75,16 @@ export type CreateMediaLinkInput = {
 };
 
 const API_BASE = (import.meta.env.PUBLIC_API_BASE || import.meta.env.PUBLIC_SPARK_API_BASE || '').replace(/\/$/, '');
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
 
 function apiUrl(path: string) {
   return `${API_BASE}${path}`;
+}
+
+export function publicApiUrl(path?: string | null) {
+  if (!path) return undefined;
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  return apiUrl(path.startsWith('/') ? path : `/${path}`);
 }
 
 async function readJson<T>(response: Response): Promise<T> {
@@ -116,6 +123,15 @@ async function apiRequest<T>(path: string, init: RequestInit = {}, fallback: str
   return readJson<T>(response);
 }
 
+function validateUploadFile(file: File, purpose: string) {
+  const mimeType = file.type || 'application/octet-stream';
+  const allowed = mimeType.startsWith('image/') || mimeType === 'application/pdf' || mimeType.startsWith('text/');
+  if (!allowed) throw new Error('File harus berupa gambar, PDF, atau teks.');
+  if (purpose === 'avatar' && !mimeType.startsWith('image/')) throw new Error('Foto profil harus berupa gambar PNG, JPG, atau WebP.');
+  if (file.size <= 0) throw new Error('File kosong tidak bisa diunggah.');
+  if (file.size > MAX_UPLOAD_BYTES) throw new Error('Ukuran file maksimal 8 MB.');
+}
+
 export async function getMediaPolicy(): Promise<SparkMediaPolicy> {
   return apiRequest<SparkMediaPolicy>('/v1/media/policy', {}, 'Kebijakan media belum bisa dibaca dari Spark API.');
 }
@@ -146,4 +162,27 @@ export async function createMediaAssetLink(assetId: string, input: CreateMediaLi
     { method: 'POST', body: JSON.stringify(input) },
     'Media belum bisa ditautkan ke akun.'
   );
+}
+
+export async function uploadPublicMediaFile(file: File, purpose: 'avatar' | 'community') {
+  validateUploadFile(file, purpose);
+
+  const intent = await createMediaUploadIntent({
+    purpose,
+    file_name: file.name || `${purpose}-upload.bin`,
+    mime_type: file.type || 'application/octet-stream',
+    size_bytes: file.size,
+    private: false,
+    metadata: { source: `${purpose}-upload` }
+  });
+
+  const uploadResponse = await fetch(intent.upload_url, {
+    method: intent.upload_method || 'PUT',
+    headers: { 'Content-Type': file.type || 'application/octet-stream' },
+    body: file
+  });
+
+  if (!uploadResponse.ok) throw new Error('Media belum bisa diunggah ke object storage.');
+
+  return completeMediaUpload(intent.asset.id, { size_bytes: file.size });
 }
