@@ -2,7 +2,7 @@ import { socialSnapshotSchema } from './social-schema';
 import { SOCIAL_VIEWER_ID } from './social-model';
 import type { SocialComment, SocialEvent, SocialFeedFilter, SocialPost } from './social-types';
 
-const STORAGE_KEY = 'karyra-spark-social-state-v1';
+const STORAGE_KEY = 'karyra-spark-social-state-v2';
 
 export const socialState = $state({
   ready: false,
