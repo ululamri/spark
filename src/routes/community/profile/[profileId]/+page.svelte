@@ -10,12 +10,14 @@
   type Props = { data: { profileId: string } };
   let { data }: Props = $props();
 
-  let profile = $state<SocialProfile>(getSocialProfile(data.profileId));
+  const profileId = $derived(data.profileId);
+  let profile = $state<SocialProfile>(getSocialProfile(SOCIAL_VIEWER_ID));
   let loading = $state(true);
   let error = $state('');
 
   onMount(() => {
     restoreSocialState();
+    profile = getSocialProfile(profileId);
     void loadProfileSurface();
   });
 
@@ -30,13 +32,13 @@
     loading = true;
     error = '';
     try {
-      const remoteProfile = await fetchBackendSocialProfile(data.profileId);
+      const remoteProfile = await fetchBackendSocialProfile(profileId);
       if (remoteProfile) profile = remoteProfile;
       await hydrateSocialFeedFromBackend();
-      profile = getSocialProfile(data.profileId);
+      profile = getSocialProfile(profileId);
     } catch {
       error = 'Profil masih memakai data cache lokal.';
-      profile = getSocialProfile(data.profileId);
+      profile = getSocialProfile(profileId);
     } finally {
       loading = false;
     }
@@ -44,7 +46,7 @@
 
   const profilePosts = $derived(
     socialState.posts
-      .filter((post) => post.authorId === data.profileId && !post.viewer.hidden)
+      .filter((post) => post.authorId === profileId && !post.viewer.hidden)
       .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
   );
 
@@ -58,8 +60,8 @@
     media: profilePosts.reduce((total, post) => total + (post.media?.length ?? 0), 0)
   });
 
-  const followed = $derived(socialState.followedProfileIds.includes(data.profileId));
-  const canFollow = $derived(data.profileId !== SOCIAL_VIEWER_ID);
+  const followed = $derived(socialState.followedProfileIds.includes(profileId));
+  const canFollow = $derived(profileId !== SOCIAL_VIEWER_ID);
 </script>
 
 <svelte:head>
@@ -84,7 +86,7 @@
     </div>
 
     {#if canFollow}
-      <button type="button" class:active={followed} onclick={() => void toggleSocialFollow(data.profileId)}>
+      <button type="button" class:active={followed} onclick={() => void toggleSocialFollow(profileId)}>
         {followed ? 'Diikuti' : 'Ikuti'}
       </button>
     {/if}
