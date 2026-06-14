@@ -22,6 +22,7 @@ export const socialProfileSchema = z.object({
   location: z.string().max(80).optional(),
   bio: z.string().max(180).optional(),
   avatarLabel: z.string().min(1).max(3),
+  avatarUrl: z.string().min(1).optional(),
   trusted: z.boolean().default(false)
 });
 
