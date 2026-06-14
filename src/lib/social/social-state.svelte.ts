@@ -1,5 +1,5 @@
 import { socialSnapshotSchema } from './social-schema';
-import { SOCIAL_VIEWER_ID, socialSeedComments, socialSeedPosts } from './social-model';
+import { SOCIAL_VIEWER_ID } from './social-model';
 import type { SocialComment, SocialEvent, SocialFeedFilter, SocialPost } from './social-types';
 
 const STORAGE_KEY = 'karyra-spark-social-state-v1';
@@ -7,10 +7,10 @@ const STORAGE_KEY = 'karyra-spark-social-state-v1';
 export const socialState = $state({
   ready: false,
   activeFilter: 'all' as SocialFeedFilter,
-  followedProfileIds: ['facilitator-ayu', 'mentor-bima'] as string[],
+  followedProfileIds: [] as string[],
   mutedProfileIds: [] as string[],
-  posts: structuredClone(socialSeedPosts) as SocialPost[],
-  comments: structuredClone(socialSeedComments) as Record<string, SocialComment[]>,
+  posts: [] as SocialPost[],
+  comments: {} as Record<string, SocialComment[]>,
   events: [] as SocialEvent[]
 });
 
@@ -32,7 +32,7 @@ export function restoreSocialState() {
       }
     }
   } catch {
-    // Keep seed state if local storage is unreadable.
+    // Keep the empty runtime state if local storage is unreadable.
   }
 
   socialState.ready = true;
@@ -57,10 +57,10 @@ export function saveSocialState() {
 
 export function resetSocialState() {
   socialState.activeFilter = 'all';
-  socialState.followedProfileIds = ['facilitator-ayu', 'mentor-bima'];
+  socialState.followedProfileIds = [];
   socialState.mutedProfileIds = [];
-  socialState.posts = structuredClone(socialSeedPosts) as SocialPost[];
-  socialState.comments = structuredClone(socialSeedComments) as Record<string, SocialComment[]>;
+  socialState.posts = [];
+  socialState.comments = {};
   socialState.events = [];
   saveSocialState();
 }
