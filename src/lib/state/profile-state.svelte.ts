@@ -22,6 +22,10 @@ function sanitizeConnectionIds(ids: unknown) {
   return ids.filter((id): id is string => typeof id === 'string' && !LEGACY_CONNECTION_IDS.has(id));
 }
 
+function isPersistableAvatarUrl(value: string) {
+  return value.startsWith('http://') || value.startsWith('https://') || value.startsWith('/v1/media/');
+}
+
 export function restoreProfileState() {
   if (typeof window === 'undefined') return;
   try {
@@ -153,7 +157,6 @@ export function createProfileUpdatePayload() {
     location: profileState.location,
     visibility: profileState.visibility,
     avatar_preset: profileState.avatarPreset,
-    avatar_url: profileState.avatarImageData.startsWith('http') ? profileState.avatarImageData : ''
+    avatar_url: isPersistableAvatarUrl(profileState.avatarImageData) ? profileState.avatarImageData : ''
   };
 }
-
