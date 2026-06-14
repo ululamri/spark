@@ -42,6 +42,7 @@ function messageFromErrorBody(body: unknown, fallback: string) {
     if (body.error.includes('handle')) return 'Handle hanya boleh berisi huruf, angka, titik, strip, dan underscore.';
     if (body.error.includes('display_name')) return 'Nama profil terlalu pendek atau terlalu panjang.';
     if (body.error.includes('visibility')) return 'Pilihan visibilitas profil tidak valid.';
+    if (body.error.includes('avatar media asset')) return 'Foto profil harus berasal dari gambar yang sudah berhasil diunggah.';
     return body.error;
   }
   return fallback;
@@ -77,6 +78,25 @@ export async function updateBackendProfile(payload: BackendProfileUpdate): Promi
   if (!response.ok) {
     const body = await readJson<unknown>(response).catch(() => null);
     throw new Error(messageFromErrorBody(body, 'Profil belum bisa disimpan ke Spark API.'));
+  }
+
+  return readJson<BackendProfile>(response);
+}
+
+export async function setBackendProfileAvatar(mediaAssetId: string): Promise<BackendProfile> {
+  const response = await fetch(apiUrl('/v1/profile/me/avatar'), {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ media_asset_id: mediaAssetId })
+  });
+
+  if (!response.ok) {
+    const body = await readJson<unknown>(response).catch(() => null);
+    throw new Error(messageFromErrorBody(body, 'Foto profil belum bisa disimpan ke akun.'));
   }
 
   return readJson<BackendProfile>(response);
