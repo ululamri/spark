@@ -87,6 +87,16 @@ export function publicApiUrl(path?: string | null) {
   return apiUrl(path.startsWith('/') ? path : `/${path}`);
 }
 
+export function mediaPublicPath(assetId: string) {
+  return `/v1/media/public/${encodeURIComponent(assetId)}`;
+}
+
+function withPublicMediaUrl(asset: SparkMediaAsset): SparkMediaAsset {
+  if (asset.public_url) return asset;
+  if (asset.visibility === 'public') return { ...asset, public_url: mediaPublicPath(asset.id) };
+  return asset;
+}
+
 async function readJson<T>(response: Response): Promise<T> {
   const text = await response.text();
   if (!text) return {} as T;
@@ -149,11 +159,12 @@ export async function createMediaUploadIntent(input: CreateUploadIntentInput): P
 }
 
 export async function completeMediaUpload(assetId: string, input: CompleteUploadInput = {}): Promise<SparkMediaAsset> {
-  return apiRequest<SparkMediaAsset>(
+  const asset = await apiRequest<SparkMediaAsset>(
     `/v1/media/assets/${encodeURIComponent(assetId)}/complete`,
     { method: 'POST', body: JSON.stringify(input) },
     'Status media belum bisa diselesaikan.'
   );
+  return withPublicMediaUrl(asset);
 }
 
 export async function createMediaAssetLink(assetId: string, input: CreateMediaLinkInput): Promise<SparkMediaLink> {
