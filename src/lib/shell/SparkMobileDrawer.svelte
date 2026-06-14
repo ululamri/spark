@@ -1,15 +1,35 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
   import { fade, fly } from 'svelte/transition';
+  import { getBackendProfile } from '$lib/api/spark-profile-api';
   import { sparkMessages } from '$lib/messaging/spark-messaging-model';
   import { appState, pushToast } from '$state/app-state.svelte';
   import { betaSession, getModeLabel, logoutBetaSession } from '$state/beta-session-state.svelte';
   import { messageState } from '$state/message-state.svelte';
+  import { applyBackendProfileSnapshot, profileState, restoreProfileState } from '$state/profile-state.svelte';
   import SparkIcon from '$ui/SparkIcon.svelte';
   import SparkThemeToggle from '$ui/SparkThemeToggle.svelte';
 
   let loggingOut = $state(false);
   const unreadMessages = $derived(sparkMessages.filter((message) => !messageState.readMessageIds.includes(message.id)).length);
+  const drawerName = $derived(profileState.displayName || betaSession.user?.name || 'Pengguna Spark');
+  const drawerAvatar = $derived(profileState.avatarImageData);
+
+  onMount(() => {
+    restoreProfileState();
+    void hydrateProfile();
+  });
+
+  async function hydrateProfile() {
+    if (!betaSession.user) return;
+    try {
+      const profile = await getBackendProfile();
+      if (profile) applyBackendProfileSnapshot(profile);
+    } catch {
+      // Drawer keeps session/local fallback when profile API is unavailable.
+    }
+  }
 
   const accountLinks = $derived(
     betaSession.user
@@ -58,9 +78,15 @@
 
     <div class="drawer-account-card production-drawer-account pass35b2-drawer-account">
       {#if betaSession.user}
-        <span>{betaSession.user.name.slice(0, 1)}</span>
+        <span class="drawer-avatar">
+          {#if drawerAvatar}
+            <img src={drawerAvatar} alt={`Foto profil ${drawerName}`} loading="lazy" />
+          {:else}
+            {drawerName.slice(0, 1)}
+          {/if}
+        </span>
         <div>
-          <strong>{betaSession.user.name}</strong>
+          <strong>{drawerName}</strong>
           <small>{getModeLabel(betaSession.user.mode)}</small>
         </div>
       {:else}
@@ -120,6 +146,17 @@
     -webkit-appearance: none;
     cursor: default;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  .drawer-avatar {
+    overflow: hidden;
+  }
+
+  .drawer-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
   }
 
   @media (max-width: 980px) {
