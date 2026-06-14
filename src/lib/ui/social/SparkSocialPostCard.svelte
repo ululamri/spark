@@ -31,6 +31,10 @@
     { key: 'inspiring', label: 'Inspirasi', icon: 'sparkles' }
   ];
 
+  function profileHref(profileId: string) {
+    return `/community/profile/${encodeURIComponent(profileId)}`;
+  }
+
   function addComment() {
     if (!commentPolicy.canKirim) return;
     void addSocialComment({ postId: post.id, body: commentDraft });
@@ -61,10 +65,10 @@
 
 <article class="social-post-card" id={post.id} data-kind={post.kind}>
   <header class="post-head">
-    <span class="avatar" aria-hidden="true">{author.avatarLabel}</span>
+    <a class="avatar" href={profileHref(post.authorId)} aria-label={`Buka profil ${author.name}`}>{author.avatarLabel}</a>
     <div>
       <div class="author-row">
-        <strong>{author.name}</strong>
+        <a class="author-link" href={profileHref(post.authorId)}>{author.name}</a>
         {#if author.trusted}<em>verified</em>{/if}
       </div>
       <small>{author.handle} · {socialPostKindLabels[post.kind]} · komunitas</small>
@@ -132,8 +136,8 @@
         {#each comments as comment (comment.id)}
           {@const commentAuthor = getSocialProfile(comment.authorId)}
           <div class="comment-row">
-            <span>{commentAuthor.avatarLabel}</span>
-            <p><strong>{commentAuthor.name}</strong> {comment.body}</p>
+            <a class="comment-avatar" href={profileHref(comment.authorId)} aria-label={`Buka profil ${commentAuthor.name}`}>{commentAuthor.avatarLabel}</a>
+            <p><a href={profileHref(comment.authorId)}>{commentAuthor.name}</a> {comment.body}</p>
           </div>
         {/each}
       {/if}
@@ -178,13 +182,14 @@
   }
 
   .avatar,
-  .comment-row > span {
+  .comment-avatar {
     display: grid;
     place-items: center;
     border-radius: 15px;
     color: #fff;
     background: linear-gradient(135deg, var(--spark-blue), var(--spark-blue-strong));
     font-weight: 800;
+    text-decoration: none;
   }
 
   .avatar {
@@ -199,13 +204,20 @@
     min-width: 0;
   }
 
-  .author-row strong {
+  .author-link {
     color: var(--spark-navy);
     font-size: 14px;
+    font-weight: 800;
     line-height: 1.1;
+    text-decoration: none;
   }
 
-  :global([data-theme='dark']) .author-row strong { color: #fff; }
+  .author-link:hover,
+  .comment-row p a:hover {
+    color: var(--spark-blue-strong);
+  }
+
+  :global([data-theme='dark']) .author-link { color: #fff; }
 
   .author-row em {
     padding: 3px 6px;
@@ -381,7 +393,7 @@
     align-items: start;
   }
 
-  .comment-row > span {
+  .comment-avatar {
     width: 28px;
     height: 28px;
     border-radius: 11px;
@@ -395,12 +407,14 @@
     line-height: 1.45;
   }
 
-  .comment-row strong {
+  .comment-row p a {
     color: var(--spark-navy);
     font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
   }
 
-  :global([data-theme='dark']) .comment-row strong { color: #fff; }
+  :global([data-theme='dark']) .comment-row p a { color: #fff; }
 
   .comment-compose {
     display: grid;
