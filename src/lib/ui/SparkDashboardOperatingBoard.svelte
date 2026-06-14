@@ -1,9 +1,16 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import SparkButton from './SparkButton.svelte';
   import SparkIcon from './SparkIcon.svelte';
+  import { getBackendProfile } from '$lib/api/spark-profile-api';
   import { sparkMessages } from '$lib/messaging/spark-messaging-model';
   import { betaSession } from '$state/beta-session-state.svelte';
   import { gatewayState } from '$state/gateway-state.svelte';
+  import {
+    applyBackendProfileSnapshot,
+    profileState,
+    restoreProfileState
+  } from '$state/profile-state.svelte';
   import { messageState } from '$state/message-state.svelte';
   import {
     getCompletedLessonCount,
@@ -13,7 +20,22 @@
     learningState
   } from '$state/learning-state.svelte';
 
-  const userName = $derived(betaSession.user?.name ?? 'Karyra');
+  onMount(() => {
+    restoreProfileState();
+    void hydrateProfile();
+  });
+
+  async function hydrateProfile() {
+    try {
+      const profile = await getBackendProfile();
+      if (profile) applyBackendProfileSnapshot(profile);
+    } catch {
+      // Dashboard keeps local/session fallback when profile API is unavailable.
+    }
+  }
+
+  const userName = $derived(profileState.displayName || betaSession.user?.name || 'Karyra');
+  const avatarUrl = $derived(profileState.avatarImageData);
   const unreadMessages = $derived(sparkMessages.filter((message) => !messageState.readMessageIds.includes(message.id)).length);
   const readiness = $derived(getReadinessScore());
   const progress = $derived(getLearningProgressPercent());
@@ -36,7 +58,13 @@
 <section class="ops-board spark-dashboard-board" aria-label="Dashboard harian">
   <div class="ops-main-card spark-dashboard-card">
     <div class="spark-dashboard-userline">
-      <span>{userName.slice(0, 1)}</span>
+      <span>
+        {#if avatarUrl}
+          <img src={avatarUrl} alt={`Foto profil ${userName}`} />
+        {:else}
+          {userName.slice(0, 1)}
+        {/if}
+      </span>
       <div><small>Ringkasan hari ini</small><strong>{userName}</strong></div>
       <a href="/profile">{readiness}% Passport</a>
     </div>
@@ -71,3 +99,12 @@
     </div>
   </div>
 </section>
+
+<style>
+  .spark-dashboard-userline img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+  }
+</style>
