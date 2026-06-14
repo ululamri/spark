@@ -1,3 +1,4 @@
+import { optimizeImageFileForUpload } from '$lib/media/image-upload-optimizer';
 import { backendProfileFromApi, registerBackendSocialProfiles } from './social-model';
 import { extractSocialTags } from './social-policy';
 import { socialState } from './social-state.svelte';
@@ -20,6 +21,7 @@ type BackendProfile = {
   bio: string;
   location: string;
   visibility: string;
+  avatar_url?: string | null;
 };
 
 type BackendStats = {
@@ -294,17 +296,23 @@ export async function hydrateSocialFeedFromBackend() {
 }
 
 export async function uploadSocialMediaFile(file: File) {
-  validateSocialUploadFile(file);
+  const uploadFile = file.type.startsWith('image/') ? await optimizeImageFileForUpload(file, 'community') : file;
+  validateSocialUploadFile(uploadFile);
 
   const intent = await apiPost<BackendUploadIntent>(
     '/v1/media/upload-intents',
     {
       purpose: 'community',
-      file_name: file.name || 'spark-upload.bin',
-      mime_type: file.type || 'application/octet-stream',
-      size_bytes: file.size,
+      file_name: uploadFile.name || 'spark-upload.bin',
+      mime_type: uploadFile.type || 'application/octet-stream',
+      size_bytes: uploadFile.size,
       private: false,
-      metadata: { source: 'social-composer' }
+      metadata: {
+        source: 'social-composer',
+        original_file_name: file.name,
+        original_size_bytes: file.size,
+        optimized: uploadFile.size !== file.size || uploadFile.type !== file.type
+      }
     },
     'Media upload belum tersedia. Post text-only tetap bisa dikirim.'
   );
@@ -313,8 +321,8 @@ export async function uploadSocialMediaFile(file: File) {
 
   const uploadResponse = await fetch(intent.upload_url, {
     method: intent.upload_method || 'PUT',
-    headers: { 'Content-Type': file.type || 'application/octet-stream' },
-    body: file
+    headers: { 'Content-Type': uploadFile.type || 'application/octet-stream' },
+    body: uploadFile
   });
 
   if (!uploadResponse.ok) {
@@ -323,7 +331,7 @@ export async function uploadSocialMediaFile(file: File) {
 
   const completed = await apiPost<BackendMedia>(
     `/v1/media/assets/${encodeURIComponent(intent.asset.id)}/complete`,
-    { size_bytes: file.size },
+    { size_bytes: uploadFile.size },
     'Media sudah terunggah, tetapi belum bisa ditandai complete.'
   );
 
