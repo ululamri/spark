@@ -70,8 +70,10 @@ export function backendProfileFromApi(input: {
   bio?: string;
   location?: string;
   visibility?: string;
+  avatar_url?: string | null;
 }): SocialProfile {
   const name = input.display_name?.trim() || 'Pengguna Spark';
+  const avatarUrl = input.avatar_url?.trim();
   return {
     id: input.user_id,
     name,
@@ -80,6 +82,7 @@ export function backendProfileFromApi(input: {
     location: input.location?.trim() || 'Komunitas Spark',
     bio: input.bio?.trim().slice(0, 180) || 'Profil komunitas Spark.',
     avatarLabel: avatarLabelFromName(name).slice(0, 3),
+    avatarUrl: avatarUrl || undefined,
     trusted: input.visibility === 'public'
   };
 }
