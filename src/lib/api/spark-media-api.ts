@@ -1,3 +1,5 @@
+import { optimizeImageFileForUpload } from '$lib/media/image-upload-optimizer';
+
 export type SparkMediaVisibility = 'public' | 'private';
 export type SparkMediaStatus = 'pending' | 'uploaded' | 'linked';
 
@@ -176,24 +178,30 @@ export async function createMediaAssetLink(assetId: string, input: CreateMediaLi
 }
 
 export async function uploadPublicMediaFile(file: File, purpose: 'avatar' | 'community') {
-  validateUploadFile(file, purpose);
+  const uploadFile = file.type.startsWith('image/') ? await optimizeImageFileForUpload(file, purpose) : file;
+  validateUploadFile(uploadFile, purpose);
 
   const intent = await createMediaUploadIntent({
     purpose,
-    file_name: file.name || `${purpose}-upload.bin`,
-    mime_type: file.type || 'application/octet-stream',
-    size_bytes: file.size,
+    file_name: uploadFile.name || `${purpose}-upload.bin`,
+    mime_type: uploadFile.type || 'application/octet-stream',
+    size_bytes: uploadFile.size,
     private: false,
-    metadata: { source: `${purpose}-upload` }
+    metadata: {
+      source: `${purpose}-upload`,
+      original_file_name: file.name,
+      original_size_bytes: file.size,
+      optimized: uploadFile.size !== file.size || uploadFile.type !== file.type
+    }
   });
 
   const uploadResponse = await fetch(intent.upload_url, {
     method: intent.upload_method || 'PUT',
-    headers: { 'Content-Type': file.type || 'application/octet-stream' },
-    body: file
+    headers: { 'Content-Type': uploadFile.type || 'application/octet-stream' },
+    body: uploadFile
   });
 
   if (!uploadResponse.ok) throw new Error('Media belum bisa diunggah ke object storage.');
 
-  return completeMediaUpload(intent.asset.id, { size_bytes: file.size });
+  return completeMediaUpload(intent.asset.id, { size_bytes: uploadFile.size });
 }
