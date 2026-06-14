@@ -3,7 +3,7 @@
   import SparkIcon from '$ui/SparkIcon.svelte';
   import SparkSectionHeader from '$ui/SparkSectionHeader.svelte';
   import SparkSocialComposer from './SparkSocialComposer.svelte';
-  import SparkSocialPostCard from './SparkSocialPostCard.svelte';
+  import SparkSocialPostCardWithAvatar from './SparkSocialPostCardWithAvatar.svelte';
   import SparkSocialSafetyPanel from './SparkSocialSafetyPanel.svelte';
   import { hydrateSocialFeedFromBackend } from '$lib/social/social-backend-gateway';
   import { socialPostKindLabels } from '$lib/social/social-model';
@@ -87,7 +87,7 @@
           </div>
         {:else}
           {#each visiblePosts as post (post.id)}
-            <SparkSocialPostCard {post} />
+            <SparkSocialPostCardWithAvatar {post} />
           {/each}
         {/if}
       </div>
@@ -218,33 +218,32 @@
     display: grid;
     justify-items: center;
     gap: 8px;
-    padding: 24px 16px;
+    padding: 24px;
     border: 1px dashed var(--spark-line);
-    border-radius: 24px;
+    border-radius: 22px;
+    color: var(--spark-muted);
     background: rgba(255,255,255,.46);
     text-align: center;
   }
 
-  :global([data-theme='dark']) .social-empty-state { background: rgba(255,255,255,.035); }
-
-  .social-empty-state :global(svg) { color: var(--spark-blue-strong); }
-  .social-empty-state strong { color: var(--spark-navy); }
-  :global([data-theme='dark']) .social-empty-state strong { color: #fff; }
-  .social-empty-state p { max-width: 34ch; margin: 0; color: var(--spark-muted); font-size: 12.5px; line-height: 1.45; }
-
-  @media (max-width: 920px) {
-    .social-layer-head,
-    .social-layout { grid-template-columns: 1fr; }
-
-    .social-left-rail { position: static; }
+  .social-empty-state strong {
+    color: var(--spark-navy);
   }
 
-  @media (max-width: 520px) {
-    .social-event-card { grid-template-columns: 36px minmax(0, 1fr); }
+  :global([data-theme='dark']) .social-empty-state {
+    background: rgba(255,255,255,.04);
+  }
 
-    .social-event-card button {
-      grid-column: 2;
-      width: fit-content;
+  :global([data-theme='dark']) .social-empty-state strong { color: #fff; }
+
+  @media (max-width: 860px) {
+    .social-layer-head,
+    .social-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .social-left-rail {
+      position: static;
     }
   }
 </style>
