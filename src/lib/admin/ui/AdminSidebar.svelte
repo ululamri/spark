@@ -9,6 +9,7 @@
     { href: '/admin/passport', label: 'Passport' },
     { href: '/admin/proofs', label: 'Proof Ledger' },
     { href: '/admin/pilots', label: 'Community pilot' },
+    { href: '/admin/social', label: 'Social review' },
     { href: '/admin/starknet', label: 'Starknet / Hub' },
     { href: '/admin/content', label: 'Content & docs' },
     { href: '/admin/settings', label: 'Settings' }
