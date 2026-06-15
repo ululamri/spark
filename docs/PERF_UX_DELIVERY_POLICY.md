@@ -145,11 +145,16 @@ sudo systemctl status caddy --no-pager
 ## Smoke tests
 
 ```bash
-curl -I https://spark.user.cloudjkt01.com/_app/immutable/
+curl -i -sS https://spark.user.cloudjkt01.com/ | head -40
 ```
 
 ```bash
-curl -i -sS https://spark.user.cloudjkt01.com/health | head -40
+curl -i -sS https://spark.user.cloudjkt01.com/hub/ | head -40
+```
+
+```bash
+curl -i -sS https://spark.user.cloudjkt01.com/health/live | head -40
+curl -i -sS https://spark.user.cloudjkt01.com/health/ready | head -40
 ```
 
 ```bash
@@ -157,7 +162,7 @@ curl -i -sS -H "x-karyra-admin-token: $KARYRA_ADMIN_TOKEN" \
   https://spark.user.cloudjkt01.com/api/admin/ai/scope | head -80
 ```
 
-Expected admin API response must be JSON, not SvelteKit HTML.
+Expected admin API response must be JSON, not SvelteKit HTML. A `401` JSON means the route is correct but the supplied admin token is missing or invalid.
 
 ## Guardrails
 
