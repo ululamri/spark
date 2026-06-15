@@ -1,16 +1,14 @@
 # Karyra Spark Caddy delivery policy example
-# Keep this file synced with the live /etc/caddy/Caddyfile block.
-# Replace ports if your systemd services use different local listeners.
+# Source of truth must stay aligned with the live /etc/caddy/Caddyfile block.
+# This version preserves the current live architecture:
+# - spark-api on 127.0.0.1:8787
+# - spark web frontend on 127.0.0.1:4173
+# - hub static build served from absolute path /opt/karyra/hub/build
 
 spark.user.cloudjkt01.com {
 	encode zstd gzip
 
 	# Backend API and admin surfaces must hit spark-api, not SvelteKit.
-	handle /health* {
-		header Cache-Control "no-store"
-		reverse_proxy 127.0.0.1:8787
-	}
-
 	handle /v1/auth* {
 		header Cache-Control "no-store"
 		reverse_proxy 127.0.0.1:8787
@@ -36,22 +34,48 @@ spark.user.cloudjkt01.com {
 		reverse_proxy 127.0.0.1:8787
 	}
 
-	# Public/read APIs get short private cache at most. Social/feed remains dynamic.
+	handle /health/* {
+		header Cache-Control "no-store"
+		reverse_proxy 127.0.0.1:8787
+	}
+
+	handle /health {
+		header Cache-Control "no-store"
+		reverse_proxy 127.0.0.1:8787
+	}
+
+	# Public/read APIs get short private cache at most. Sensitive endpoints above override this.
 	handle /v1/* {
 		header Cache-Control "private, max-age=15, stale-while-revalidate=30"
 		reverse_proxy 127.0.0.1:8787
 	}
 
-	# SvelteKit immutable build assets.
+	# Hub is a static build served from absolute path. Keep this before frontend fallback.
+	redir /hub /hub/ 308
+
+	handle_path /hub/_app/immutable/* {
+		root * /opt/karyra/hub/build
+		header Cache-Control "public, max-age=31536000, immutable"
+		file_server
+	}
+
+	handle_path /hub/* {
+		root * /opt/karyra/hub/build
+		try_files {path} {path}/ /index.html
+		header Cache-Control "private, max-age=0, must-revalidate"
+		file_server
+	}
+
+	# Spark SvelteKit immutable build assets served by frontend service.
 	handle /_app/immutable/* {
 		header Cache-Control "public, max-age=31536000, immutable"
-		reverse_proxy 127.0.0.1:5000
+		reverse_proxy 127.0.0.1:4173
 	}
 
 	# Static public assets. Keep shorter than immutable because filenames may be human-managed.
 	handle /favicon* {
 		header Cache-Control "public, max-age=86400"
-		reverse_proxy 127.0.0.1:5000
+		reverse_proxy 127.0.0.1:4173
 	}
 
 	# Future optimized public media path, to be enabled after imgproxy pass.
@@ -60,9 +84,15 @@ spark.user.cloudjkt01.com {
 	# 	reverse_proxy 127.0.0.1:8088
 	# }
 
-	# Frontend SSR/app fallback.
+	# Spark frontend SSR/app fallback.
 	handle {
 		header Cache-Control "private, max-age=0, must-revalidate"
-		reverse_proxy 127.0.0.1:5000
+		reverse_proxy 127.0.0.1:4173
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
 	}
 }
