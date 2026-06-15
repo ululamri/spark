@@ -26,12 +26,23 @@ export const socialProfileSchema = z.object({
   trusted: z.boolean().default(false)
 });
 
+export const socialOptimizedMediaUrlsSchema = z.object({
+  avatar64: z.string().min(1).optional(),
+  avatar128: z.string().min(1).optional(),
+  feed480: z.string().min(1).optional(),
+  feed720: z.string().min(1).optional(),
+  detail1080: z.string().min(1).optional(),
+  detail1440: z.string().min(1).optional(),
+  original: z.string().min(1).optional()
+});
+
 export const socialMediaAttachmentSchema = z.object({
   id: z.string().min(1),
   fileName: z.string().min(1).max(160),
   mimeType: z.string().min(1).max(128),
   sizeBytes: z.number().int().nonnegative(),
   publicUrl: z.string().min(1).optional(),
+  optimizedUrls: socialOptimizedMediaUrlsSchema.optional(),
   createdAt: z.string().min(1)
 });
 
