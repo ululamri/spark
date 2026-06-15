@@ -18,6 +18,7 @@
 
   let commentDraft = $state('');
   let showComments = $state(false);
+  let shareCopied = $state(false);
 
   const author = $derived(getSocialProfile(post.authorId));
   const comments = $derived(socialState.comments[post.id] ?? []);
@@ -53,13 +54,46 @@
   }
 
   async function copyShareLink() {
-    const href = typeof window === 'undefined' ? `/community#${post.id}` : `${window.location.origin}/community#${post.id}`;
-    try {
-      await navigator.clipboard?.writeText(href);
-    } catch {
-      // Copy fallback is intentionally silent. Event count still records share intent.
+    if (typeof window === 'undefined') return;
+
+    const href = `${window.location.origin}/community?tab=diskusi#${post.id}`;
+    let shared = false;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Karyra Spark discussion', text: post.body.slice(0, 120), url: href });
+        shared = true;
+      } catch {
+        shared = false;
+      }
     }
+
+    if (!shared) {
+      try {
+        await navigator.clipboard?.writeText(href);
+        shared = true;
+      } catch {
+        const fallback = document.createElement('textarea');
+        fallback.value = href;
+        fallback.setAttribute('readonly', 'true');
+        fallback.style.position = 'fixed';
+        fallback.style.left = '-9999px';
+        document.body.appendChild(fallback);
+        fallback.select();
+        try {
+          shared = document.execCommand('copy');
+        } catch {
+          shared = false;
+        }
+        fallback.remove();
+      }
+    }
+
     shareSocialPost(post.id);
+    shareCopied = shared;
+    window.setTimeout(() => {
+      shareCopied = false;
+    }, 1800);
   }
 </script>
 
@@ -123,8 +157,8 @@
     <button type="button" onclick={() => (showComments = !showComments)}>
       <SparkIcon name="messages" size={14} /> Komentar <span>{post.stats.comments}</span>
     </button>
-    <button type="button" onclick={copyShareLink}>
-      <SparkIcon name="share" size={14} /> Share <span>{post.stats.shares}</span>
+    <button type="button" class:active={shareCopied} onclick={copyShareLink} aria-live="polite">
+      <SparkIcon name="share" size={14} /> {shareCopied ? 'Tersalin' : 'Share'} <span>{post.stats.shares}</span>
     </button>
   </div>
 
