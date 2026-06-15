@@ -53,12 +53,23 @@ type BackendComment = {
   created_at: string;
 };
 
+type BackendOptimizedMediaUrls = {
+  avatar_64?: string | null;
+  avatar_128?: string | null;
+  feed_480?: string | null;
+  feed_720?: string | null;
+  detail_1080?: string | null;
+  detail_1440?: string | null;
+  original?: string | null;
+};
+
 type BackendMedia = {
   id: string;
   original_file_name: string;
   mime_type: string;
   size_bytes: number;
   public_url?: string | null;
+  optimized_urls?: BackendOptimizedMediaUrls | null;
   created_at: string;
 };
 
@@ -98,6 +109,19 @@ function publicApiUrl(path?: string | null) {
   if (!path) return undefined;
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
   return apiUrl(path.startsWith('/') ? path : `/${path}`);
+}
+
+function transformOptimizedUrls(urls?: BackendOptimizedMediaUrls | null): SocialMediaAttachment['optimizedUrls'] {
+  if (!urls) return undefined;
+  return {
+    avatar64: publicApiUrl(urls.avatar_64),
+    avatar128: publicApiUrl(urls.avatar_128),
+    feed480: publicApiUrl(urls.feed_480),
+    feed720: publicApiUrl(urls.feed_720),
+    detail1080: publicApiUrl(urls.detail_1080),
+    detail1440: publicApiUrl(urls.detail_1440),
+    original: publicApiUrl(urls.original)
+  };
 }
 
 async function readJson<T>(response: Response): Promise<T> {
@@ -199,6 +223,7 @@ function transformMedia(item: BackendMedia): SocialMediaAttachment {
     mimeType: item.mime_type,
     sizeBytes: item.size_bytes,
     publicUrl: publicApiUrl(item.public_url),
+    optimizedUrls: transformOptimizedUrls(item.optimized_urls),
     createdAt: item.created_at
   };
 }
