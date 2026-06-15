@@ -1,5 +1,6 @@
 <script lang="ts">
   import SparkIcon from '$ui/SparkIcon.svelte';
+  import SparkOptimizedImage from '$ui/SparkOptimizedImage.svelte';
   import {
     addSocialComment,
     hideSocialPost,
@@ -45,6 +46,23 @@
 
   function isImageMedia(item: SocialMediaAttachment) {
     return item.mimeType.startsWith('image/') && Boolean(item.publicUrl);
+  }
+
+  function mediaImageHref(item: SocialMediaAttachment) {
+    return item.optimizedUrls?.original ?? item.publicUrl ?? '#';
+  }
+
+  function mediaImageSrc(item: SocialMediaAttachment) {
+    return item.optimizedUrls?.feed720 ?? item.optimizedUrls?.feed480 ?? item.publicUrl ?? '';
+  }
+
+  function mediaImageSrcset(item: SocialMediaAttachment) {
+    const entries = [
+      item.optimizedUrls?.feed480 ? `${item.optimizedUrls.feed480} 480w` : '',
+      item.optimizedUrls?.feed720 ? `${item.optimizedUrls.feed720} 720w` : '',
+      item.optimizedUrls?.detail1080 ? `${item.optimizedUrls.detail1080} 1080w` : ''
+    ].filter(Boolean);
+    return entries.join(', ');
   }
 
   function mediaSizeLabel(sizeBytes: number) {
@@ -120,8 +138,14 @@
     <div class="media-grid" aria-label="Lampiran media">
       {#each media as item (item.id)}
         {#if isImageMedia(item)}
-          <a class="media-image" href={item.publicUrl ?? '#'} target="_blank" rel="noreferrer" aria-label={`Buka ${item.fileName}`}>
-            <img src={item.publicUrl ?? ''} alt={item.fileName} loading="lazy" />
+          <a class="media-image" href={mediaImageHref(item)} target="_blank" rel="noreferrer" aria-label={`Buka ${item.fileName}`}>
+            <SparkOptimizedImage
+              src={mediaImageSrc(item)}
+              srcset={mediaImageSrcset(item)}
+              sizes="(max-width: 720px) 92vw, 640px"
+              alt={item.fileName}
+              class="media-optimized-image"
+            />
           </a>
         {:else}
           <a class="media-file" href={item.publicUrl ?? '#'} target="_blank" rel="noreferrer" aria-label={`Buka ${item.fileName}`}>
@@ -310,14 +334,20 @@
     background: rgba(248, 251, 255, 0.72);
   }
 
+  .media-image {
+    display: block;
+    text-decoration: none;
+  }
+
   :global([data-theme='dark']) .media-image,
   :global([data-theme='dark']) .media-file { background: rgba(255,255,255,.045); }
 
-  .media-image img {
-    display: block;
-    width: 100%;
+  .media-image :global(.spark-optimized-image) {
+    min-height: 180px;
+  }
+
+  .media-image :global(.spark-optimized-image img) {
     max-height: 420px;
-    object-fit: cover;
   }
 
   .media-file {
