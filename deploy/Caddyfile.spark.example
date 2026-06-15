@@ -1,0 +1,68 @@
+# Karyra Spark Caddy delivery policy example
+# Keep this file synced with the live /etc/caddy/Caddyfile block.
+# Replace ports if your systemd services use different local listeners.
+
+spark.user.cloudjkt01.com {
+	encode zstd gzip
+
+	# Backend API and admin surfaces must hit spark-api, not SvelteKit.
+	handle /health* {
+		header Cache-Control "no-store"
+		reverse_proxy 127.0.0.1:8787
+	}
+
+	handle /v1/auth* {
+		header Cache-Control "no-store"
+		reverse_proxy 127.0.0.1:8787
+	}
+
+	handle /v1/profile* {
+		header Cache-Control "no-store"
+		reverse_proxy 127.0.0.1:8787
+	}
+
+	handle /v1/media/upload-intents* {
+		header Cache-Control "no-store"
+		reverse_proxy 127.0.0.1:8787
+	}
+
+	handle /v1/media/complete* {
+		header Cache-Control "no-store"
+		reverse_proxy 127.0.0.1:8787
+	}
+
+	handle /api/admin/* {
+		header Cache-Control "no-store"
+		reverse_proxy 127.0.0.1:8787
+	}
+
+	# Public/read APIs get short private cache at most. Social/feed remains dynamic.
+	handle /v1/* {
+		header Cache-Control "private, max-age=15, stale-while-revalidate=30"
+		reverse_proxy 127.0.0.1:8787
+	}
+
+	# SvelteKit immutable build assets.
+	handle /_app/immutable/* {
+		header Cache-Control "public, max-age=31536000, immutable"
+		reverse_proxy 127.0.0.1:5000
+	}
+
+	# Static public assets. Keep shorter than immutable because filenames may be human-managed.
+	handle /favicon* {
+		header Cache-Control "public, max-age=86400"
+		reverse_proxy 127.0.0.1:5000
+	}
+
+	# Future optimized public media path, to be enabled after imgproxy pass.
+	# handle /media/optimized/* {
+	# 	header Cache-Control "public, max-age=2592000, stale-while-revalidate=86400"
+	# 	reverse_proxy 127.0.0.1:8088
+	# }
+
+	# Frontend SSR/app fallback.
+	handle {
+		header Cache-Control "private, max-age=0, must-revalidate"
+		reverse_proxy 127.0.0.1:5000
+	}
+}
