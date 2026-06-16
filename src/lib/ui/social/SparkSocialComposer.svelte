@@ -15,16 +15,20 @@
   let selectedFiles = $state<File[]>([]);
   let uploadedMedia = $state<SocialMediaAttachment[]>([]);
   let uploadError = $state('');
+  let composerNotice = $state('');
   let submitting = $state(false);
+  let submitPhase = $state<'idle' | 'uploading' | 'posting'>('idle');
   let fileInput = $state<HTMLInputElement | undefined>(undefined);
   const policy = $derived(evaluateSocialDraft(draft));
+  const submitLabel = $derived(submitPhase === 'uploading' ? 'Mengunggah media...' : submitPhase === 'posting' ? 'Mengirim...' : 'Kirim');
 
   function openComposer(nextKind: SocialPostKind = kind) {
     kind = nextKind;
     composerOpen = true;
+    composerNotice = '';
   }
 
-  function resetComposer() {
+  function resetComposer(clearNotice = true) {
     draft = '';
     kind = 'progress';
     composerOpen = false;
@@ -32,12 +36,15 @@
     uploadedMedia = [];
     uploadError = '';
     submitting = false;
+    submitPhase = 'idle';
+    if (clearNotice) composerNotice = '';
     if (fileInput) fileInput.value = '';
   }
 
   function chooseFiles() {
     composerOpen = true;
     uploadError = '';
+    composerNotice = '';
     fileInput?.click();
   }
 
@@ -46,6 +53,7 @@
     const files = Array.from(input.files ?? []);
     selectedFiles = files.slice(0, MAX_FILES);
     uploadedMedia = [];
+    composerNotice = '';
     uploadError = files.length > MAX_FILES ? `Maksimal ${MAX_FILES} file per post. File tambahan diabaikan.` : '';
   }
 
@@ -53,6 +61,7 @@
     selectedFiles = selectedFiles.filter((_, itemIndex) => itemIndex !== index);
     uploadedMedia = [];
     uploadError = '';
+    composerNotice = '';
     if (selectedFiles.length === 0 && fileInput) fileInput.value = '';
   }
 
@@ -76,18 +85,23 @@
     if (!policy.canKirim || submitting) return;
     submitting = true;
     uploadError = '';
+    composerNotice = '';
 
     try {
+      submitPhase = selectedFiles.length > 0 && uploadedMedia.length === 0 ? 'uploading' : 'posting';
       const uploaded = uploadedMedia.length > 0 ? uploadedMedia : await uploadSelectedFiles();
+      submitPhase = 'posting';
       await createSocialPost({
         body: draft,
         kind,
         mediaAssetIds: uploaded.map((item) => item.id)
       });
-      resetComposer();
+      resetComposer(false);
+      composerNotice = 'Postingan masuk ke feed. Sinkronisasi berjalan otomatis.';
     } catch (error) {
       uploadError = error instanceof Error ? error.message : 'Media belum bisa diunggah. Coba lagi setelah koneksi stabil.';
       submitting = false;
+      submitPhase = 'idle';
     }
   }
 </script>
@@ -110,6 +124,10 @@
     onchange={handleFiles}
     aria-label="Pilih media untuk post"
   />
+
+  {#if composerNotice && !composerOpen}
+    <p class="composer-notice"><SparkIcon name="check" size={14} /> {composerNotice}</p>
+  {/if}
 
   {#if !composerOpen && draft.trim().length === 0 && selectedFiles.length === 0}
     <div class="composer-open-actions" aria-label="Mulai diskusi">
@@ -184,7 +202,7 @@
       <div>
         <button type="button" class="composer-cancel" disabled={submitting} onclick={resetComposer}>Batal</button>
         <button type="button" class="spark-btn primary" disabled={!policy.canKirim || submitting} onclick={submit}>
-          <SparkIcon name={submitting ? 'clock' : 'send'} size={15} /> {submitting ? 'Mengunggah...' : 'Kirim'}
+          <SparkIcon name={submitting ? 'clock' : 'send'} size={15} /> {submitLabel}
         </button>
       </div>
     </div>
@@ -322,14 +340,9 @@
     flex-wrap: wrap;
   }
 
-  .media-tools button {
-    color: var(--spark-blue-strong);
-  }
+  .media-tools button { color: var(--spark-blue-strong); }
 
-  .selected-media-list {
-    display: grid;
-    gap: 8px;
-  }
+  .selected-media-list { display: grid; gap: 8px; }
 
   .selected-media-item {
     display: grid;
@@ -374,6 +387,7 @@
     font-size: 11px;
   }
 
+  .composer-notice,
   .composer-warning,
   .composer-error {
     display: flex;
@@ -384,6 +398,7 @@
     line-height: 1.35;
   }
 
+  .composer-notice { color: var(--spark-green); }
   .composer-warning { color: #a15a00; }
   .composer-error { color: #b42318; }
   :global([data-theme='dark']) .composer-warning { color: #ffd08a; }
