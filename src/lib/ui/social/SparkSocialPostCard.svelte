@@ -79,6 +79,10 @@
     return src ? `--comment-avatar-url: url('${src}')` : undefined;
   }
 
+  function commentAuthor(commentAuthorId: string) {
+    return getSocialProfile(commentAuthorId);
+  }
+
   async function copyShareLink() {
     if (typeof window === 'undefined') return;
 
@@ -200,16 +204,15 @@
         <p class="empty-comment">Belum ada komentar. Mulai dengan pertanyaan atau dukungan singkat.</p>
       {:else}
         {#each comments as comment (comment.id)}
-          {@const commentAuthor = getSocialProfile(comment.authorId)}
           <div class="comment-row">
             <a
               class="comment-avatar"
-              class:hasAvatar={Boolean(profileAvatarSrc(commentAuthor))}
-              style={avatarBackgroundStyle(profileAvatarSrc(commentAuthor))}
+              class:hasAvatar={Boolean(profileAvatarSrc(commentAuthor(comment.authorId)))}
+              style={avatarBackgroundStyle(profileAvatarSrc(commentAuthor(comment.authorId)))}
               href={profileHref(comment.authorId)}
-              aria-label={`Buka profil ${commentAuthor.name}`}
-            >{commentAuthor.avatarLabel}</a>
-            <p><a href={profileHref(comment.authorId)}>{commentAuthor.name}</a> {comment.body}</p>
+              aria-label={`Buka profil ${commentAuthor(comment.authorId).name}`}
+            >{commentAuthor(comment.authorId).avatarLabel}</a>
+            <p><a href={profileHref(comment.authorId)}>{commentAuthor(comment.authorId).name}</a> {comment.body}</p>
           </div>
         {/each}
       {/if}
