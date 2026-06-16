@@ -102,6 +102,15 @@ type BackendFeedResponse = {
   items: BackendHydratedPost[];
 };
 
+type HydrateSocialFeedOptions = {
+  force?: boolean;
+  staleMs?: number;
+};
+
+const DEFAULT_SOCIAL_FEED_STALE_MS = 45_000;
+let socialFeedLastHydratedAt = 0;
+let socialFeedHydrationPromise: Promise<boolean> | null = null;
+
 function apiUrl(path: string) {
   return `${API_BASE}${path}`;
 }
@@ -298,27 +307,44 @@ export async function fetchBackendSocialProfile(profileId: string): Promise<Soci
   return normalized;
 }
 
-export async function hydrateSocialFeedFromBackend() {
+export async function hydrateSocialFeedFromBackend(options: HydrateSocialFeedOptions = {}) {
   if (typeof window === 'undefined') return false;
 
-  socialBackendStatus.syncing = true;
-  socialBackendStatus.error = '';
+  const staleMs = options.staleMs ?? DEFAULT_SOCIAL_FEED_STALE_MS;
+  const now = Date.now();
 
-  try {
-    const feed = await apiGet<BackendFeedResponse>('/v1/social/feed?limit=30', 'Feed komunitas belum bisa dibaca dari Spark API.');
-    if (!feed) return false;
-
-    registerProfiles(feed.items);
-    socialState.posts = feed.items.map(transformPost);
-    socialState.comments = Object.fromEntries(feed.items.map((item) => [item.post.id, item.comments.map(transformComment)]));
-    socialBackendStatus.ready = true;
+  if (!options.force && socialBackendStatus.ready && now - socialFeedLastHydratedAt < staleMs) {
     return true;
-  } catch (error) {
-    socialBackendStatus.error = error instanceof Error ? error.message : 'Feed komunitas belum bisa disinkronkan.';
-    return false;
-  } finally {
-    socialBackendStatus.syncing = false;
   }
+
+  if (!options.force && socialFeedHydrationPromise) {
+    return socialFeedHydrationPromise;
+  }
+
+  socialFeedHydrationPromise = (async () => {
+    socialBackendStatus.syncing = true;
+    socialBackendStatus.error = '';
+
+    try {
+      const feed = await apiGet<BackendFeedResponse>('/v1/social/feed?limit=30', 'Feed komunitas belum bisa dibaca dari Spark API.');
+      if (!feed) return false;
+
+      registerProfiles(feed.items);
+      socialState.posts = feed.items.map(transformPost);
+      socialState.comments = Object.fromEntries(feed.items.map((item) => [item.post.id, item.comments.map(transformComment)]));
+      socialBackendStatus.ready = true;
+      socialFeedLastHydratedAt = Date.now();
+      return true;
+    } catch (error) {
+      socialBackendStatus.error = error instanceof Error ? error.message : 'Feed komunitas belum bisa disinkronkan.';
+      return false;
+    } finally {
+      socialBackendStatus.syncing = false;
+      socialFeedHydrationPromise = null;
+    }
+  })();
+
+  return socialFeedHydrationPromise;
 }
 
 export async function uploadSocialMediaFile(file: File) {

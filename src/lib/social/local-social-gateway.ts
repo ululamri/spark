@@ -65,7 +65,7 @@ export async function createSocialPost(input: SocialDraftInput) {
   try {
     const created = await createBackendSocialPost({ ...input, body: policy.normalized });
     if (created) {
-      await hydrateSocialFeedFromBackend();
+      await hydrateSocialFeedFromBackend({ force: true });
     } else {
       markPostStatus(post.id, 'local');
     }
@@ -146,7 +146,7 @@ export async function addSocialComment(input: SocialCommentInput) {
 
   try {
     const created = await createBackendSocialComment(input.postId, policy.normalized);
-    if (created) await hydrateSocialFeedFromBackend();
+    if (created) await hydrateSocialFeedFromBackend({ force: true });
   } catch {
     const comments = socialState.comments[input.postId] ?? [];
     socialState.comments = {

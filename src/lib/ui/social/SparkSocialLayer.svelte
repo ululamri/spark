@@ -20,7 +20,7 @@
 
   onMount(() => {
     restoreSocialState();
-    void hydrateSocialFeedFromBackend();
+    void hydrateSocialFeedFromBackend({ staleMs: 45_000 });
   });
 
   $effect(() => {
