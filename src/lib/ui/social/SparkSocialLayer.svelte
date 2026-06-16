@@ -63,6 +63,7 @@
   }
 
   function refreshWhenActive() {
+    if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return;
     void refreshSocialFeed(true, false);
   }
 
@@ -72,10 +73,12 @@
 
     const interval = window.setInterval(refreshWhenActive, AUTO_REFRESH_MS);
     window.addEventListener('focus', refreshWhenActive);
+    document.addEventListener('visibilitychange', refreshWhenActive);
 
     return () => {
       window.clearInterval(interval);
       window.removeEventListener('focus', refreshWhenActive);
+      document.removeEventListener('visibilitychange', refreshWhenActive);
     };
   });
 
@@ -107,7 +110,7 @@
           ? socialState.posts.length > 0
             ? 'Menyegarkan...'
             : 'Mengambil feed...'
-          : lastRefreshCopy || (socialBackendStatus.ready ? 'Auto-sync aktif.' : 'Cache lokal siap.'))
+          : lastRefreshCopy || (socialBackendStatus.ready ? 'Auto-sync aktif.' : 'Menunggu koneksi backend.'))
   );
 </script>
 
@@ -160,7 +163,7 @@
           <div class="social-empty-state loading">
             <SparkIcon name="loader" size={22} />
             <strong>Mengambil feed komunitas...</strong>
-            <p>Cache lokal tetap dipakai setelah data pertama siap.</p>
+            <p>Tampilan lama tetap dipakai setelah data pertama siap.</p>
           </div>
         {:else if showEmptyFeedState}
           <div class="social-empty-state">
