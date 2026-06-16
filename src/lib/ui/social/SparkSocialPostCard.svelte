@@ -63,15 +63,15 @@
 
   function statusLabel(status: SocialPost['status']) {
     if (status === 'pending') return 'Mengirim...';
-    if (status === 'failed') return 'Gagal sinkron · akan tetap terlihat lokal';
-    if (status === 'local') return 'Tersimpan lokal';
+    if (status === 'failed') return 'Gagal sinkron · cek koneksi';
+    if (status === 'local') return 'Menunggu sinkronisasi';
     return 'Tersinkron ke Spark API';
   }
 
   function commentStatusLabel(comment: SocialComment) {
     if (comment.status === 'pending') return 'mengirim';
-    if (comment.status === 'failed') return 'gagal';
-    if (comment.status === 'local') return 'lokal';
+    if (comment.status === 'failed') return 'gagal sinkron';
+    if (comment.status === 'local') return 'menunggu sinkron';
     return '';
   }
 
@@ -536,9 +536,7 @@
     text-decoration: none;
   }
 
-  .comment-row p small {
-    margin-left: 5px;
-  }
+  .comment-row p small { margin-left: 5px; }
 
   :global([data-theme='dark']) .comment-row p a { color: #fff; }
 
