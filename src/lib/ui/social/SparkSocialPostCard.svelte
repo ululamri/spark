@@ -12,7 +12,7 @@
   import { getSocialProfile, SOCIAL_VIEWER_ID, socialPostKindLabels } from '$lib/social/social-model';
   import { evaluateSocialComment } from '$lib/social/social-policy';
   import { socialState } from '$lib/social/social-state.svelte';
-  import type { SocialMediaAttachment, SocialPost, SocialProfile, SocialReactionKind } from '$lib/social/social-types';
+  import type { SocialComment, SocialMediaAttachment, SocialPost, SocialProfile, SocialReactionKind } from '$lib/social/social-types';
 
   type Props = { post: SocialPost };
   let { post }: Props = $props();
@@ -20,6 +20,8 @@
   let commentDraft = $state('');
   let showComments = $state(false);
   let shareCopied = $state(false);
+  let commentSubmitting = $state(false);
+  let commentError = $state('');
 
   const author = $derived(getSocialProfile(post.authorId));
   const comments = $derived(socialState.comments[post.id] ?? []);
@@ -37,11 +39,40 @@
     return `/community/profile/${encodeURIComponent(profileId)}`;
   }
 
-  function addComment() {
-    if (!commentPolicy.canKirim) return;
-    void addSocialComment({ postId: post.id, body: commentDraft });
-    commentDraft = '';
+  async function addComment() {
+    if (!commentPolicy.canKirim || commentSubmitting) return;
+    commentSubmitting = true;
+    commentError = '';
     showComments = true;
+
+    try {
+      await addSocialComment({ postId: post.id, body: commentDraft });
+      commentDraft = '';
+    } catch (error) {
+      commentError = error instanceof Error ? error.message : 'Komentar belum bisa dikirim.';
+    } finally {
+      commentSubmitting = false;
+    }
+  }
+
+  function handleCommentKeydown(event: KeyboardEvent) {
+    if (event.key !== 'Enter' || event.isComposing) return;
+    event.preventDefault();
+    void addComment();
+  }
+
+  function statusLabel(status: SocialPost['status']) {
+    if (status === 'pending') return 'Mengirim...';
+    if (status === 'failed') return 'Gagal sinkron · akan tetap terlihat lokal';
+    if (status === 'local') return 'Tersimpan lokal';
+    return 'Tersinkron ke Spark API';
+  }
+
+  function commentStatusLabel(comment: SocialComment) {
+    if (comment.status === 'pending') return 'mengirim';
+    if (comment.status === 'failed') return 'gagal';
+    if (comment.status === 'local') return 'lokal';
+    return '';
   }
 
   function isImageMedia(item: SocialMediaAttachment) {
@@ -127,13 +158,14 @@
   }
 </script>
 
-<article class="social-post-card" id={post.id} data-kind={post.kind}>
+<article class="social-post-card" id={post.id} data-kind={post.kind} data-status={post.status}>
   <header class="post-head">
     <a class="avatar" href={profileHref(post.authorId)} aria-label={`Buka profil ${author.name}`}>{author.avatarLabel}</a>
     <div>
       <div class="author-row">
         <a class="author-link" href={profileHref(post.authorId)}>{author.name}</a>
         {#if author.trusted}<em>verified</em>{/if}
+        {#if post.status !== 'synced'}<span class="status-pill">{statusLabel(post.status)}</span>{/if}
       </div>
       <small>{author.handle} · {socialPostKindLabels[post.kind]} · komunitas</small>
     </div>
@@ -204,7 +236,7 @@
         <p class="empty-comment">Belum ada komentar. Mulai dengan pertanyaan atau dukungan singkat.</p>
       {:else}
         {#each comments as comment (comment.id)}
-          <div class="comment-row">
+          <div class="comment-row" data-status={comment.status}>
             <a
               class="comment-avatar"
               class:hasAvatar={Boolean(profileAvatarSrc(commentAuthor(comment.authorId)))}
@@ -212,23 +244,36 @@
               href={profileHref(comment.authorId)}
               aria-label={`Buka profil ${commentAuthor(comment.authorId).name}`}
             >{commentAuthor(comment.authorId).avatarLabel}</a>
-            <p><a href={profileHref(comment.authorId)}>{commentAuthor(comment.authorId).name}</a> {comment.body}</p>
+            <p>
+              <a href={profileHref(comment.authorId)}>{commentAuthor(comment.authorId).name}</a> {comment.body}
+              {#if commentStatusLabel(comment)}<small>{commentStatusLabel(comment)}</small>{/if}
+            </p>
           </div>
         {/each}
       {/if}
 
       <div class="comment-compose">
-        <input bind:value={commentDraft} placeholder="Tulis komentar aman..." aria-label="Tulis komentar" onkeydown={(event) => event.key === 'Enter' && addComment()} />
-        <button type="button" disabled={!commentPolicy.canKirim} onclick={addComment}>Kirim</button>
+        <input
+          bind:value={commentDraft}
+          placeholder="Tulis komentar aman..."
+          aria-label="Tulis komentar"
+          disabled={commentSubmitting}
+          onkeydown={handleCommentKeydown}
+        />
+        <button type="button" disabled={!commentPolicy.canKirim || commentSubmitting} onclick={() => void addComment()}>
+          {commentSubmitting ? 'Mengirim...' : 'Kirim'}
+        </button>
       </div>
-      {#if commentDraft.trim().length > 0 && commentPolicy.errors.length > 0}
+      {#if commentError}
+        <small class="comment-error">{commentError}</small>
+      {:else if commentDraft.trim().length > 0 && commentPolicy.errors.length > 0}
         <small class="comment-error">{commentPolicy.errors[0]}</small>
       {/if}
     </section>
   {/if}
 
   <footer class="post-tools">
-    <small>{post.status === 'local' ? 'Tersimpan lokal' : post.status === 'synced' ? 'Tersinkron ke Spark API' : post.status}</small>
+    <small>{statusLabel(post.status)}</small>
     <div>
       <button type="button" onclick={() => void hideSocialPost(post.id)}>Sembunyikan</button>
       <button type="button" disabled={post.viewer.reported} onclick={() => void reportSocialPost(post.id, 'unsafe')}>
@@ -267,10 +312,7 @@
     text-decoration: none;
   }
 
-  .avatar {
-    width: 40px;
-    height: 40px;
-  }
+  .avatar { width: 40px; height: 40px; }
 
   .comment-avatar.hasAvatar {
     color: transparent;
@@ -281,6 +323,7 @@
 
   .author-row {
     display: flex;
+    flex-wrap: wrap;
     gap: 7px;
     align-items: center;
     min-width: 0;
@@ -295,20 +338,34 @@
   }
 
   .author-link:hover,
-  .comment-row p a:hover {
-    color: var(--spark-blue-strong);
-  }
-
+  .comment-row p a:hover { color: var(--spark-blue-strong); }
   :global([data-theme='dark']) .author-link { color: #fff; }
 
-  .author-row em {
+  .author-row em,
+  .status-pill,
+  .comment-row p small {
     padding: 3px 6px;
     border-radius: 999px;
-    background: rgba(34, 183, 122, 0.12);
-    color: var(--spark-green);
     font-size: 10px;
     font-style: normal;
     font-weight: 760;
+  }
+
+  .author-row em {
+    background: rgba(34, 183, 122, 0.12);
+    color: var(--spark-green);
+  }
+
+  .status-pill,
+  .comment-row p small {
+    background: rgba(31, 117, 255, 0.1);
+    color: var(--spark-blue-strong);
+  }
+
+  .social-post-card[data-status='failed'] .status-pill,
+  .comment-row[data-status='failed'] p small {
+    background: rgba(180, 35, 24, 0.1);
+    color: #b42318;
   }
 
   .post-head small,
@@ -345,10 +402,7 @@
 
   :global([data-theme='dark']) .post-body { color: #e5edff; }
 
-  .media-grid {
-    display: grid;
-    gap: 8px;
-  }
+  .media-grid { display: grid; gap: 8px; }
 
   .media-image,
   .media-file {
@@ -358,21 +412,13 @@
     background: rgba(248, 251, 255, 0.72);
   }
 
-  .media-image {
-    display: block;
-    text-decoration: none;
-  }
+  .media-image { display: block; text-decoration: none; }
 
   :global([data-theme='dark']) .media-image,
   :global([data-theme='dark']) .media-file { background: rgba(255,255,255,.045); }
 
-  .media-image :global(.spark-optimized-image) {
-    min-height: 180px;
-  }
-
-  .media-image :global(.spark-optimized-image img) {
-    max-height: 420px;
-  }
+  .media-image :global(.spark-optimized-image) { min-height: 180px; }
+  .media-image :global(.spark-optimized-image img) { max-height: 420px; }
 
   .media-file {
     display: flex;
@@ -383,11 +429,7 @@
     text-decoration: none;
   }
 
-  .media-file span {
-    display: grid;
-    gap: 2px;
-    min-width: 0;
-  }
+  .media-file span { display: grid; gap: 2px; min-width: 0; }
 
   .media-file strong {
     overflow: hidden;
@@ -399,10 +441,7 @@
 
   :global([data-theme='dark']) .media-file strong { color: #fff; }
 
-  .media-file small {
-    color: var(--spark-muted);
-    font-size: 11px;
-  }
+  .media-file small { color: var(--spark-muted); font-size: 11px; }
 
   .tag-row,
   .post-actions,
@@ -420,9 +459,7 @@
     font-weight: 680;
   }
 
-  .post-actions {
-    padding-top: 2px;
-  }
+  .post-actions { padding-top: 2px; }
 
   .post-actions button,
   .post-tools button,
@@ -451,10 +488,7 @@
     border-color: rgba(31, 117, 255, 0.28);
   }
 
-  .post-actions span {
-    color: currentColor;
-    opacity: .72;
-  }
+  .post-actions span { color: currentColor; opacity: .72; }
 
   .comment-thread {
     display: grid;
@@ -502,6 +536,10 @@
     text-decoration: none;
   }
 
+  .comment-row p small {
+    margin-left: 5px;
+  }
+
   :global([data-theme='dark']) .comment-row p a { color: #fff; }
 
   .comment-compose {
@@ -529,6 +567,12 @@
     font-size: 11.5px;
   }
 
+  button:disabled,
+  input:disabled {
+    cursor: not-allowed;
+    opacity: .58;
+  }
+
   .post-tools {
     justify-content: space-between;
     padding-top: 2px;
@@ -542,7 +586,4 @@
     .post-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .post-actions button { width: 100%; }
   }
-
-
-/* KARYRA PASS 37A SOCIAL CSS SCOPE WARNING FIX: parent theme selectors are global; local classes remain scoped. */
 </style>
