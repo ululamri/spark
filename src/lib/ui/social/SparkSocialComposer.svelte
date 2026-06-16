@@ -1,9 +1,10 @@
 <script lang="ts">
   import SparkIcon from '$ui/SparkIcon.svelte';
-  import { uploadSocialMediaFile } from '$lib/social/social-backend-gateway';
+  import { hydrateSocialFeedFromBackend, uploadSocialMediaFile } from '$lib/social/social-backend-gateway';
   import { createSocialPost } from '$lib/social/local-social-gateway';
   import { socialPostKindHints, socialPostKindLabels } from '$lib/social/social-model';
   import { evaluateSocialDraft } from '$lib/social/social-policy';
+  import { socialState } from '$lib/social/social-state.svelte';
   import type { SocialMediaAttachment, SocialPostKind } from '$lib/social/social-types';
 
   const kinds: SocialPostKind[] = ['progress', 'question', 'resource', 'workshop', 'lab'];
@@ -21,6 +22,10 @@
   let fileInput = $state<HTMLInputElement | undefined>(undefined);
   const policy = $derived(evaluateSocialDraft(draft));
   const submitLabel = $derived(submitPhase === 'uploading' ? 'Mengunggah media...' : submitPhase === 'posting' ? 'Mengirim...' : 'Kirim');
+
+  function feedRefreshLimit() {
+    return Math.min(50, Math.max(20, socialState.posts.length || 20));
+  }
 
   function openComposer(nextKind: SocialPostKind = kind) {
     kind = nextKind;
@@ -83,6 +88,7 @@
 
   async function submit() {
     if (!policy.canKirim || submitting) return;
+    const refreshLimit = feedRefreshLimit();
     submitting = true;
     uploadError = '';
     composerNotice = '';
@@ -96,6 +102,7 @@
         kind,
         mediaAssetIds: uploaded.map((item) => item.id)
       });
+      await hydrateSocialFeedFromBackend({ force: true, limit: refreshLimit });
       resetComposer(false);
       composerNotice = 'Postingan masuk ke feed. Sinkronisasi berjalan otomatis.';
     } catch (error) {
