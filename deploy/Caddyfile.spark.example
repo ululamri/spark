@@ -78,8 +78,9 @@ spark.user.cloudjkt01.com {
 		reverse_proxy 127.0.0.1:4173
 	}
 
-	# Future optimized public media path, to be enabled after imgproxy pass.
-	# handle /media/optimized/* {
+	# Optimized public media path. handle_path strips /media/optimized before proxying to imgproxy.
+	# Keep disabled until karyra-imgproxy is healthy and SPARK_MEDIA_OPTIMIZER_ENABLED is ready.
+	# handle_path /media/optimized/* {
 	# 	header Cache-Control "public, max-age=2592000, stale-while-revalidate=86400"
 	# 	reverse_proxy 127.0.0.1:8088
 	# }
