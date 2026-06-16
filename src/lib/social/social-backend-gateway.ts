@@ -7,11 +7,17 @@ import type { SocialComment, SocialDraftInput, SocialMediaAttachment, SocialPost
 const API_BASE = (import.meta.env.PUBLIC_API_BASE || import.meta.env.PUBLIC_SPARK_API_BASE || '').replace(/\/$/, '');
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MAX_SOCIAL_UPLOAD_BYTES = 8 * 1024 * 1024;
+const DEFAULT_SOCIAL_FEED_STALE_MS = 45_000;
+const DEFAULT_SOCIAL_FEED_LIMIT = 20;
+const MAX_SOCIAL_FEED_LIMIT = 50;
 
 export const socialBackendStatus = {
   ready: false,
   syncing: false,
-  error: ''
+  loadingMore: false,
+  error: '',
+  nextCursor: null as string | null,
+  hasMore: false
 };
 
 type BackendProfile = {
@@ -100,14 +106,17 @@ type BackendHydratedPost = {
 
 type BackendFeedResponse = {
   items: BackendHydratedPost[];
+  next_cursor?: string | null;
 };
 
 type HydrateSocialFeedOptions = {
   force?: boolean;
   staleMs?: number;
+  append?: boolean;
+  cursor?: string | null;
+  limit?: number;
 };
 
-const DEFAULT_SOCIAL_FEED_STALE_MS = 45_000;
 let socialFeedLastHydratedAt = 0;
 let socialFeedHydrationPromise: Promise<boolean> | null = null;
 
@@ -226,6 +235,18 @@ function reactionCount(reactions: Record<string, number>, keys: string[]) {
   return keys.reduce((total, key) => total + (Number(reactions[key]) || 0), 0);
 }
 
+function normalizedFeedLimit(limit?: number) {
+  if (!Number.isFinite(limit ?? DEFAULT_SOCIAL_FEED_LIMIT)) return DEFAULT_SOCIAL_FEED_LIMIT;
+  return Math.min(MAX_SOCIAL_FEED_LIMIT, Math.max(1, Math.round(limit ?? DEFAULT_SOCIAL_FEED_LIMIT)));
+}
+
+function socialFeedPath(options: HydrateSocialFeedOptions) {
+  const params = new URLSearchParams();
+  params.set('limit', String(normalizedFeedLimit(options.limit)));
+  if (options.cursor) params.set('cursor', options.cursor);
+  return `/v1/social/feed?${params.toString()}`;
+}
+
 function transformMedia(item: BackendMedia): SocialMediaAttachment {
   return {
     id: item.id,
@@ -281,6 +302,15 @@ function registerProfiles(items: BackendHydratedPost[]) {
   );
 }
 
+function commentsFromFeed(items: BackendHydratedPost[]) {
+  return Object.fromEntries(items.map((item) => [item.post.id, item.comments.map(transformComment)]));
+}
+
+function mergePosts(existing: SocialPost[], incoming: SocialPost[]) {
+  const existingIds = new Set(existing.map((post) => post.id));
+  return [...existing, ...incoming.filter((post) => !existingIds.has(post.id))];
+}
+
 function validateSocialUploadFile(file: File) {
   const mimeType = file.type || 'application/octet-stream';
   const allowed = mimeType.startsWith('image/') || mimeType === 'application/pdf' || mimeType.startsWith('text/');
@@ -310,10 +340,11 @@ export async function fetchBackendSocialProfile(profileId: string): Promise<Soci
 export async function hydrateSocialFeedFromBackend(options: HydrateSocialFeedOptions = {}) {
   if (typeof window === 'undefined') return false;
 
+  const append = Boolean(options.append && options.cursor);
   const staleMs = options.staleMs ?? DEFAULT_SOCIAL_FEED_STALE_MS;
   const now = Date.now();
 
-  if (!options.force && socialBackendStatus.ready && now - socialFeedLastHydratedAt < staleMs) {
+  if (!append && !options.force && socialBackendStatus.ready && now - socialFeedLastHydratedAt < staleMs) {
     return true;
   }
 
@@ -322,24 +353,37 @@ export async function hydrateSocialFeedFromBackend(options: HydrateSocialFeedOpt
   }
 
   socialFeedHydrationPromise = (async () => {
-    socialBackendStatus.syncing = true;
+    socialBackendStatus.syncing = !append;
+    socialBackendStatus.loadingMore = append;
     socialBackendStatus.error = '';
 
     try {
-      const feed = await apiGet<BackendFeedResponse>('/v1/social/feed?limit=30', 'Feed komunitas belum bisa dibaca dari Spark API.');
+      const feed = await apiGet<BackendFeedResponse>(socialFeedPath(options), 'Feed komunitas belum bisa dibaca dari Spark API.');
       if (!feed) return false;
 
       registerProfiles(feed.items);
-      socialState.posts = feed.items.map(transformPost);
-      socialState.comments = Object.fromEntries(feed.items.map((item) => [item.post.id, item.comments.map(transformComment)]));
+      const posts = feed.items.map(transformPost);
+      const comments = commentsFromFeed(feed.items);
+
+      if (append) {
+        socialState.posts = mergePosts(socialState.posts, posts);
+        socialState.comments = { ...socialState.comments, ...comments };
+      } else {
+        socialState.posts = posts;
+        socialState.comments = comments;
+        socialFeedLastHydratedAt = Date.now();
+      }
+
       socialBackendStatus.ready = true;
-      socialFeedLastHydratedAt = Date.now();
+      socialBackendStatus.nextCursor = feed.next_cursor ?? null;
+      socialBackendStatus.hasMore = Boolean(feed.next_cursor);
       return true;
     } catch (error) {
       socialBackendStatus.error = error instanceof Error ? error.message : 'Feed komunitas belum bisa disinkronkan.';
       return false;
     } finally {
       socialBackendStatus.syncing = false;
+      socialBackendStatus.loadingMore = false;
       socialFeedHydrationPromise = null;
     }
   })();
