@@ -24,12 +24,16 @@
   let isLoadingMoreFeed = $state(false);
   let lastRefreshCopy = $state('');
 
+  function refreshFeedLimit() {
+    return Math.min(50, Math.max(20, socialState.posts.length || 20));
+  }
+
   async function refreshSocialFeed(force = false, announce = true) {
     if (isRefreshingFeed || isLoadingMoreFeed) return;
 
     isRefreshingFeed = true;
     try {
-      const hydrated = await hydrateSocialFeedFromBackend({ force, staleMs: 45_000, limit: 20 });
+      const hydrated = await hydrateSocialFeedFromBackend({ force, staleMs: 45_000, limit: refreshFeedLimit() });
       if (hydrated && announce) {
         lastRefreshCopy = force ? 'Feed disegarkan.' : 'Feed tersinkron.';
       }
@@ -58,15 +62,21 @@
     }
   }
 
+  function refreshWhenActive() {
+    void refreshSocialFeed(true, false);
+  }
+
   onMount(() => {
     restoreSocialState();
     void refreshSocialFeed(false);
 
-    const interval = window.setInterval(() => {
-      void refreshSocialFeed(true, false);
-    }, AUTO_REFRESH_MS);
+    const interval = window.setInterval(refreshWhenActive, AUTO_REFRESH_MS);
+    window.addEventListener('focus', refreshWhenActive);
 
-    return () => window.clearInterval(interval);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refreshWhenActive);
+    };
   });
 
   $effect(() => {
