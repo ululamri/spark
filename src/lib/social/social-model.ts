@@ -1,5 +1,7 @@
 import type { SocialComment, SocialPost, SocialProfile } from './social-types';
 
+const API_BASE = (import.meta.env.PUBLIC_API_BASE || import.meta.env.PUBLIC_SPARK_API_BASE || '').replace(/\/$/, '');
+
 export const SOCIAL_VIEWER_ID = 'local-viewer';
 
 export const socialPostKindLabels = {
@@ -31,6 +33,13 @@ const localViewerProfile: SocialProfile = {
 };
 
 let backendSocialProfiles: SocialProfile[] = [];
+
+function publicApiUrl(path?: string | null) {
+  if (!path) return undefined;
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  if (!API_BASE) return path.startsWith('/') ? path : `/${path}`;
+  return `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
+}
 
 function avatarLabelFromName(name: string) {
   const letters = name
@@ -71,6 +80,15 @@ export function backendProfileFromApi(input: {
   location?: string;
   visibility?: string;
   avatar_url?: string | null;
+  avatar_optimized_urls?: {
+    avatar_64?: string | null;
+    avatar_128?: string | null;
+    feed_480?: string | null;
+    feed_720?: string | null;
+    detail_1080?: string | null;
+    detail_1440?: string | null;
+    original?: string | null;
+  } | null;
 }): SocialProfile {
   const name = input.display_name?.trim() || 'Pengguna Spark';
   const avatarUrl = input.avatar_url?.trim();
@@ -83,6 +101,17 @@ export function backendProfileFromApi(input: {
     bio: input.bio?.trim().slice(0, 180) || 'Profil komunitas Spark.',
     avatarLabel: avatarLabelFromName(name).slice(0, 3),
     avatarUrl: avatarUrl || undefined,
+    avatarOptimizedUrls: input.avatar_optimized_urls
+      ? {
+          avatar64: publicApiUrl(input.avatar_optimized_urls.avatar_64),
+          avatar128: publicApiUrl(input.avatar_optimized_urls.avatar_128),
+          feed480: publicApiUrl(input.avatar_optimized_urls.feed_480),
+          feed720: publicApiUrl(input.avatar_optimized_urls.feed_720),
+          detail1080: publicApiUrl(input.avatar_optimized_urls.detail_1080),
+          detail1440: publicApiUrl(input.avatar_optimized_urls.detail_1440),
+          original: publicApiUrl(input.avatar_optimized_urls.original)
+        }
+      : undefined,
     trusted: input.visibility === 'public'
   };
 }

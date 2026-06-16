@@ -22,6 +22,7 @@ type BackendProfile = {
   location: string;
   visibility: string;
   avatar_url?: string | null;
+  avatar_optimized_urls?: BackendOptimizedMediaUrls | null;
 };
 
 type BackendStats = {

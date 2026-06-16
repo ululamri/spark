@@ -14,6 +14,16 @@ export const socialEventKindSchema = z.enum([
   'follow.toggled'
 ]);
 
+export const socialOptimizedMediaUrlsSchema = z.object({
+  avatar64: z.string().min(1).optional(),
+  avatar128: z.string().min(1).optional(),
+  feed480: z.string().min(1).optional(),
+  feed720: z.string().min(1).optional(),
+  detail1080: z.string().min(1).optional(),
+  detail1440: z.string().min(1).optional(),
+  original: z.string().min(1).optional()
+});
+
 export const socialProfileSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1).max(80),
@@ -23,17 +33,8 @@ export const socialProfileSchema = z.object({
   bio: z.string().max(180).optional(),
   avatarLabel: z.string().min(1).max(3),
   avatarUrl: z.string().min(1).optional(),
+  avatarOptimizedUrls: socialOptimizedMediaUrlsSchema.optional(),
   trusted: z.boolean().default(false)
-});
-
-export const socialOptimizedMediaUrlsSchema = z.object({
-  avatar64: z.string().min(1).optional(),
-  avatar128: z.string().min(1).optional(),
-  feed480: z.string().min(1).optional(),
-  feed720: z.string().min(1).optional(),
-  detail1080: z.string().min(1).optional(),
-  detail1440: z.string().min(1).optional(),
-  original: z.string().min(1).optional()
 });
 
 export const socialMediaAttachmentSchema = z.object({

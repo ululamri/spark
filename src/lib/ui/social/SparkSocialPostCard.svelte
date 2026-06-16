@@ -194,7 +194,14 @@
         {#each comments as comment (comment.id)}
           {@const commentAuthor = getSocialProfile(comment.authorId)}
           <div class="comment-row">
-            <a class="comment-avatar" href={profileHref(comment.authorId)} aria-label={`Buka profil ${commentAuthor.name}`}>{commentAuthor.avatarLabel}</a>
+            {@const commentAvatarSrc = commentAuthor.avatarOptimizedUrls?.avatar64 ?? commentAuthor.avatarOptimizedUrls?.avatar128 ?? commentAuthor.avatarUrl}
+            <a
+              class="comment-avatar"
+              class:hasAvatar={Boolean(commentAvatarSrc)}
+              style={commentAvatarSrc ? `--comment-avatar-url: url('${commentAvatarSrc}')` : undefined}
+              href={profileHref(comment.authorId)}
+              aria-label={`Buka profil ${commentAuthor.name}`}
+            >{commentAuthor.avatarLabel}</a>
             <p><a href={profileHref(comment.authorId)}>{commentAuthor.name}</a> {comment.body}</p>
           </div>
         {/each}
@@ -253,6 +260,13 @@
   .avatar {
     width: 40px;
     height: 40px;
+  }
+
+  .comment-avatar.hasAvatar {
+    color: transparent;
+    background-image: var(--comment-avatar-url);
+    background-size: cover;
+    background-position: center;
   }
 
   .author-row {

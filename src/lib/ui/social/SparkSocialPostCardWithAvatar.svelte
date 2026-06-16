@@ -7,9 +7,15 @@
   let { post }: Props = $props();
 
   const author = $derived(getSocialProfile(post.authorId));
+  const avatarSrc = $derived(
+    author?.avatarOptimizedUrls?.avatar64 ?? 
+    author?.avatarOptimizedUrls?.avatar128 ?? 
+    author?.avatarUrl
+  );
 </script>
 
-<div class="avatar-card-wrap" class:hasAvatar={Boolean(author.avatarUrl)} style={`--avatar-url: url('${author.avatarUrl ?? ''}')`}>
+
+<div class="avatar-card-wrap" class:hasAvatar={Boolean(avatarSrc)} style={`--avatar-url: url('${avatarSrc ?? ''}')`}>
   <SparkSocialPostCard {post} />
 </div>
 
