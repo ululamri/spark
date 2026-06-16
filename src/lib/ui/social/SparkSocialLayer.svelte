@@ -20,20 +20,40 @@
 
   let hasAttemptedHydrate = $state(false);
   let isRefreshingFeed = $state(false);
+  let isLoadingMoreFeed = $state(false);
   let lastRefreshCopy = $state('');
 
   async function refreshSocialFeed(force = false) {
-    if (isRefreshingFeed) return;
+    if (isRefreshingFeed || isLoadingMoreFeed) return;
 
     isRefreshingFeed = true;
     try {
-      const hydrated = await hydrateSocialFeedFromBackend({ force, staleMs: 45_000 });
+      const hydrated = await hydrateSocialFeedFromBackend({ force, staleMs: 45_000, limit: 20 });
       if (hydrated) {
         lastRefreshCopy = force ? 'Feed disegarkan manual.' : 'Feed tersinkron dari Spark API.';
       }
     } finally {
       hasAttemptedHydrate = true;
       isRefreshingFeed = false;
+    }
+  }
+
+  async function loadMoreSocialFeed() {
+    if (isRefreshingFeed || isLoadingMoreFeed || !socialBackendStatus.nextCursor) return;
+
+    isLoadingMoreFeed = true;
+    try {
+      const hydrated = await hydrateSocialFeedFromBackend({
+        append: true,
+        cursor: socialBackendStatus.nextCursor,
+        force: true,
+        limit: 15
+      });
+      if (hydrated) {
+        lastRefreshCopy = socialBackendStatus.hasMore ? 'Diskusi lama ditambahkan.' : 'Semua diskusi lama sudah tampil.';
+      }
+    } finally {
+      isLoadingMoreFeed = false;
     }
   }
 
@@ -61,13 +81,16 @@
 
   const showInitialFeedLoading = $derived(isRefreshingFeed && !hasAttemptedHydrate && socialState.posts.length === 0);
   const showEmptyFeedState = $derived(!showInitialFeedLoading && visiblePosts.length === 0);
+  const showPaginationCard = $derived(hasAttemptedHydrate && visiblePosts.length > 0);
   const feedStatusCopy = $derived(
     socialBackendStatus.error ||
-      (isRefreshingFeed
-        ? socialState.posts.length > 0
-          ? 'Menyegarkan feed tanpa mengosongkan tampilan.'
-          : 'Mengambil feed komunitas dari Spark API...'
-        : lastRefreshCopy || (socialBackendStatus.ready ? 'Feed siap dari cache singkat.' : 'Cache lokal siap sambil menunggu backend.'))
+      (isLoadingMoreFeed
+        ? 'Mengambil diskusi lama tanpa mengganggu feed saat ini.'
+        : isRefreshingFeed
+          ? socialState.posts.length > 0
+            ? 'Menyegarkan feed tanpa mengosongkan tampilan.'
+            : 'Mengambil feed komunitas dari Spark API...'
+          : lastRefreshCopy || (socialBackendStatus.ready ? 'Feed siap dari cache singkat.' : 'Cache lokal siap sambil menunggu backend.'))
   );
 </script>
 
@@ -76,7 +99,7 @@
     <SparkSectionHeader
       eyebrow="Diskusi komunitas"
       title="Tanya, koordinasi, dan berbagi progress."
-      copy="Ruang diskusi publik untuk pertanyaan, koordinasi workshop, rujukan aman, catatan belajar, dan showcase Lab. Feed dibaca dari Spark API saat backend tersedia, lalu jatuh kembali ke cache lokal bila jaringan belum siap."
+      copy="Ruang diskusi publik untuk pertanyaan, koordinasi workshop, rujukan aman, catatan belajar, dan showcase Lab. Feed dibaca bertahap dari Spark API agar layar diskusi tetap ringan."
     />
 
     <div class="social-event-card">
@@ -108,10 +131,10 @@
     <div class="social-feed-column">
       <SparkSocialComposer />
 
-      <div class="feed-sync-card" data-syncing={isRefreshingFeed} data-error={Boolean(socialBackendStatus.error)}>
+      <div class="feed-sync-card" data-syncing={isRefreshingFeed || isLoadingMoreFeed} data-error={Boolean(socialBackendStatus.error)}>
         <span><SparkIcon name={socialBackendStatus.error ? 'alert-triangle' : 'refresh-cw'} size={15} /></span>
         <p>{feedStatusCopy}</p>
-        <button type="button" disabled={isRefreshingFeed} onclick={() => void refreshSocialFeed(true)}>
+        <button type="button" disabled={isRefreshingFeed || isLoadingMoreFeed} onclick={() => void refreshSocialFeed(true)}>
           {isRefreshingFeed ? 'Menyegarkan...' : 'Refresh'}
         </button>
       </div>
@@ -135,6 +158,23 @@
           {/each}
         {/if}
       </div>
+
+      {#if showPaginationCard}
+        <div class="feed-pagination-card" data-exhausted={!socialBackendStatus.hasMore}>
+          <p>
+            {#if socialBackendStatus.hasMore}
+              Feed awal dibuat ringan. Muat diskusi lama saat dibutuhkan.
+            {:else}
+              Semua diskusi yang tersedia sudah tampil di cache saat ini.
+            {/if}
+          </p>
+          {#if socialBackendStatus.hasMore}
+            <button type="button" disabled={isRefreshingFeed || isLoadingMoreFeed} onclick={() => void loadMoreSocialFeed()}>
+              {isLoadingMoreFeed ? 'Memuat...' : 'Muat diskusi lama'}
+            </button>
+          {/if}
+        </div>
+      {/if}
     </div>
   </div>
 </div>
@@ -153,7 +193,8 @@
   }
 
   .social-event-card,
-  .feed-sync-card {
+  .feed-sync-card,
+  .feed-pagination-card {
     border: 1px solid var(--spark-line);
     border-radius: 20px;
     background: var(--spark-card);
@@ -201,7 +242,8 @@
   }
 
   .social-event-card button,
-  .feed-sync-card button {
+  .feed-sync-card button,
+  .feed-pagination-card button {
     min-height: 32px;
     padding: 0 10px;
     border: 1px solid var(--spark-line);
@@ -212,12 +254,14 @@
     font-weight: 700;
   }
 
-  .feed-sync-card button:disabled {
+  .feed-sync-card button:disabled,
+  .feed-pagination-card button:disabled {
     opacity: .68;
   }
 
   :global([data-theme='dark']) .social-event-card button,
-  :global([data-theme='dark']) .feed-sync-card button { background: rgba(255,255,255,.055); }
+  :global([data-theme='dark']) .feed-sync-card button,
+  :global([data-theme='dark']) .feed-pagination-card button { background: rgba(255,255,255,.055); }
 
   .social-layout {
     display: grid;
@@ -272,12 +316,25 @@
     background: rgba(31,117,255,.1);
   }
 
-  .feed-sync-card {
+  .feed-sync-card,
+  .feed-pagination-card {
     display: grid;
-    grid-template-columns: 32px minmax(0, 1fr) auto;
     gap: 9px;
     align-items: center;
     padding: 10px 11px;
+  }
+
+  .feed-sync-card {
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+  }
+
+  .feed-pagination-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .feed-pagination-card[data-exhausted='true'] {
+    border-style: dashed;
+    background: color-mix(in srgb, var(--spark-card) 78%, transparent);
   }
 
   .feed-sync-card > span {
@@ -291,7 +348,8 @@
     background: rgba(180, 35, 24, 0.1);
   }
 
-  .feed-sync-card p {
+  .feed-sync-card p,
+  .feed-pagination-card p {
     margin: 0;
     color: var(--spark-muted);
     font-size: 11.8px;
@@ -336,13 +394,19 @@
   }
 
   @media (max-width: 560px) {
-    .feed-sync-card {
+    .feed-sync-card,
+    .feed-pagination-card {
       grid-template-columns: 30px minmax(0, 1fr);
     }
 
-    .feed-sync-card button {
+    .feed-sync-card button,
+    .feed-pagination-card button {
       grid-column: 2;
       width: fit-content;
+    }
+
+    .feed-pagination-card p {
+      grid-column: 1 / -1;
     }
   }
 </style>
