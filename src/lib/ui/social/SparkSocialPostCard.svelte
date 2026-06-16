@@ -12,7 +12,7 @@
   import { getSocialProfile, SOCIAL_VIEWER_ID, socialPostKindLabels } from '$lib/social/social-model';
   import { evaluateSocialComment } from '$lib/social/social-policy';
   import { socialState } from '$lib/social/social-state.svelte';
-  import type { SocialMediaAttachment, SocialPost, SocialReactionKind } from '$lib/social/social-types';
+  import type { SocialMediaAttachment, SocialPost, SocialProfile, SocialReactionKind } from '$lib/social/social-types';
 
   type Props = { post: SocialPost };
   let { post }: Props = $props();
@@ -69,6 +69,14 @@
     if (sizeBytes >= 1024 * 1024) return `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
     if (sizeBytes >= 1024) return `${Math.round(sizeBytes / 1024)} KB`;
     return `${sizeBytes} B`;
+  }
+
+  function profileAvatarSrc(profile: SocialProfile) {
+    return profile.avatarOptimizedUrls?.avatar64 ?? profile.avatarOptimizedUrls?.avatar128 ?? profile.avatarUrl;
+  }
+
+  function avatarBackgroundStyle(src?: string) {
+    return src ? `--comment-avatar-url: url('${src}')` : undefined;
   }
 
   async function copyShareLink() {
@@ -194,11 +202,10 @@
         {#each comments as comment (comment.id)}
           {@const commentAuthor = getSocialProfile(comment.authorId)}
           <div class="comment-row">
-            {@const commentAvatarSrc = commentAuthor.avatarOptimizedUrls?.avatar64 ?? commentAuthor.avatarOptimizedUrls?.avatar128 ?? commentAuthor.avatarUrl}
             <a
               class="comment-avatar"
-              class:hasAvatar={Boolean(commentAvatarSrc)}
-              style={commentAvatarSrc ? `--comment-avatar-url: url('${commentAvatarSrc}')` : undefined}
+              class:hasAvatar={Boolean(profileAvatarSrc(commentAuthor))}
+              style={avatarBackgroundStyle(profileAvatarSrc(commentAuthor))}
               href={profileHref(comment.authorId)}
               aria-label={`Buka profil ${commentAuthor.name}`}
             >{commentAuthor.avatarLabel}</a>
