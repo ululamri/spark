@@ -7,11 +7,11 @@ export const sparkStorageRegistry: SparkStorageEntry[] = [
     key: 'karyra-spark-learning-state-v3',
     owner: 'learning',
     label: 'Progress belajar',
-    description: 'Pelajaran selesai, catatan, bookmark, checkpoint, dan status belajar lokal.',
+    description: 'Pelajaran selesai, catatan, bookmark, checkpoint, dan status belajar yang dicache di perangkat.',
     authority: 'server-source',
     resetOnProgressReset: true,
     resetOnAllLocalReset: true,
-    futureBackendRole: 'Server menjadi sumber utama. Local state menjadi cache dan draft offline.'
+    futureBackendRole: 'Server menjadi sumber utama. State perangkat menjadi cache dan draft offline.'
   },
   {
     key: 'karyra-spark-leveling-state-v1',
@@ -37,41 +37,41 @@ export const sparkStorageRegistry: SparkStorageEntry[] = [
     key: 'karyra-spark-message-state-v1',
     owner: 'message',
     label: 'Notifikasi dan inbox',
-    description: 'Status baca, filter pesan, dan pesan yang disimpan di perangkat.',
+    description: 'Status baca, filter pesan, dan pesan yang disimpan sebagai cache UI di perangkat.',
     authority: 'server-source',
     resetOnProgressReset: true,
     resetOnAllLocalReset: true,
-    futureBackendRole: 'Server menyimpan status baca. Local state hanya cache UI.'
+    futureBackendRole: 'Server menyimpan status baca. State perangkat hanya cache UI.'
   },
   {
     key: 'karyra-spark-social-state-v1',
     owner: 'social',
     label: 'Diskusi komunitas',
-    description: 'Post lokal, komentar, reaction, follow, report, dan event diskusi.',
+    description: 'Cache diskusi, komentar, reaction, follow, report, dan draft interaksi komunitas.',
     authority: 'server-source',
     resetOnProgressReset: true,
     resetOnAllLocalReset: true,
-    futureBackendRole: 'Server menyimpan diskusi. Local state menjadi cache, draft, dan optimistic update.'
+    futureBackendRole: 'Server menyimpan diskusi. State perangkat menjadi cache, draft, dan optimistic update.'
   },
   {
     key: SYNC_QUEUE_STORAGE_KEY,
     owner: 'system',
     label: 'Antrean sync',
-    description: 'Event lokal yang nanti dikirim ke backend saat sync aktif.',
+    description: 'Event perangkat yang menunggu sinkronisasi backend saat jaringan atau session belum siap.',
     authority: 'local-cache',
     resetOnProgressReset: true,
     resetOnAllLocalReset: true,
-    futureBackendRole: 'Diganti atau diperkuat dengan IndexedDB queue dan retry policy.'
+    futureBackendRole: 'Diperkuat dengan IndexedDB queue dan retry policy bila dibutuhkan.'
   },
   {
     key: 'karyra-spark-session-v2',
     owner: 'auth',
-    label: 'Sesi lokal',
-    description: 'Identitas sesi lokal sebelum auth backend aktif.',
-    authority: 'server-source',
+    label: 'Cache akun browser',
+    description: 'Salinan ringan identitas akun backend untuk render UI. Sumber kebenaran tetap cookie httpOnly dan /v1/auth/me.',
+    authority: 'local-cache',
     resetOnProgressReset: false,
     resetOnAllLocalReset: true,
-    futureBackendRole: 'Diganti cookie httpOnly/session backend. Tidak menjadi sumber data akun.'
+    futureBackendRole: 'Tetap cache UI non-rahasia. Tidak menjadi sumber kebenaran akun.'
   },
   {
     key: 'karyra-spark-theme-v2',
@@ -81,13 +81,13 @@ export const sparkStorageRegistry: SparkStorageEntry[] = [
     authority: 'local-preference',
     resetOnProgressReset: false,
     resetOnAllLocalReset: true,
-    futureBackendRole: 'Boleh tetap local preference atau disalin ke profile settings.'
+    futureBackendRole: 'Boleh tetap preference perangkat atau disalin ke profile settings.'
   },
   {
     key: 'karyra-spark-managed-content-v1',
     owner: 'content',
-    label: 'Konten terkelola lokal',
-    description: 'Draft copy/resource legal/community yang diedit dari content studio lokal.',
+    label: 'Konten terkelola perangkat',
+    description: 'Draft copy/resource legal/community yang diedit dari content studio sebelum dipublish ke backend.',
     authority: 'local-source',
     resetOnProgressReset: false,
     resetOnAllLocalReset: true,
@@ -97,11 +97,11 @@ export const sparkStorageRegistry: SparkStorageEntry[] = [
     key: 'karyra-spark-cookie-choice-v1',
     owner: 'cookie',
     label: 'Pilihan cookie',
-    description: 'Pilihan penyimpanan lokal/cookie penting.',
+    description: 'Pilihan penyimpanan/cookie penting pada perangkat.',
     authority: 'local-preference',
     resetOnProgressReset: false,
     resetOnAllLocalReset: true,
-    futureBackendRole: 'Tetap preference lokal kecuali consent backend dibutuhkan.'
+    futureBackendRole: 'Tetap preference perangkat kecuali consent backend dibutuhkan.'
   }
 ];
 
