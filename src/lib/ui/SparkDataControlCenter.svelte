@@ -3,8 +3,10 @@
   import SparkIcon from './SparkIcon.svelte';
   import { resetLocalSparkData } from '$lib/sync/reset-local-data';
   import type { LocalResetMode } from '$lib/sync/sync-types';
+  import { logoutBetaSession } from '$state/beta-session-state.svelte';
 
   let confirmMode = $state<LocalResetMode | null>(null);
+  let resetting = $state(false);
 
   const resetOptions: {
     mode: LocalResetMode;
@@ -17,27 +19,33 @@
     {
       mode: 'progress-only',
       title: 'Reset Progress Belajar',
-      copy: 'Kosongkan progres belajar di perangkat ini. Akun dan tampilan tetap aman.',
+      copy: 'Kosongkan cache progress belajar di perangkat ini. Akun backend tetap aman.',
       icon: 'book-open',
       action: 'Reset progress',
       tone: 'normal'
     },
     {
       mode: 'all-local',
-      title: 'Hapus Data Lokal',
-      copy: 'Hapus data Spark dari browser ini saat perangkat akan dipakai orang lain.',
+      title: 'Bersihkan Perangkat',
+      copy: 'Bersihkan cache Spark di browser ini dan tutup akses akun backend dari perangkat.',
       icon: 'shield-alert',
-      action: 'Hapus data lokal',
+      action: 'Bersihkan perangkat',
       tone: 'danger'
     }
   ];
 
   const selectedOption = $derived(resetOptions.find((option) => option.mode === confirmMode));
 
-  function runReset() {
-    if (!confirmMode) return;
-    resetLocalSparkData(confirmMode);
-    confirmMode = null;
+  async function runReset() {
+    if (!confirmMode || resetting) return;
+    resetting = true;
+    try {
+      if (confirmMode === 'all-local') await logoutBetaSession();
+      resetLocalSparkData(confirmMode);
+      confirmMode = null;
+    } finally {
+      resetting = false;
+    }
   }
 </script>
 
@@ -46,7 +54,7 @@
     <span><SparkIcon name="shield" size={19} /></span>
     <div>
       <span class="spark-eyebrow">Data</span>
-      <h2>Kelola data lokal dengan aman.</h2>
+      <h2>Kelola cache perangkat dengan aman.</h2>
     </div>
   </div>
 
@@ -61,6 +69,7 @@
         <SparkButton
           variant={option.tone === 'danger' ? 'ghost' : 'secondary'}
           onclick={() => (confirmMode = option.mode)}
+          disabled={resetting}
         >
           {option.action}
         </SparkButton>
@@ -76,14 +85,14 @@
     <h2>{selectedOption.title}?</h2>
     <p>
       {#if confirmMode === 'all-local'}
-        Semua data Spark di browser ini akan dihapus. Akunmu tetap ada, tetapi data lokal di perangkat ini tidak bisa dikembalikan.
+        Cache Spark di browser ini akan dibersihkan dan akses akun backend akan ditutup dari perangkat ini.
       {:else}
-        Progress belajar di perangkat ini akan dikosongkan. Akun dan pilihan tampilan tetap dipertahankan.
+        Cache progress belajar di perangkat ini akan dikosongkan. Akun backend tetap dipertahankan.
       {/if}
     </p>
     <div>
-      <SparkButton variant="ghost" onclick={() => (confirmMode = null)}>Batal</SparkButton>
-      <SparkButton onclick={runReset}>{confirmMode === 'all-local' ? 'Ya, hapus data lokal' : 'Ya, reset progress saya'}</SparkButton>
+      <SparkButton variant="ghost" onclick={() => (confirmMode = null)} disabled={resetting}>Batal</SparkButton>
+      <SparkButton onclick={() => void runReset()} loading={resetting} disabled={resetting}>{confirmMode === 'all-local' ? 'Ya, bersihkan perangkat' : 'Ya, reset progress saya'}</SparkButton>
     </div>
   </div>
 {/if}
