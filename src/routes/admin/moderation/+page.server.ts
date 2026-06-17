@@ -19,40 +19,44 @@ function checked(formData: FormData, key: string) {
   return formData.get(key) === 'on' || formData.get(key) === 'true';
 }
 
-function pick(searchParams: URLSearchParams, key: string, allowed: string[]) {
-  const value = searchParams.get(key)?.trim() || '';
-  return allowed.includes(value) ? value : '';
+function pick(searchParams: URLSearchParams, key: string, allowed: string[], fallback = 'all') {
+  const value = searchParams.get(key)?.trim() || fallback;
+  return allowed.includes(value) ? value : fallback;
+}
+
+function apiFilter(value: string) {
+  return value && value !== 'all' ? value : undefined;
 }
 
 export const load: PageServerLoad = async ({ fetch, url }) => {
   const filters = {
-    reportStatus: pick(url.searchParams, 'report_status', ['pending', 'reviewed', 'dismissed', 'actioned']),
-    reportTargetType: pick(url.searchParams, 'report_target_type', ['post', 'comment']),
-    postStatus: pick(url.searchParams, 'post_status', ['published', 'hidden', 'removed', 'deleted']),
-    commentStatus: pick(url.searchParams, 'comment_status', ['published', 'hidden', 'removed', 'deleted']),
-    signalStatus: pick(url.searchParams, 'signal_status', ['clean', 'needs_review', 'high_risk', 'blocked_pending_review']),
-    signalTargetType: pick(url.searchParams, 'signal_target_type', ['post', 'comment']),
-    jobStatus: pick(url.searchParams, 'job_status', ['running', 'dry_run', 'completed', 'partial_failed', 'failed']),
-    jobTargetType: pick(url.searchParams, 'job_target_type', ['post', 'comment', 'report'])
+    reportStatus: pick(url.searchParams, 'report_status', ['all', 'pending', 'reviewed', 'dismissed', 'actioned'], 'pending'),
+    reportTargetType: pick(url.searchParams, 'report_target_type', ['all', 'post', 'comment']),
+    postStatus: pick(url.searchParams, 'post_status', ['all', 'published', 'hidden', 'removed', 'deleted']),
+    commentStatus: pick(url.searchParams, 'comment_status', ['all', 'published', 'hidden', 'removed', 'deleted']),
+    signalStatus: pick(url.searchParams, 'signal_status', ['all', 'clean', 'needs_review', 'high_risk', 'blocked_pending_review']),
+    signalTargetType: pick(url.searchParams, 'signal_target_type', ['all', 'post', 'comment']),
+    jobStatus: pick(url.searchParams, 'job_status', ['all', 'running', 'dry_run', 'completed', 'partial_failed', 'failed']),
+    jobTargetType: pick(url.searchParams, 'job_target_type', ['all', 'post', 'comment', 'report'])
   };
 
   const [reportsResult, postsResult, commentsResult, signalsResult, bulkJobsResult] = await Promise.allSettled([
     adminApi.socialReports(fetch, {
       limit: 50,
-      status: filters.reportStatus || 'pending',
-      target_type: filters.reportTargetType || undefined
+      status: apiFilter(filters.reportStatus),
+      target_type: apiFilter(filters.reportTargetType)
     }),
-    adminApi.socialPosts(fetch, { limit: 50, status: filters.postStatus || undefined }),
-    adminApi.socialComments(fetch, { limit: 50, status: filters.commentStatus || undefined }),
+    adminApi.socialPosts(fetch, { limit: 50, status: apiFilter(filters.postStatus) }),
+    adminApi.socialComments(fetch, { limit: 50, status: apiFilter(filters.commentStatus) }),
     adminApi.mlSignals(fetch, {
       limit: 50,
-      status: filters.signalStatus || undefined,
-      target_type: filters.signalTargetType || undefined
+      status: apiFilter(filters.signalStatus),
+      target_type: apiFilter(filters.signalTargetType)
     }),
     adminSocialOpsApi.bulkJobs(fetch, {
       limit: 25,
-      status: filters.jobStatus || undefined,
-      target_type: filters.jobTargetType || undefined
+      status: apiFilter(filters.jobStatus),
+      target_type: apiFilter(filters.jobTargetType)
     })
   ]);
 
