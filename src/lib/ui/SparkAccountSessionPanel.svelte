@@ -16,7 +16,7 @@
 
   const user = $derived(betaSession.user);
   const isBackendSession = $derived(user?.status === 'backend-session');
-  const statusLabel = $derived(isBackendSession ? 'Backend session aktif' : user?.status === 'local-session' ? 'Local session' : 'Belum masuk');
+  const statusLabel = $derived(isBackendSession ? 'Akun backend aktif' : 'Akun belum terverifikasi');
 
   async function refreshSession() {
     if (refreshing) return;
@@ -27,7 +27,7 @@
       if (refreshed?.status === 'backend-session') {
         pushToast({ title: 'Session valid', copy: 'Akun backend masih aktif setelah dicek ulang.', tone: 'success' });
       } else {
-        pushToast({ title: 'Session belum aktif', copy: 'Masuk ulang untuk membuat session backend.', tone: 'warning' });
+        pushToast({ title: 'Session belum valid', copy: 'Masuk ulang untuk mengaktifkan akun backend.', tone: 'warning' });
       }
     } catch (error) {
       localError = authErrorMessage(error);
@@ -54,14 +54,14 @@
 <SparkCard class="settings-simple-card pass18b-session-card">
   <div class="settings-section-head pass40b-section-head">
     <span class="spark-eyebrow">Akun</span>
-    <h2>Verifikasi session akun.</h2>
+    <h2>Verifikasi akun.</h2>
   </div>
 
   <div class="pass18b-session-status" data-ok={isBackendSession}>
     <span><SparkIcon name={isBackendSession ? 'shield-check' : 'shield'} size={18} /></span>
     <div>
       <strong>{statusLabel}</strong>
-      <small>{isBackendSession ? 'Register/login sudah tersambung ke Spark API.' : 'Session backend belum terkonfirmasi.'}</small>
+      <small>{isBackendSession ? 'Register/login sudah tersambung ke Spark API.' : 'Masuk ulang bila akun belum terhubung ke backend.'}</small>
     </div>
   </div>
 
@@ -77,16 +77,16 @@
       <div><dt>Nama</dt><dd>{user.name}</dd></div>
       <div><dt>Email</dt><dd>{user.email || '—'}</dd></div>
       <div><dt>Handle</dt><dd>{user.handle}</dd></div>
-      <div><dt>User ID</dt><dd>{user.id}</dd></div>
+      <div><dt>User ID</dt><dd>{isBackendSession ? user.id : 'Belum tersambung ke backend'}</dd></div>
       <div><dt>Mode</dt><dd>{user.mode}</dd></div>
-      <div><dt>Status</dt><dd>{user.status}</dd></div>
+      <div><dt>Status akun</dt><dd>{isBackendSession ? 'Terverifikasi backend' : 'Perlu masuk ulang'}</dd></div>
     </dl>
   {:else}
-    <p class="pass18b-session-copy">Belum ada user aktif di perangkat ini. Masuk atau daftar dulu untuk membuat backend session.</p>
+    <p class="pass18b-session-copy">Belum ada akun aktif di perangkat ini. Masuk atau daftar dulu untuk membuat akun backend.</p>
   {/if}
 
   <div class="pass18b-session-actions">
-    <SparkButton variant="secondary" loading={refreshing} disabled={refreshing || loggingOut} onclick={refreshSession}>Cek ulang session</SparkButton>
+    <SparkButton variant="secondary" loading={refreshing} disabled={refreshing || loggingOut} onclick={refreshSession}>Cek ulang akun</SparkButton>
     {#if user}
       <SparkButton variant="ghost" loading={loggingOut} disabled={refreshing || loggingOut} onclick={signOut}>Keluar</SparkButton>
     {:else}
