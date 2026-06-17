@@ -142,11 +142,12 @@ function mapApiError(status: number, rawMessage: string) {
 
   if (status === 401) return 'Email atau kata sandi belum cocok.';
   if (status === 409 || message.includes('already registered')) return 'Email ini sudah terdaftar. Masuk dengan akun tersebut atau gunakan email lain.';
+  if (status === 429 || message.includes('too many auth attempts') || message.includes('rate limited')) return 'Terlalu banyak percobaan. Tunggu sebentar, lalu coba lagi.';
   if (message.includes('password must be')) return 'Kata sandi minimal 8 karakter dan maksimal 128 karakter.';
   if (message.includes('valid email')) return 'Gunakan email yang valid.';
   if (status >= 500) return 'Spark API sedang belum stabil. Coba lagi sebentar.';
 
-  return rawMessage.replace(/^bad request:\s*/i, '').replace(/^conflict:\s*/i, '') || 'Permintaan belum bisa diproses. Periksa kembali data yang kamu isi.';
+  return rawMessage.replace(/^bad request:\s*/i, '').replace(/^conflict:\s*/i, '').replace(/^rate limited:\s*/i, '') || 'Permintaan belum bisa diproses. Periksa kembali data yang kamu isi.';
 }
 
 async function requestJson<T>(path: string, init: RequestInit = {}) {
