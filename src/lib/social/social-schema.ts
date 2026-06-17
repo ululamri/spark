@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const socialPostKindSchema = z.enum(['progress', 'question', 'resource', 'workshop', 'lab']);
 export const socialVisibilitySchema = z.enum(['community', 'followers', 'public']);
-export const socialSyncStatusSchema = z.enum(['local', 'pending', 'synced', 'failed']);
+export const socialSyncStatusSchema = z.enum(['queued', 'pending', 'synced', 'failed', 'local']);
 export const socialReactionKindSchema = z.enum(['support', 'helpful', 'inspiring']);
 export const socialEventKindSchema = z.enum([
   'post.created',
