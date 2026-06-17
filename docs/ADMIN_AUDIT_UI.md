@@ -1,4 +1,4 @@
-# PASS 17K — Admin Audit Log UI
+# PASS 17K/17L — Admin Audit Log UI
 
 Tanggal: 2026-06-17  
 Repo: `ululamri/spark`  
@@ -6,12 +6,13 @@ Live path: `/opt/karyra/spark`
 
 ## Status
 
-PASS 17K menambahkan UI read-only untuk audit trail admin.
+PASS 17K menambahkan UI read-only untuk audit trail admin. PASS 17L menambahkan detail drilldown untuk satu audit event.
 
 Route:
 
 ```txt
 /admin/audit
+/admin/audit/events/[eventId]
 ```
 
 Route ini memakai SvelteKit server load. Token admin tetap private server-side dan tidak dikirim ke browser.
@@ -28,6 +29,9 @@ GET /api/admin/audit/events/:event_id
 - Metric audit event window.
 - Filter actor kind, action, target type.
 - Tabel audit event terbaru.
+- Event row link ke detail page.
+- Detail page untuk full metadata JSON.
+- Detail page untuk capabilities lengkap.
 - Actor badge.
 - Target preview.
 - Summary dan metadata preview.
@@ -38,6 +42,7 @@ GET /api/admin/audit/events/:event_id
 - Read-only.
 - Tidak ada action/mutasi dari UI audit.
 - Filter hanya mengubah query read/list.
+- Detail page hanya membaca satu event by ID.
 - Access tetap dikontrol backend dengan `audit_read`.
 
 ## Deploy frontend
@@ -63,6 +68,8 @@ Expected:
 - Sidebar menampilkan `Audit log`.
 - Audit table tampil jika backend punya rows.
 - Filter actor/action/target type bekerja dan mengubah URL query.
+- Klik action/event di audit table membuka `/admin/audit/events/<event-id>`.
+- Detail page menampilkan actor, target, summary, capabilities, dan full metadata JSON.
 
 Contoh filter:
 
