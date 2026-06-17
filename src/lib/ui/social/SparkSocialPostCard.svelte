@@ -64,14 +64,14 @@
   function statusLabel(status: SocialPost['status']) {
     if (status === 'pending') return 'Mengirim...';
     if (status === 'failed') return 'Gagal sinkron · cek koneksi';
-    if (status === 'local') return 'Menunggu sinkronisasi';
+    if (status === 'queued' || status === 'local') return 'Menunggu sinkronisasi';
     return 'Tersinkron ke Spark API';
   }
 
   function commentStatusLabel(comment: SocialComment) {
     if (comment.status === 'pending') return 'mengirim';
     if (comment.status === 'failed') return 'gagal sinkron';
-    if (comment.status === 'local') return 'menunggu sinkron';
+    if (comment.status === 'queued' || comment.status === 'local') return 'menunggu sinkron';
     return '';
   }
 
