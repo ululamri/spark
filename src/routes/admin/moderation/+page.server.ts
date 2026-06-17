@@ -19,16 +19,45 @@ function checked(formData: FormData, key: string) {
   return formData.get(key) === 'on' || formData.get(key) === 'true';
 }
 
-export const load: PageServerLoad = async ({ fetch }) => {
+function pick(searchParams: URLSearchParams, key: string, allowed: string[]) {
+  const value = searchParams.get(key)?.trim() || '';
+  return allowed.includes(value) ? value : '';
+}
+
+export const load: PageServerLoad = async ({ fetch, url }) => {
+  const filters = {
+    reportStatus: pick(url.searchParams, 'report_status', ['pending', 'reviewed', 'dismissed', 'actioned']),
+    reportTargetType: pick(url.searchParams, 'report_target_type', ['post', 'comment']),
+    postStatus: pick(url.searchParams, 'post_status', ['published', 'hidden', 'removed', 'deleted']),
+    commentStatus: pick(url.searchParams, 'comment_status', ['published', 'hidden', 'removed', 'deleted']),
+    signalStatus: pick(url.searchParams, 'signal_status', ['clean', 'needs_review', 'high_risk', 'blocked_pending_review']),
+    signalTargetType: pick(url.searchParams, 'signal_target_type', ['post', 'comment']),
+    jobStatus: pick(url.searchParams, 'job_status', ['running', 'dry_run', 'completed', 'partial_failed', 'failed']),
+    jobTargetType: pick(url.searchParams, 'job_target_type', ['post', 'comment', 'report'])
+  };
+
   const [reportsResult, postsResult, commentsResult, signalsResult, bulkJobsResult] = await Promise.allSettled([
-    adminApi.socialReports(fetch, { limit: 50, status: 'pending' }),
-    adminApi.socialPosts(fetch, { limit: 50 }),
-    adminApi.socialComments(fetch, { limit: 50 }),
-    adminApi.mlSignals(fetch, { limit: 50 }),
-    adminSocialOpsApi.bulkJobs(fetch, { limit: 25 })
+    adminApi.socialReports(fetch, {
+      limit: 50,
+      status: filters.reportStatus || 'pending',
+      target_type: filters.reportTargetType || undefined
+    }),
+    adminApi.socialPosts(fetch, { limit: 50, status: filters.postStatus || undefined }),
+    adminApi.socialComments(fetch, { limit: 50, status: filters.commentStatus || undefined }),
+    adminApi.mlSignals(fetch, {
+      limit: 50,
+      status: filters.signalStatus || undefined,
+      target_type: filters.signalTargetType || undefined
+    }),
+    adminSocialOpsApi.bulkJobs(fetch, {
+      limit: 25,
+      status: filters.jobStatus || undefined,
+      target_type: filters.jobTargetType || undefined
+    })
   ]);
 
   return {
+    filters,
     reports: reportsResult.status === 'fulfilled' ? reportsResult.value.data : null,
     posts: postsResult.status === 'fulfilled' ? postsResult.value.data : null,
     comments: commentsResult.status === 'fulfilled' ? commentsResult.value.data : null,
