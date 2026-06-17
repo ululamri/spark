@@ -12,21 +12,22 @@
   const postItems = $derived(data.posts?.items ?? []);
   const commentItems = $derived(data.comments?.items ?? []);
   const reportItems = $derived(data.reports?.items ?? []);
+  const bulkJobItems = $derived(data.bulkJobs?.items ?? []);
   const pendingSignalCount = $derived(signalItems.filter((item) => !item.reviewed_at && item.status !== 'clean').length);
   const highRiskCount = $derived(signalItems.filter((item) => item.status === 'high_risk' || item.status === 'blocked_pending_review').length);
   const pendingReportCount = $derived(reportItems.filter((item) => item.status === 'pending').length);
-  const flaggedContentCount = $derived(postItems.filter((item) => item.reports_count > 0 || item.status !== 'published').length + commentItems.filter((item) => item.reports_count > 0 || item.status !== 'published').length);
+  const failedBulkJobCount = $derived(bulkJobItems.filter((item) => item.status === 'failed' || item.status === 'partial_failed').length);
 
   const metrics = $derived([
     { id: 'ml-signals', label: 'ML signals', value: signalItems.length, detail: 'Latest signal rows from the backend ML moderation pipeline.', state: 'available' as const },
-    { id: 'pending-signals', label: 'Signals needing review', value: pendingSignalCount, detail: 'Non-clean ML signals not yet marked reviewed.', state: 'available' as const },
+    { id: 'high-risk-signals', label: 'High-risk signals', value: highRiskCount, detail: 'Signals marked high_risk or blocked_pending_review.', state: 'available' as const },
     { id: 'reports', label: 'Pending reports', value: pendingReportCount, detail: 'User reports waiting for moderation handling.', state: 'available' as const },
-    { id: 'flagged-content', label: 'Flagged content', value: flaggedContentCount, detail: 'Posts/comments with reports or non-published status in the loaded window.', state: 'available' as const }
+    { id: 'bulk-jobs', label: 'Bulk jobs', value: bulkJobItems.length, detail: `Recent moderation jobs; ${failedBulkJobCount} need attention.`, state: 'available' as const }
   ]);
 
   function tone(status: string) {
     if (['clean', 'allow', 'published', 'completed', 'dry_run', 'reviewed', 'dismissed', 'available'].includes(status)) return 'success' as const;
-    if (['needs_review', 'pending', 'hidden', 'high_risk', 'review'].includes(status)) return 'warning' as const;
+    if (['needs_review', 'pending', 'hidden', 'high_risk', 'review', 'running', 'partial_failed'].includes(status)) return 'warning' as const;
     if (['blocked_pending_review', 'block', 'removed', 'deleted', 'failed'].includes(status)) return 'danger' as const;
     return 'neutral' as const;
   }
@@ -45,7 +46,7 @@
 
 <AdminHeader
   title="Social moderation"
-  description="Human-in-the-loop moderation queue for reports, ML signals, and bulk actions. ML only creates evidence; final content actions stay manual."
+  description="Human-in-the-loop moderation queue for reports, ML signals, bulk actions, and operations history."
 >
   {#snippet actions()}
     <a class="admin-button--secondary" href="/komunitas" target="_blank" rel="noreferrer">Open community</a>
@@ -94,14 +95,49 @@
     </form>
   </AdminSectionCard>
 
-  <AdminSectionCard eyebrow="Safety boundary" title="No automatic action" description="PASS 17G only connects the UI to PASS 17E and PASS 17F backend engines.">
+  <AdminSectionCard eyebrow="Safety boundary" title="No automatic action" description="PASS 17H keeps moderation observable while preserving the human approval model.">
     <ul class="admin-checklist">
       <li>ML signal scan does not mutate content status.</li>
       <li>Bulk actions require explicit checkbox selection and form submit.</li>
-      <li>Dry-run is visible and should be used before destructive actions.</li>
+      <li>Operations history is read-only and sourced from persisted backend jobs.</li>
     </ul>
   </AdminSectionCard>
 </div>
+
+<AdminSectionCard eyebrow="Operations" title="Recent bulk moderation jobs" description="Read-only operational history for PASS 17E bulk moderation jobs. Use it to verify dry-runs, applied counts, skips, and failures after reload.">
+  {#if bulkJobItems.length}
+    <AdminTable caption="Recent bulk moderation jobs" columns={['Job', 'Target', 'Result', 'Actor', 'Created']}>
+      {#each bulkJobItems as job}
+        <tr>
+          <td>
+            <strong>{shortId(job.id)}</strong><br />
+            <span class="admin-muted">{job.action} · {job.dry_run ? 'dry-run' : 'live action'}</span>
+          </td>
+          <td>
+            <span class="admin-code">{job.target_type}</span><br />
+            <span class="admin-muted">{job.total_count} targets</span>
+          </td>
+          <td>
+            <AdminStatusBadge label={job.status} tone={tone(job.status)} />
+            <div class="admin-muted">
+              {job.applied_count} applied · {job.would_apply_count} would apply · {job.skipped_count} skipped · {job.failed_count} failed
+            </div>
+          </td>
+          <td>
+            {job.actor_kind}<br />
+            <span class="admin-muted">{job.actor_user_id ? shortId(job.actor_user_id) : 'legacy root'}</span>
+          </td>
+          <td>
+            {job.created_at}<br />
+            <span class="admin-muted">{job.completed_at || 'not completed'}</span>
+          </td>
+        </tr>
+      {/each}
+    </AdminTable>
+  {:else}
+    <AdminEmptyState title="No bulk jobs yet" detail="Run a dry-run bulk action from this page to create the first persisted job." />
+  {/if}
+</AdminSectionCard>
 
 <AdminSectionCard eyebrow="ML queue" title="Moderation signals" description="Signals generated by rules/local AI/external moderation. Marking reviewed only records human review; it does not apply content action.">
   {#if signalItems.length}
