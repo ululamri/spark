@@ -95,22 +95,22 @@
     </form>
   </AdminSectionCard>
 
-  <AdminSectionCard eyebrow="Safety boundary" title="No automatic action" description="PASS 17H keeps moderation observable while preserving the human approval model.">
+  <AdminSectionCard eyebrow="Safety boundary" title="No automatic action" description="PASS 17I adds drilldown without changing the human approval model.">
     <ul class="admin-checklist">
       <li>ML signal scan does not mutate content status.</li>
       <li>Bulk actions require explicit checkbox selection and form submit.</li>
-      <li>Operations history is read-only and sourced from persisted backend jobs.</li>
+      <li>Operations history and job detail are read-only views over persisted backend jobs.</li>
     </ul>
   </AdminSectionCard>
 </div>
 
-<AdminSectionCard eyebrow="Operations" title="Recent bulk moderation jobs" description="Read-only operational history for PASS 17E bulk moderation jobs. Use it to verify dry-runs, applied counts, skips, and failures after reload.">
+<AdminSectionCard eyebrow="Operations" title="Recent bulk moderation jobs" description="Read-only operational history for PASS 17E bulk moderation jobs. Open a job to inspect each target result.">
   {#if bulkJobItems.length}
     <AdminTable caption="Recent bulk moderation jobs" columns={['Job', 'Target', 'Result', 'Actor', 'Created']}>
       {#each bulkJobItems as job}
         <tr>
           <td>
-            <strong>{shortId(job.id)}</strong><br />
+            <a href={'/admin/moderation/jobs/' + job.id}><strong>{shortId(job.id)}</strong></a><br />
             <span class="admin-muted">{job.action} · {job.dry_run ? 'dry-run' : 'live action'}</span>
           </td>
           <td>
