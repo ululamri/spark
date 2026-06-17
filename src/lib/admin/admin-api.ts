@@ -214,6 +214,147 @@ export type AdminSystem = {
   data_source?: AdminDataSource;
 };
 
+export type AdminList<T> = {
+  items: T[];
+  limit: number;
+  offset: number;
+  total: number;
+  data_source: AdminDataSource;
+};
+
+export type AdminSocialReport = {
+  id: string;
+  reporter_user_id: string;
+  reporter_display_name: string;
+  target_type: 'post' | 'comment' | string;
+  target_id: string;
+  reason: string;
+  details: string;
+  status: string;
+  reviewed_by_user_id: string | null;
+  reviewed_at: string | null;
+  action_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminSocialPost = {
+  id: string;
+  author_user_id: string;
+  author_display_name: string;
+  kind: string;
+  body: string;
+  visibility: string;
+  status: string;
+  comments_count: number;
+  reactions: Record<string, number>;
+  reports_count: number;
+  published_at: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminSocialComment = {
+  id: string;
+  post_id: string;
+  author_user_id: string;
+  author_display_name: string;
+  parent_comment_id: string | null;
+  body: string;
+  status: string;
+  reactions: Record<string, number>;
+  reports_count: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminMlSignal = {
+  id: string;
+  target_type: 'post' | 'comment' | string;
+  target_id: string;
+  target_owner_user_id: string | null;
+  source: string;
+  status: string;
+  decision: string;
+  categories: string[];
+  severity: string;
+  score: number;
+  summary: string;
+  recommendation: string;
+  moderation_event_id: string | null;
+  model_run_ids: string[];
+  created_by_kind: string;
+  created_by_user_id: string | null;
+  reviewed_by_user_id: string | null;
+  reviewed_at: string | null;
+  review_note: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminMlSignals = AdminList<AdminMlSignal>;
+
+export type AdminMlScan = {
+  signal: AdminMlSignal;
+  rule_decision: {
+    decision: string;
+    categories: string[];
+    score: number;
+    severity: string;
+    summary: string;
+  };
+  local_ai: unknown | null;
+  external_ai: unknown | null;
+  provider_errors: string[];
+  auto_action: boolean;
+};
+
+export type AdminBulkJob = {
+  job: {
+    id: string;
+    actor_kind: string;
+    actor_user_id: string | null;
+    target_type: string;
+    action: string;
+    reason: string;
+    status: string;
+    dry_run: boolean;
+    idempotency_key: string | null;
+    total_count: number;
+    would_apply_count: number;
+    applied_count: number;
+    skipped_count: number;
+    failed_count: number;
+    created_at: string;
+    completed_at: string | null;
+  };
+  items: Array<{
+    id: string;
+    bulk_job_id: string;
+    target_type: string;
+    target_id: string;
+    action: string;
+    status: string;
+    action_id: string | null;
+    report_id: string | null;
+    message: string;
+    created_at: string;
+  }>;
+  data_source: AdminDataSource;
+};
+
+export type AdminBulkModerationRequest = {
+  target_type: 'post' | 'comment' | 'report' | string;
+  action: 'hide' | 'remove' | 'restore' | 'dismiss_report' | 'mark_reviewed' | string;
+  target_ids?: string[];
+  targets?: Array<{ target_id: string; report_id?: string | null }>;
+  reason?: string;
+  dry_run?: boolean;
+  idempotency_key?: string;
+  payload?: Record<string, unknown>;
+};
+
 function trimSlash(value: string) {
   return value.replace(/\/+$/, '');
 }
@@ -238,6 +379,15 @@ function adminToken() {
   return token;
 }
 
+async function parseAdminResponse<T>(response: Response): Promise<AdminSuccessEnvelope<T>> {
+  const body = (await response.json().catch(() => null)) as AdminSuccessEnvelope<T> | AdminErrorEnvelope | null;
+  if (!response.ok || !body || !body.ok) {
+    const error = body && !body.ok ? body.error : null;
+    throw new AdminApiError(response.status, error?.code || 'admin_api_error', error?.message || `Admin API request failed (${response.status}).`);
+  }
+  return body;
+}
+
 async function requestAdmin<T>(fetcher: typeof fetch, path: string): Promise<AdminSuccessEnvelope<T>> {
   const response = await fetcher(adminBaseUrl() + path, {
     cache: 'no-store',
@@ -247,12 +397,29 @@ async function requestAdmin<T>(fetcher: typeof fetch, path: string): Promise<Adm
     },
     signal: AbortSignal.timeout(8000)
   });
-  const body = (await response.json().catch(() => null)) as AdminSuccessEnvelope<T> | AdminErrorEnvelope | null;
-  if (!response.ok || !body || !body.ok) {
-    const error = body && !body.ok ? body.error : null;
-    throw new AdminApiError(response.status, error?.code || 'admin_api_error', error?.message || `Admin API request failed (${response.status}).`);
-  }
-  return body;
+  return parseAdminResponse<T>(response);
+}
+
+async function requestAdminJson<T>(fetcher: typeof fetch, path: string, payload: unknown): Promise<AdminSuccessEnvelope<T>> {
+  const response = await fetcher(adminBaseUrl() + path, {
+    method: 'POST',
+    cache: 'no-store',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      'x-karyra-admin-token': adminToken()
+    },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(15000)
+  });
+  return parseAdminResponse<T>(response);
+}
+
+function listQuery(input: { limit?: number; offset?: number; status?: string; target_type?: string } = {}) {
+  const query = new URLSearchParams({ limit: String(input.limit ?? 50), offset: String(input.offset ?? 0) });
+  if (input.status) query.set('status', input.status);
+  if (input.target_type) query.set('target_type', input.target_type);
+  return query;
 }
 
 export function adminErrorMessage(error: unknown) {
@@ -274,5 +441,19 @@ export const adminApi = {
   proofLedger: (fetcher: typeof fetch) => requestAdmin<AdminProofLedger>(fetcher, '/proof-ledger'),
   communityPilot: (fetcher: typeof fetch) => requestAdmin<AdminCommunityPilot>(fetcher, '/community-pilot'),
   starknet: (fetcher: typeof fetch) => requestAdmin<AdminStarknet>(fetcher, '/starknet'),
-  system: (fetcher: typeof fetch) => requestAdmin<AdminSystem>(fetcher, '/system')
+  system: (fetcher: typeof fetch) => requestAdmin<AdminSystem>(fetcher, '/system'),
+  socialReports: (fetcher: typeof fetch, input: { limit?: number; offset?: number; status?: string; target_type?: string } = {}) =>
+    requestAdmin<AdminList<AdminSocialReport>>(fetcher, '/social/reports?' + listQuery(input)),
+  socialPosts: (fetcher: typeof fetch, input: { limit?: number; offset?: number; status?: string } = {}) =>
+    requestAdmin<AdminList<AdminSocialPost>>(fetcher, '/social/posts?' + listQuery(input)),
+  socialComments: (fetcher: typeof fetch, input: { limit?: number; offset?: number; status?: string } = {}) =>
+    requestAdmin<AdminList<AdminSocialComment>>(fetcher, '/social/comments?' + listQuery(input)),
+  mlSignals: (fetcher: typeof fetch, input: { limit?: number; offset?: number; status?: string; target_type?: string } = {}) =>
+    requestAdmin<AdminMlSignals>(fetcher, '/social/ml/signals?' + listQuery(input)),
+  mlScan: (fetcher: typeof fetch, input: { target_type: string; target_id: string; use_local_ai?: boolean; use_external_fallback?: boolean; note?: string }) =>
+    requestAdminJson<AdminMlScan>(fetcher, '/social/ml/scan', input),
+  markMlSignalReviewed: (fetcher: typeof fetch, signalId: string, input: { note?: string }) =>
+    requestAdminJson<AdminMlSignal>(fetcher, '/social/ml/signals/' + encodeURIComponent(signalId) + '/mark-reviewed', input),
+  bulkModeration: (fetcher: typeof fetch, input: AdminBulkModerationRequest) =>
+    requestAdminJson<AdminBulkJob>(fetcher, '/social/bulk/moderation-actions', input)
 } as const;
