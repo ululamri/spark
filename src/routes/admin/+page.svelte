@@ -58,19 +58,19 @@
     </AdminSectionCard>
   </div>
 
-  <AdminSectionCard eyebrow="Community" title="Public discussion review" description="Minimal private surface for the API-backed public discussion layer.">
+  <AdminSectionCard eyebrow="Community" title="Public discussion review" description="Private moderation surface for the API-backed public discussion layer.">
     <div class="admin-status-grid">
       <div class="admin-status-card">
         <div class="admin-status-card__top"><strong>Feed runtime</strong><AdminStatusBadge label="api-backed" tone="success" /></div>
-        <p>Posts, comments, reactions, follow state, reports, profile links, and media rendering are now connected to the Spark API surface.</p>
+        <p>Posts, comments, reactions, follow state, reports, profile links, and media rendering are connected to the Spark API surface.</p>
       </div>
       <div class="admin-status-card">
-        <div class="admin-status-card__top"><strong>Review endpoints</strong><AdminStatusBadge label="available" tone="info" /></div>
-        <p>The protected backend exposes report, post, comment, and action endpoints. Full table/action UI will be enabled in the next safe patch.</p>
+        <div class="admin-status-card__top"><strong>Moderation UI</strong><AdminStatusBadge label="available" tone="success" /></div>
+        <p>Report queues, ML moderation signals, and bulk moderation actions are available from <a href="/admin/moderation">Social moderation</a>.</p>
       </div>
       <div class="admin-status-card">
-        <div class="admin-status-card__top"><strong>Storage</strong><AdminStatusBadge label="waiting for MinIO" tone="warning" /></div>
-        <p>Media upload has friendly error handling until the storage service is installed and tested end-to-end.</p>
+        <div class="admin-status-card__top"><strong>Storage</strong><AdminStatusBadge label="imgproxy optimized" tone="success" /></div>
+        <p>Social avatars and media URLs use the optimized rendering path while retaining API-backed source records.</p>
       </div>
     </div>
   </AdminSectionCard>
