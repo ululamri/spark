@@ -1,7 +1,6 @@
 <script lang="ts">
   import SparkIcon from '$ui/SparkIcon.svelte';
   import SparkOptimizedImage from '$ui/SparkOptimizedImage.svelte';
-  import { hydrateSocialFeedFromBackend } from '$lib/social/social-backend-gateway';
   import {
     addSocialComment,
     hideSocialPost,
@@ -9,7 +8,7 @@
     shareSocialPost,
     toggleSocialFollow,
     toggleSocialReaction
-  } from '$lib/social/local-social-gateway';
+  } from '$lib/social/social-mutation-gateway';
   import { getSocialProfile, SOCIAL_VIEWER_ID, socialPostKindLabels } from '$lib/social/social-model';
   import { evaluateSocialComment } from '$lib/social/social-policy';
   import { socialState } from '$lib/social/social-state.svelte';
@@ -40,20 +39,14 @@
     return `/community/profile/${encodeURIComponent(profileId)}`;
   }
 
-  function feedRefreshLimit() {
-    return Math.min(50, Math.max(20, socialState.posts.length || 20));
-  }
-
   async function addComment() {
     if (!commentPolicy.canKirim || commentSubmitting) return;
-    const refreshLimit = feedRefreshLimit();
     commentSubmitting = true;
     commentError = '';
     showComments = true;
 
     try {
       await addSocialComment({ postId: post.id, body: commentDraft });
-      await hydrateSocialFeedFromBackend({ force: true, limit: refreshLimit });
       commentDraft = '';
     } catch (error) {
       commentError = error instanceof Error ? error.message : 'Komentar belum bisa dikirim.';
