@@ -10,6 +10,7 @@
     { href: '/admin/proofs', label: 'Proof Ledger' },
     { href: '/admin/pilots', label: 'Community pilot' },
     { href: '/admin/moderation', label: 'Moderation' },
+    { href: '/admin/audit', label: 'Audit log' },
     { href: '/admin/starknet', label: 'Starknet / Hub' },
     { href: '/admin/content', label: 'Content & docs' },
     { href: '/admin/settings', label: 'Settings' }
