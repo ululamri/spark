@@ -3,6 +3,7 @@
   import SparkCard from './SparkCard.svelte';
   import SparkIcon from './SparkIcon.svelte';
   import SparkDataControlCenter from './SparkDataControlCenter.svelte';
+  import SparkAccountSessionPanel from './SparkAccountSessionPanel.svelte';
   import { pushToast } from '$state/app-state.svelte';
   import { learningState, setExperience, type ExperienceLevel } from '$state/learning-state.svelte';
   import { setThemePreference, themeState, type ThemePreference } from '$state/theme-state.svelte';
@@ -59,7 +60,7 @@
   <div>
     <span class="spark-eyebrow">Pengaturan</span>
     <h1>Atur pengalaman belajarmu</h1>
-    <p>Pilih tampilan, ritme belajar, dan bantuan yang paling nyaman.</p>
+    <p>Pilih tampilan, ritme belajar, bantuan, dan cek status session akunmu.</p>
   </div>
 
   <aside class="settings-current-card pass40b-settings-current">
@@ -72,6 +73,8 @@
 </section>
 
 <section class="settings-simple-layout pass40b-settings-layout">
+  <SparkAccountSessionPanel />
+
   <SparkCard class="settings-simple-card pass40b-settings-card">
     <div class="settings-section-head pass40b-section-head">
       <span class="spark-eyebrow">Tampilan</span>
