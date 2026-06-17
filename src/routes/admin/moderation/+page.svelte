@@ -19,9 +19,9 @@
 
   const metrics = $derived([
     { id: 'ml-signals', label: 'ML signals', value: signalItems.length, detail: 'Latest signal rows from the backend ML moderation pipeline.', state: 'available' as const },
-    { id: 'pending-signals', label: 'Signals needing review', value: pendingSignalCount, detail: 'Non-clean ML signals not yet marked reviewed.', state: pendingSignalCount ? 'review' : 'available' },
-    { id: 'reports', label: 'Pending reports', value: pendingReportCount, detail: 'User reports waiting for moderation handling.', state: pendingReportCount ? 'review' : 'available' },
-    { id: 'flagged-content', label: 'Flagged content', value: flaggedContentCount, detail: 'Posts/comments with reports or non-published status in the loaded window.', state: flaggedContentCount ? 'review' : 'available' }
+    { id: 'pending-signals', label: 'Signals needing review', value: pendingSignalCount, detail: 'Non-clean ML signals not yet marked reviewed.', state: 'available' as const },
+    { id: 'reports', label: 'Pending reports', value: pendingReportCount, detail: 'User reports waiting for moderation handling.', state: 'available' as const },
+    { id: 'flagged-content', label: 'Flagged content', value: flaggedContentCount, detail: 'Posts/comments with reports or non-published status in the loaded window.', state: 'available' as const }
   ]);
 
   function tone(status: string) {
