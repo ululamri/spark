@@ -1,4 +1,4 @@
-# PASS 18B — User-side Auth Session Verification
+# PASS 18B/18C — User-side Auth Verification
 
 Tanggal: 2026-06-17  
 Repo: `ululamri/spark`  
@@ -6,7 +6,7 @@ Live path: `/opt/karyra/spark`
 
 ## Status
 
-PASS 18B menambahkan panel verifikasi session akun di halaman user settings.
+PASS 18B menambahkan panel verifikasi akun di halaman user settings. PASS 18C meluruskan model auth frontend menjadi backend-session only dan menghapus narasi local-session dari user-facing flow.
 
 Route:
 
@@ -14,7 +14,7 @@ Route:
 /settings
 ```
 
-Komponen baru:
+Komponen:
 
 ```txt
 src/lib/ui/SparkAccountSessionPanel.svelte
@@ -24,17 +24,28 @@ src/lib/ui/SparkAccountSessionPanel.svelte
 
 Memudahkan test manual dari sisi user setelah register/login:
 
-- memastikan user punya `backend-session`,
-- melihat email/user ID/handle/status,
+- memastikan akun backend aktif,
+- melihat email/user ID/handle,
 - cek ulang `/v1/auth/me` dari browser,
 - logout dari session backend.
+
+## Model final
+
+```txt
+Akun user = backend auth session.
+Cookie httpOnly + /v1/auth/me = sumber kebenaran.
+LocalStorage auth key = cache UI non-rahasia, bukan sumber kebenaran akun.
+```
+
+Warisan `local-session` tidak lagi menjadi status akun yang valid di frontend production.
 
 ## Safety boundary
 
 - Tidak menampilkan cookie/token mentah.
 - Tidak membuka admin token.
 - Semua request user auth tetap memakai cookie `credentials: include` melalui state auth yang sudah ada.
-- Panel hanya membaca state session dan memanggil endpoint user auth biasa.
+- Panel hanya membaca state akun dan memanggil endpoint user auth biasa.
+- `Bersihkan Perangkat` pada data control menutup session backend lebih dulu sebelum membersihkan cache browser.
 
 ## Deploy frontend
 
@@ -54,22 +65,22 @@ systemctl status karyra-spark-web --no-pager
 4. Expected panel `Akun` menampilkan:
 
 ```txt
-Backend session aktif
-Status: backend-session
+Akun backend aktif
 Email: <email-user>
 User ID: <uuid>
+Status akun: Terverifikasi backend
 ```
 
-5. Klik `Cek ulang session`.
+5. Klik `Cek ulang akun`.
 6. Expected toast `Session valid`.
 7. Refresh browser.
-8. Expected session tetap backend-session.
+8. Expected akun tetap aktif.
 9. Klik `Keluar`.
 10. Expected user logout dan protected route meminta login ulang.
 
 ## Admin team follow-up
 
-Setelah user-side session valid, superadmin bisa membuka:
+Setelah user-side account valid, superadmin bisa membuka:
 
 ```txt
 /admin/team
