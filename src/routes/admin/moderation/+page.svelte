@@ -8,6 +8,7 @@
 
   let { data, form } = $props();
 
+  const filters = $derived(data.filters);
   const signalItems = $derived(data.signals?.items ?? []);
   const postItems = $derived(data.posts?.items ?? []);
   const commentItems = $derived(data.comments?.items ?? []);
@@ -69,6 +70,95 @@
   {/each}
 </div>
 
+<AdminSectionCard eyebrow="Workflow" title="Filter moderation queues" description="Filters are stored in the URL, so reload and shared links keep the same operator view.">
+  <form class="admin-moderation-form" method="GET" action="/admin/moderation">
+    <div class="admin-filter-row">
+      <label>
+        ML status
+        <select name="signal_status">
+          <option value="all" selected={filters.signalStatus === 'all'}>All signals</option>
+          <option value="clean" selected={filters.signalStatus === 'clean'}>Clean</option>
+          <option value="needs_review" selected={filters.signalStatus === 'needs_review'}>Needs review</option>
+          <option value="high_risk" selected={filters.signalStatus === 'high_risk'}>High risk</option>
+          <option value="blocked_pending_review" selected={filters.signalStatus === 'blocked_pending_review'}>Blocked pending review</option>
+        </select>
+      </label>
+      <label>
+        ML target
+        <select name="signal_target_type">
+          <option value="all" selected={filters.signalTargetType === 'all'}>All targets</option>
+          <option value="post" selected={filters.signalTargetType === 'post'}>Post</option>
+          <option value="comment" selected={filters.signalTargetType === 'comment'}>Comment</option>
+        </select>
+      </label>
+      <label>
+        Job status
+        <select name="job_status">
+          <option value="all" selected={filters.jobStatus === 'all'}>All jobs</option>
+          <option value="running" selected={filters.jobStatus === 'running'}>Running</option>
+          <option value="dry_run" selected={filters.jobStatus === 'dry_run'}>Dry-run</option>
+          <option value="completed" selected={filters.jobStatus === 'completed'}>Completed</option>
+          <option value="partial_failed" selected={filters.jobStatus === 'partial_failed'}>Partial failed</option>
+          <option value="failed" selected={filters.jobStatus === 'failed'}>Failed</option>
+        </select>
+      </label>
+      <label>
+        Job target
+        <select name="job_target_type">
+          <option value="all" selected={filters.jobTargetType === 'all'}>All targets</option>
+          <option value="post" selected={filters.jobTargetType === 'post'}>Post</option>
+          <option value="comment" selected={filters.jobTargetType === 'comment'}>Comment</option>
+          <option value="report" selected={filters.jobTargetType === 'report'}>Report</option>
+        </select>
+      </label>
+    </div>
+    <div class="admin-filter-row">
+      <label>
+        Report status
+        <select name="report_status">
+          <option value="all" selected={filters.reportStatus === 'all'}>All reports</option>
+          <option value="pending" selected={filters.reportStatus === 'pending'}>Pending</option>
+          <option value="reviewed" selected={filters.reportStatus === 'reviewed'}>Reviewed</option>
+          <option value="dismissed" selected={filters.reportStatus === 'dismissed'}>Dismissed</option>
+          <option value="actioned" selected={filters.reportStatus === 'actioned'}>Actioned</option>
+        </select>
+      </label>
+      <label>
+        Report target
+        <select name="report_target_type">
+          <option value="all" selected={filters.reportTargetType === 'all'}>All targets</option>
+          <option value="post" selected={filters.reportTargetType === 'post'}>Post</option>
+          <option value="comment" selected={filters.reportTargetType === 'comment'}>Comment</option>
+        </select>
+      </label>
+      <label>
+        Post status
+        <select name="post_status">
+          <option value="all" selected={filters.postStatus === 'all'}>All posts</option>
+          <option value="published" selected={filters.postStatus === 'published'}>Published</option>
+          <option value="hidden" selected={filters.postStatus === 'hidden'}>Hidden</option>
+          <option value="removed" selected={filters.postStatus === 'removed'}>Removed</option>
+          <option value="deleted" selected={filters.postStatus === 'deleted'}>Deleted</option>
+        </select>
+      </label>
+      <label>
+        Comment status
+        <select name="comment_status">
+          <option value="all" selected={filters.commentStatus === 'all'}>All comments</option>
+          <option value="published" selected={filters.commentStatus === 'published'}>Published</option>
+          <option value="hidden" selected={filters.commentStatus === 'hidden'}>Hidden</option>
+          <option value="removed" selected={filters.commentStatus === 'removed'}>Removed</option>
+          <option value="deleted" selected={filters.commentStatus === 'deleted'}>Deleted</option>
+        </select>
+      </label>
+    </div>
+    <div class="admin-filter-row">
+      <button class="admin-button" type="submit">Apply filters</button>
+      <a class="admin-button--secondary" href="/admin/moderation">Reset filters</a>
+    </div>
+  </form>
+</AdminSectionCard>
+
 <div class="admin-card-grid">
   <AdminSectionCard eyebrow="ML moderation" title="Scan target" description="Create a new ML/rule signal for one post or comment. This does not hide, remove, or restore content.">
     <form class="admin-moderation-form" method="POST" action="?/scanTarget">
@@ -95,7 +185,7 @@
     </form>
   </AdminSectionCard>
 
-  <AdminSectionCard eyebrow="Safety boundary" title="No automatic action" description="PASS 17I adds drilldown without changing the human approval model.">
+  <AdminSectionCard eyebrow="Safety boundary" title="No automatic action" description="PASS 17J adds queue filters without changing the human approval model.">
     <ul class="admin-checklist">
       <li>ML signal scan does not mutate content status.</li>
       <li>Bulk actions require explicit checkbox selection and form submit.</li>
@@ -135,7 +225,7 @@
       {/each}
     </AdminTable>
   {:else}
-    <AdminEmptyState title="No bulk jobs yet" detail="Run a dry-run bulk action from this page to create the first persisted job." />
+    <AdminEmptyState title="No bulk jobs match filters" detail="Adjust filters or run a dry-run bulk action from this page." />
   {/if}
 </AdminSectionCard>
 
@@ -177,7 +267,7 @@
       {/each}
     </AdminTable>
   {:else}
-    <AdminEmptyState title="No ML signals" detail="Create a signal from the scan form or run a backend batch scan." />
+    <AdminEmptyState title="No ML signals match filters" detail="Adjust filters or create a signal from the scan form." />
   {/if}
 </AdminSectionCard>
 
@@ -213,7 +303,7 @@
       </AdminTable>
     </form>
   {:else}
-    <AdminEmptyState title="No posts loaded" detail="The backend returned an empty post window." />
+    <AdminEmptyState title="No posts match filters" detail="Adjust post status filters or wait for new community activity." />
   {/if}
 </AdminSectionCard>
 
@@ -249,11 +339,11 @@
       </AdminTable>
     </form>
   {:else}
-    <AdminEmptyState title="No comments loaded" detail="The backend returned an empty comment window." />
+    <AdminEmptyState title="No comments match filters" detail="Adjust comment status filters or wait for new discussion replies." />
   {/if}
 </AdminSectionCard>
 
-<AdminSectionCard eyebrow="Reports" title="Pending reports" description="Select report rows to mark reviewed or dismiss through the bulk engine.">
+<AdminSectionCard eyebrow="Reports" title="Reports" description="Select report rows to mark reviewed or dismiss through the bulk engine.">
   {#if reportItems.length}
     <form method="POST" action="?/bulkReports">
       <div class="admin-filter-row">
@@ -271,7 +361,7 @@
         <label class="admin-checkbox-label"><input type="checkbox" name="dry_run" checked /> Dry-run only</label>
         <button class="admin-button" type="submit">Run selected reports</button>
       </div>
-      <AdminTable caption="Pending social reports" columns={['Select', 'Report', 'Target', 'Reporter', 'Status']}>
+      <AdminTable caption="Social reports" columns={['Select', 'Report', 'Target', 'Reporter', 'Status']}>
         {#each reportItems as report}
           <tr>
             <td><input type="checkbox" name="target_ids" value={report.id} aria-label={'Select report ' + report.id} /></td>
@@ -284,6 +374,6 @@
       </AdminTable>
     </form>
   {:else}
-    <AdminEmptyState title="No pending reports" detail="The pending report queue is empty." />
+    <AdminEmptyState title="No reports match filters" detail="Adjust report filters or wait for new user reports." />
   {/if}
 </AdminSectionCard>
