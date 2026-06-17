@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The Admin Dashboard is a private SvelteKit surface for operational visibility across Karyra Spark learning, Safe Practice Lab, Readiness Passport, Proof Ledger foundations, community pilots, and Starknet Hub readiness.
+The Admin Dashboard is a private SvelteKit surface for operational visibility across Karyra Spark learning, Safe Practice Lab, Readiness Passport, Proof Ledger foundations, community pilots, Starknet Hub readiness, CMS operations, and moderation operations.
 
 It is intentionally separated from the public learner shell. It does not provide wallet connection, signature, transaction, private-key, seed-phrase, or onchain write behavior.
 
@@ -20,47 +20,38 @@ It is intentionally separated from the public learner shell. It does not provide
 | `/admin/proofs` | Proof Ledger and facilitator-verification contract |
 | `/admin/pilots` | Community pilot session templates and evidence guidance |
 | `/admin/starknet` | Hub route, read-only RPC status, reader status, and roadmap |
-| `/admin/content` | Documentation availability map |
+| `/admin/content` | Documentation availability map; future home for structured Learn/Core and Lab CMS |
 | `/admin/settings` | Safe environment summary, feature flags, and safety checklist |
 
 ## Security model
 
-Admin access is fail-closed. The dashboard is disabled unless all of these private runtime variables are valid:
+Admin access is fail-closed. The current root admin is intentionally traditional: it is a server-side superadmin/dev bootstrap, not a normal database user. This keeps root access separate from future user-based admin and moderator accounts.
 
-- `KARYRA_ADMIN_ENABLED=true`
-- `KARYRA_ADMIN_PASSWORD` with at least 12 characters
-- `KARYRA_ADMIN_SESSION_SECRET` with at least 32 characters
+The current dashboard gate is enabled only when the private runtime admin configuration is valid. The frontend admin login creates an HttpOnly, SameSite=Strict, signed session cookie scoped to `/admin`. Admin responses use `Cache-Control: private, no-store`, `X-Frame-Options: DENY`, and a same-origin referrer policy. Login attempts have a small in-memory rate limit.
 
-Optional variables:
-
-- `KARYRA_ADMIN_SESSION_HOURS` between 1 and 24, defaulting to 8
-
-Admin API variables, both private and server-only:
-
-- `KARYRA_ADMIN_API_BASE_URL` pointing to the Spark API origin, `/api` base, or full `/api/admin` base
-- `KARYRA_ADMIN_TOKEN` sent by server load functions as `x-karyra-admin-token`
-
-The login action creates an HttpOnly, SameSite=Strict, signed session cookie scoped to `/admin`. Admin responses use `Cache-Control: private, no-store`, `X-Frame-Options: DENY`, and a same-origin referrer policy. Login attempts have a small in-memory rate limit.
+The backend Admin API uses a private server-side admin token sent as `x-karyra-admin-token`. A valid bootstrap token acts as `superadmin` and has full capability. This superadmin does not need an email, a `users` row, or an `admin_role_assignments` row.
 
 Do not place admin credentials, session secrets, private RPC URLs, database URLs, or tokens in `PUBLIC_*` variables.
 
-### Production TODO
+## Role model
 
-The environment credential is a minimal v1 gate, not complete production RBAC. Before enabling admin writes or broader deployment, replace it with:
+| Role | Storage | Purpose |
+| --- | --- | --- |
+| `superadmin` | Legacy server-side admin configuration | Root/dev/operator access, emergency recovery, role management, dangerous/system actions |
+| `admin` | Future database-backed delegated assignment | CMS operations, moderation operations, bulk actions, ML moderation workflow, user safety management |
+| `moderator` | Future database-backed delegated assignment | Moderation queue, reports, media review, limited bulk actions |
 
-- identity-provider authentication and explicit admin/facilitator roles;
-- revocable server-side sessions;
-- per-action authorization;
-- durable rate limiting;
-- audit logs for sensitive reads and every write;
-- field-level privacy and retention policies;
-- CSRF review for future state-changing actions.
+`admin_role_assignments` is expected to be empty on older deployments. `0 rows` is normal when the system is still running in legacy superadmin mode. Do not bootstrap superadmin from `users.email` unless the project intentionally migrates root access away from the legacy model.
 
 ## Data behavior
 
 All operational data is loaded from Spark Admin API v1 under `/api/admin/*`. The server-only client is defined in `src/lib/admin/admin-api.ts`; page server loads attach the private admin token, and only response data is serialized to the browser.
 
 Source-controlled lesson and Lab catalogs may label IDs observed by the backend. They never populate an unavailable or empty backend dataset. When an endpoint returns `data_source: not_available`, the UI shows an explicit empty state instead of mock metrics or records.
+
+## CMS boundary
+
+`ksbuilder` owns public website copy, CTA, and public surface building. Admin CMS is separate and should own structured Learn/Core and Lab content: lessons, lab steps, checkpoints, references, draft/review/publish/archive state, and revision history.
 
 ## Starknet boundary
 
@@ -70,19 +61,20 @@ Account readers, Passport anchors, badges, payments, merchant utility, wallet co
 
 ## Current limitations
 
-- Admin API v1 is read-only.
-- Lesson and Lab catalog metadata remains source-controlled and read-only.
-- Documentation files are checked for repository presence but are not individually rendered as public routes.
+- Superadmin is still the legacy root credential, intentionally separate from user-based roles.
+- Delegated `admin` and `moderator` roles are foundation-ready but not yet wired through the full admin UI.
+- Lesson and Lab catalog metadata remains source-controlled and read-only until the dedicated Admin CMS pass.
+- Bulk moderation and ML moderation are planned after RBAC/audit alignment.
 - Rate limiting is process-local and resets when the server restarts.
-- The single environment credential does not provide individual administrator identity.
-- No audit log is implemented yet.
 
 ## Future improvements
 
-1. Add production RBAC and durable audit logging.
-2. Add privacy-reviewed facilitator verification workflows.
-3. Add source-controlled metadata editing only after a reviewed content-write contract exists.
-4. Add operational monitoring without exposing private infrastructure details.
+1. Wire all admin write surfaces through capability checks and audit logging.
+2. Add Admin CMS for structured Learn/Core and Lab content.
+3. Add bulk moderation job support with dry-run, idempotency, and per-item result logs.
+4. Add ML moderation signals as human-in-the-loop queue inputs.
+5. Add privacy-reviewed facilitator verification workflows.
+6. Add operational monitoring without exposing private infrastructure details.
 
 ## Safety invariants
 
