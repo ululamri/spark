@@ -1,6 +1,6 @@
 export type BetaUserRole = 'learner' | 'facilitator' | 'explorer';
 export type BetaUserMode = 'beginner' | 'guided' | 'explorer';
-export type BetaUserStatus = 'local-session' | 'backend-session';
+export type BetaUserStatus = 'backend-session';
 
 export type BetaUser = {
   id: string;
@@ -83,16 +83,10 @@ function normalizeHandle(input: string) {
   return `@${seed || 'karyra'}`;
 }
 
-function createSessionId(email: string) {
-  const cryptoId = typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  const emailSeed = normalizeHandle(email).replace('@', '');
-  return `user-${emailSeed}-${cryptoId}`;
-}
-
 function isValidUser(value: Partial<BetaUser> | null): value is BetaUser {
   if (!value?.id || !value.name || !value.handle || !value.mode) return false;
-  if (value.status !== 'local-session' && value.status !== 'backend-session') return false;
-  if (value.id.includes('spark-local') || value.id.includes('example')) return false;
+  if (value.status !== 'backend-session') return false;
+  if (value.id.includes('spark-local') || value.id.includes('example') || value.id.startsWith('user-')) return false;
   return true;
 }
 
@@ -191,8 +185,10 @@ export function restoreBetaSession() {
     window.localStorage.removeItem(legacyKey);
   }
 
-  betaSession.user = safeParseSession(window.localStorage.getItem(STORAGE_KEY));
+  const user = safeParseSession(window.localStorage.getItem(STORAGE_KEY));
+  betaSession.user = user;
   betaSession.ready = true;
+  if (!user) window.localStorage.removeItem(STORAGE_KEY);
 }
 
 export function saveBetaSession(user: BetaUser | null) {
@@ -224,10 +220,8 @@ export async function hydrateBackendSession() {
     }
 
     betaSession.lastError = authErrorMessage(error);
-    if (!betaSession.user || betaSession.user.status === 'backend-session') {
-      setCurrentUser(null);
-    }
-    return betaSession.user;
+    setCurrentUser(null);
+    return null;
   } finally {
     betaSession.ready = true;
     betaSession.hydrating = false;
@@ -270,24 +264,8 @@ export async function loginBackendSession(input: SessionInput) {
   return user;
 }
 
-export function startLearningSession(input: SessionInput) {
-  const email = normalizeEmail(input.email);
-  const name = input.name?.trim() || titleFromEmail(email);
-  const mode = input.mode ?? 'beginner';
-
-  const user: BetaUser = {
-    id: createSessionId(email),
-    name,
-    handle: normalizeHandle(email || name),
-    email,
-    role: mode === 'explorer' ? 'explorer' : 'learner',
-    mode,
-    status: 'local-session',
-    createdAt: new Date().toISOString()
-  };
-
-  setCurrentUser(user);
-  return user;
+export async function startLearningSession(input: SessionInput) {
+  return registerBackendSession(input);
 }
 
 export async function logoutBetaSession() {
@@ -305,7 +283,7 @@ export function clearLocalSession() {
 }
 
 export function isSignedIn() {
-  return Boolean(betaSession.user);
+  return betaSession.user?.status === 'backend-session';
 }
 
 export function getModeLabel(mode: BetaUserMode) {
