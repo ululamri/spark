@@ -12,7 +12,6 @@
   const filters = $derived(data.filters);
   const moderationCount = $derived(events.filter((event) => event.action.includes('moderation')).length);
   const rootTokenCount = $derived(events.filter((event) => event.actor_kind === 'super_admin_token').length);
-  const systemCount = $derived(events.filter((event) => event.actor_kind === 'system').length);
   const uniqueActions = $derived(new Set(events.map((event) => event.action)).size);
 
   const metrics = $derived([
@@ -80,13 +79,13 @@
   </form>
 </AdminSectionCard>
 
-<AdminSectionCard eyebrow="Events" title="Latest audit events" description="Append-only audit rows from the backend admin audit table.">
+<AdminSectionCard eyebrow="Events" title="Latest audit events" description="Append-only audit rows from the backend admin audit table. Open an event to inspect full metadata and capabilities.">
   {#if events.length}
     <AdminTable caption="Admin audit events" columns={['Event', 'Actor', 'Target', 'Summary', 'Metadata']}>
       {#each events as event}
         <tr>
           <td>
-            <strong>{event.action}</strong><br />
+            <a href={'/admin/audit/events/' + event.id}><strong>{event.action}</strong></a><br />
             <span class="admin-muted">{shortId(event.id)} · {event.created_at}</span>
           </td>
           <td>
