@@ -1,6 +1,7 @@
 import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { adminApi, adminErrorMessage } from '$lib/admin/admin-api';
+import { adminSocialOpsApi } from '$lib/admin/admin-social-ops-api';
 
 function idsFromForm(formData: FormData, key = 'target_ids') {
   return formData
@@ -19,11 +20,12 @@ function checked(formData: FormData, key: string) {
 }
 
 export const load: PageServerLoad = async ({ fetch }) => {
-  const [reportsResult, postsResult, commentsResult, signalsResult] = await Promise.allSettled([
+  const [reportsResult, postsResult, commentsResult, signalsResult, bulkJobsResult] = await Promise.allSettled([
     adminApi.socialReports(fetch, { limit: 50, status: 'pending' }),
     adminApi.socialPosts(fetch, { limit: 50 }),
     adminApi.socialComments(fetch, { limit: 50 }),
-    adminApi.mlSignals(fetch, { limit: 50 })
+    adminApi.mlSignals(fetch, { limit: 50 }),
+    adminSocialOpsApi.bulkJobs(fetch, { limit: 25 })
   ]);
 
   return {
@@ -31,7 +33,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
     posts: postsResult.status === 'fulfilled' ? postsResult.value.data : null,
     comments: commentsResult.status === 'fulfilled' ? commentsResult.value.data : null,
     signals: signalsResult.status === 'fulfilled' ? signalsResult.value.data : null,
-    apiError: [reportsResult, postsResult, commentsResult, signalsResult]
+    bulkJobs: bulkJobsResult.status === 'fulfilled' ? bulkJobsResult.value.data : null,
+    apiError: [reportsResult, postsResult, commentsResult, signalsResult, bulkJobsResult]
       .filter((result) => result.status === 'rejected')
       .map((result) => adminErrorMessage((result as PromiseRejectedResult).reason))
       .at(0) ?? null
