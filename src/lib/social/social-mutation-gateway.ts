@@ -19,7 +19,7 @@ import { socialState } from './social-state.svelte';
 import type { SocialComment, SocialCommentInput, SocialDraftInput, SocialPost, SocialReactionKind, SocialReportReason } from './social-types';
 
 type MutationResult = 'synced' | 'queued' | 'failed' | 'ignored';
-const QUEUED_STATUS = 'local' as const;
+const QUEUED_STATUS = 'queued' as const;
 
 function pushEvent(event: ReturnType<typeof createSocialEvent>) {
   socialState.events = [event, ...socialState.events].slice(0, 80);
