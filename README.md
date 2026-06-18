@@ -2,7 +2,7 @@
 
 > **Learn Crypto Safely, Grow Together**
 
-Karyra Spark is a mobile-first, source-available SvelteKit frontend for a Blockchain and Starknet readiness gateway — a structured educational platform that guides Indonesian-speaking users through blockchain fundamentals, safe wallet practices, and the Starknet ecosystem one step at a time.
+Karyra Spark is a mobile-first, open-source SvelteKit frontend for a Blockchain and Starknet readiness gateway — a structured educational platform that guides Indonesian-speaking users through blockchain fundamentals, safe wallet practices, and the Starknet ecosystem one step at a time.
 
 The platform is intentionally *not* a trading tool. It begins with understanding and safety, and only opens the door to wallets, testnets, and ecosystem exploration once users have demonstrated readiness.
 
@@ -313,7 +313,7 @@ Please keep commits focused and descriptive. The audit scripts in `src/scripts/`
 
 ## License
 
-Karyra Spark is source-available with all rights reserved. See [LICENSE](LICENSE) for the current project license and reuse restrictions.
+Karyra Spark is open source under the MIT License. See [LICENSE](LICENSE).
 
 ---
 
