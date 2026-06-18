@@ -9,6 +9,10 @@
   let { data, form } = $props();
 
   const filters = $derived(data.filters);
+  const actor = $derived(data.adminActor);
+  const canManageMl = $derived(Boolean(actor?.capabilities?.includes('ml_moderation_manage')));
+  const canRunBulk = $derived(Boolean(actor?.capabilities?.includes('moderation_bulk')));
+  const actorRole = $derived(actor?.role ?? 'operator');
   const signalItems = $derived(data.signals?.items ?? []);
   const postItems = $derived(data.posts?.items ?? []);
   const commentItems = $derived(data.comments?.items ?? []);
@@ -53,6 +57,10 @@
     <a class="admin-button--secondary" href="/komunitas" target="_blank" rel="noreferrer">Open community</a>
   {/snippet}
 </AdminHeader>
+
+<div class="admin-note">
+  Role: <strong>{actorRole}</strong> · ML actions: <strong>{canManageMl ? 'enabled' : 'read-only'}</strong> · bulk actions: <strong>{canRunBulk ? 'enabled' : 'read-only'}</strong>
+</div>
 
 {#if form?.success}
   <div class="admin-note admin-note--success">{form.success}</div>
@@ -161,35 +169,40 @@
 
 <div class="admin-card-grid">
   <AdminSectionCard eyebrow="ML moderation" title="Scan target" description="Create a new ML/rule signal for one post or comment. This does not hide, remove, or restore content.">
-    <form class="admin-moderation-form" method="POST" action="?/scanTarget">
-      <label>
-        Target type
-        <select name="target_type" required>
-          <option value="post">Post</option>
-          <option value="comment">Comment</option>
-        </select>
-      </label>
-      <label>
-        Target ID
-        <input name="target_id" placeholder="UUID" required />
-      </label>
-      <label>
-        Operator note
-        <input name="note" placeholder="Why this scan is being created" />
-      </label>
-      <div class="admin-checkbox-row">
-        <label><input type="checkbox" name="use_local_ai" /> Use local AI if enabled</label>
-        <label><input type="checkbox" name="use_external_fallback" /> Use external fallback</label>
-      </div>
-      <button class="admin-button" type="submit">Create ML signal</button>
-    </form>
+    {#if canManageMl}
+      <form class="admin-moderation-form" method="POST" action="?/scanTarget">
+        <label>
+          Target type
+          <select name="target_type" required>
+            <option value="post">Post</option>
+            <option value="comment">Comment</option>
+          </select>
+        </label>
+        <label>
+          Target ID
+          <input name="target_id" placeholder="UUID" required />
+        </label>
+        <label>
+          Operator note
+          <input name="note" placeholder="Why this scan is being created" />
+        </label>
+        <div class="admin-checkbox-row">
+          <label><input type="checkbox" name="use_local_ai" /> Use local AI if enabled</label>
+          <label><input type="checkbox" name="use_external_fallback" /> Use external fallback</label>
+        </div>
+        <button class="admin-button" type="submit">Create ML signal</button>
+      </form>
+    {:else}
+      <AdminEmptyState title="ML actions are read-only" detail="This role can inspect moderation signals but cannot create or review ML moderation signals." />
+    {/if}
   </AdminSectionCard>
 
-  <AdminSectionCard eyebrow="Safety boundary" title="No automatic action" description="PASS 17J adds queue filters without changing the human approval model.">
+  <AdminSectionCard eyebrow="Safety boundary" title="No automatic action" description="PASS 19C keeps moderation human-approved and role-aware.">
     <ul class="admin-checklist">
       <li>ML signal scan does not mutate content status.</li>
       <li>Bulk actions require explicit checkbox selection and form submit.</li>
       <li>Operations history and job detail are read-only views over persisted backend jobs.</li>
+      <li>Action forms are hidden unless the actor has the required backend capability.</li>
     </ul>
   </AdminSectionCard>
 </div>
@@ -255,12 +268,15 @@
             {#if signal.reviewed_at}
               <AdminStatusBadge label="reviewed" tone="success" />
               <div class="admin-muted">{signal.reviewed_at}</div>
-            {:else}
+            {:else if canManageMl}
               <form class="admin-inline-form" method="POST" action="?/markSignalReviewed">
                 <input type="hidden" name="signal_id" value={signal.id} />
                 <input name="note" placeholder="Review note" />
                 <button class="admin-button admin-button--secondary" type="submit">Mark reviewed</button>
               </form>
+            {:else}
+              <AdminStatusBadge label="pending review" tone="warning" />
+              <div class="admin-muted">Read-only for this role.</div>
             {/if}
           </td>
         </tr>
@@ -273,27 +289,40 @@
 
 <AdminSectionCard eyebrow="Bulk action" title="Post moderation" description="Select posts and run the PASS 17E bulk engine. Use dry-run first for validation.">
   {#if postItems.length}
-    <form method="POST" action="?/bulkPosts">
-      <div class="admin-filter-row">
-        <label>
-          Action
-          <select name="action">
-            <option value="hide">Hide</option>
-            <option value="remove">Remove</option>
-            <option value="restore">Restore</option>
-          </select>
-        </label>
-        <label>
-          Reason
-          <input name="reason" placeholder="Reason for audit log" />
-        </label>
-        <label class="admin-checkbox-label"><input type="checkbox" name="dry_run" checked /> Dry-run only</label>
-        <button class="admin-button" type="submit">Run selected posts</button>
-      </div>
-      <AdminTable caption="Post moderation table" columns={['Select', 'Post', 'Author', 'Status', 'Signals']}>
+    {#if canRunBulk}
+      <form method="POST" action="?/bulkPosts">
+        <div class="admin-filter-row">
+          <label>
+            Action
+            <select name="action">
+              <option value="hide">Hide</option>
+              <option value="remove">Remove</option>
+              <option value="restore">Restore</option>
+            </select>
+          </label>
+          <label>
+            Reason
+            <input name="reason" placeholder="Reason for audit log" />
+          </label>
+          <label class="admin-checkbox-label"><input type="checkbox" name="dry_run" checked /> Dry-run only</label>
+          <button class="admin-button" type="submit">Run selected posts</button>
+        </div>
+        <AdminTable caption="Post moderation table" columns={['Select', 'Post', 'Author', 'Status', 'Signals']}>
+          {#each postItems as post}
+            <tr>
+              <td><input type="checkbox" name="target_ids" value={post.id} aria-label={'Select post ' + post.id} /></td>
+              <td><strong>{preview(post.body, 130)}</strong><br /><span class="admin-muted">{shortId(post.id)} · {post.kind}</span></td>
+              <td>{post.author_display_name}<br /><span class="admin-muted">{shortId(post.author_user_id)}</span></td>
+              <td><AdminStatusBadge label={post.status} tone={tone(post.status)} /></td>
+              <td>{post.reports_count} reports · {post.comments_count} comments</td>
+            </tr>
+          {/each}
+        </AdminTable>
+      </form>
+    {:else}
+      <AdminTable caption="Post moderation table" columns={['Post', 'Author', 'Status', 'Signals']}>
         {#each postItems as post}
           <tr>
-            <td><input type="checkbox" name="target_ids" value={post.id} aria-label={'Select post ' + post.id} /></td>
             <td><strong>{preview(post.body, 130)}</strong><br /><span class="admin-muted">{shortId(post.id)} · {post.kind}</span></td>
             <td>{post.author_display_name}<br /><span class="admin-muted">{shortId(post.author_user_id)}</span></td>
             <td><AdminStatusBadge label={post.status} tone={tone(post.status)} /></td>
@@ -301,7 +330,7 @@
           </tr>
         {/each}
       </AdminTable>
-    </form>
+    {/if}
   {:else}
     <AdminEmptyState title="No posts match filters" detail="Adjust post status filters or wait for new community activity." />
   {/if}
@@ -309,27 +338,40 @@
 
 <AdminSectionCard eyebrow="Bulk action" title="Comment moderation" description="Select comments and run the same bulk moderation engine.">
   {#if commentItems.length}
-    <form method="POST" action="?/bulkComments">
-      <div class="admin-filter-row">
-        <label>
-          Action
-          <select name="action">
-            <option value="hide">Hide</option>
-            <option value="remove">Remove</option>
-            <option value="restore">Restore</option>
-          </select>
-        </label>
-        <label>
-          Reason
-          <input name="reason" placeholder="Reason for audit log" />
-        </label>
-        <label class="admin-checkbox-label"><input type="checkbox" name="dry_run" checked /> Dry-run only</label>
-        <button class="admin-button" type="submit">Run selected comments</button>
-      </div>
-      <AdminTable caption="Comment moderation table" columns={['Select', 'Comment', 'Author', 'Status', 'Reports']}>
+    {#if canRunBulk}
+      <form method="POST" action="?/bulkComments">
+        <div class="admin-filter-row">
+          <label>
+            Action
+            <select name="action">
+              <option value="hide">Hide</option>
+              <option value="remove">Remove</option>
+              <option value="restore">Restore</option>
+            </select>
+          </label>
+          <label>
+            Reason
+            <input name="reason" placeholder="Reason for audit log" />
+          </label>
+          <label class="admin-checkbox-label"><input type="checkbox" name="dry_run" checked /> Dry-run only</label>
+          <button class="admin-button" type="submit">Run selected comments</button>
+        </div>
+        <AdminTable caption="Comment moderation table" columns={['Select', 'Comment', 'Author', 'Status', 'Reports']}>
+          {#each commentItems as comment}
+            <tr>
+              <td><input type="checkbox" name="target_ids" value={comment.id} aria-label={'Select comment ' + comment.id} /></td>
+              <td><strong>{preview(comment.body, 130)}</strong><br /><span class="admin-muted">{shortId(comment.id)} · post {shortId(comment.post_id)}</span></td>
+              <td>{comment.author_display_name}<br /><span class="admin-muted">{shortId(comment.author_user_id)}</span></td>
+              <td><AdminStatusBadge label={comment.status} tone={tone(comment.status)} /></td>
+              <td>{comment.reports_count}</td>
+            </tr>
+          {/each}
+        </AdminTable>
+      </form>
+    {:else}
+      <AdminTable caption="Comment moderation table" columns={['Comment', 'Author', 'Status', 'Reports']}>
         {#each commentItems as comment}
           <tr>
-            <td><input type="checkbox" name="target_ids" value={comment.id} aria-label={'Select comment ' + comment.id} /></td>
             <td><strong>{preview(comment.body, 130)}</strong><br /><span class="admin-muted">{shortId(comment.id)} · post {shortId(comment.post_id)}</span></td>
             <td>{comment.author_display_name}<br /><span class="admin-muted">{shortId(comment.author_user_id)}</span></td>
             <td><AdminStatusBadge label={comment.status} tone={tone(comment.status)} /></td>
@@ -337,7 +379,7 @@
           </tr>
         {/each}
       </AdminTable>
-    </form>
+    {/if}
   {:else}
     <AdminEmptyState title="No comments match filters" detail="Adjust comment status filters or wait for new discussion replies." />
   {/if}
@@ -345,26 +387,39 @@
 
 <AdminSectionCard eyebrow="Reports" title="Reports" description="Select report rows to mark reviewed or dismiss through the bulk engine.">
   {#if reportItems.length}
-    <form method="POST" action="?/bulkReports">
-      <div class="admin-filter-row">
-        <label>
-          Action
-          <select name="action">
-            <option value="mark_reviewed">Mark reviewed</option>
-            <option value="dismiss_report">Dismiss report</option>
-          </select>
-        </label>
-        <label>
-          Reason
-          <input name="reason" placeholder="Reason for audit log" />
-        </label>
-        <label class="admin-checkbox-label"><input type="checkbox" name="dry_run" checked /> Dry-run only</label>
-        <button class="admin-button" type="submit">Run selected reports</button>
-      </div>
-      <AdminTable caption="Social reports" columns={['Select', 'Report', 'Target', 'Reporter', 'Status']}>
+    {#if canRunBulk}
+      <form method="POST" action="?/bulkReports">
+        <div class="admin-filter-row">
+          <label>
+            Action
+            <select name="action">
+              <option value="mark_reviewed">Mark reviewed</option>
+              <option value="dismiss_report">Dismiss report</option>
+            </select>
+          </label>
+          <label>
+            Reason
+            <input name="reason" placeholder="Reason for audit log" />
+          </label>
+          <label class="admin-checkbox-label"><input type="checkbox" name="dry_run" checked /> Dry-run only</label>
+          <button class="admin-button" type="submit">Run selected reports</button>
+        </div>
+        <AdminTable caption="Social reports" columns={['Select', 'Report', 'Target', 'Reporter', 'Status']}>
+          {#each reportItems as report}
+            <tr>
+              <td><input type="checkbox" name="target_ids" value={report.id} aria-label={'Select report ' + report.id} /></td>
+              <td><strong>{report.reason}</strong><br /><span class="admin-muted">{preview(report.details, 130)}</span></td>
+              <td><span class="admin-code">{report.target_type}</span><br /><span class="admin-muted">{shortId(report.target_id)}</span></td>
+              <td>{report.reporter_display_name}<br /><span class="admin-muted">{shortId(report.reporter_user_id)}</span></td>
+              <td><AdminStatusBadge label={report.status} tone={tone(report.status)} /></td>
+            </tr>
+          {/each}
+        </AdminTable>
+      </form>
+    {:else}
+      <AdminTable caption="Social reports" columns={['Report', 'Target', 'Reporter', 'Status']}>
         {#each reportItems as report}
           <tr>
-            <td><input type="checkbox" name="target_ids" value={report.id} aria-label={'Select report ' + report.id} /></td>
             <td><strong>{report.reason}</strong><br /><span class="admin-muted">{preview(report.details, 130)}</span></td>
             <td><span class="admin-code">{report.target_type}</span><br /><span class="admin-muted">{shortId(report.target_id)}</span></td>
             <td>{report.reporter_display_name}<br /><span class="admin-muted">{shortId(report.reporter_user_id)}</span></td>
@@ -372,7 +427,7 @@
           </tr>
         {/each}
       </AdminTable>
-    </form>
+    {/if}
   {:else}
     <AdminEmptyState title="No reports match filters" detail="Adjust report filters or wait for new user reports." />
   {/if}
