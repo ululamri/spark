@@ -1,21 +1,49 @@
 <script lang="ts">
   import { page } from '$app/state';
 
-  const navigation = [
-    { href: '/admin', label: 'Overview' },
-    { href: '/admin/learners', label: 'Learners' },
-    { href: '/admin/lessons', label: 'Core lessons' },
-    { href: '/admin/lab', label: 'Practice Lab' },
-    { href: '/admin/passport', label: 'Passport' },
-    { href: '/admin/proofs', label: 'Proof Ledger' },
-    { href: '/admin/pilots', label: 'Community pilot' },
-    { href: '/admin/moderation', label: 'Moderation' },
-    { href: '/admin/team', label: 'Admin team' },
-    { href: '/admin/audit', label: 'Audit log' },
-    { href: '/admin/starknet', label: 'Starknet / Hub' },
-    { href: '/admin/content', label: 'Content & docs' },
-    { href: '/admin/settings', label: 'Settings' }
-  ] as const;
+  type AdminActor = {
+    mode: 'superadmin' | 'delegated';
+    role: string;
+    actorKind: string;
+    capabilities: string[];
+  } | null;
+
+  type AdminNavItem = {
+    href: string;
+    label: string;
+    roles: string[];
+    capability?: string;
+  };
+
+  let { actor }: { actor: AdminActor } = $props();
+
+  const navigation: AdminNavItem[] = [
+    { href: '/admin', label: 'Root overview', roles: ['superadmin'] },
+    { href: '/admin/learners', label: 'Learners', roles: ['superadmin', 'admin'], capability: 'content_read' },
+    { href: '/admin/lessons', label: 'Core lessons', roles: ['superadmin', 'admin'], capability: 'content_read' },
+    { href: '/admin/lab', label: 'Practice Lab', roles: ['superadmin', 'admin'], capability: 'content_read' },
+    { href: '/admin/passport', label: 'Passport', roles: ['superadmin', 'admin'], capability: 'content_read' },
+    { href: '/admin/proofs', label: 'Proof Ledger', roles: ['superadmin'], capability: 'audit_read' },
+    { href: '/admin/pilots', label: 'Community pilot', roles: ['superadmin', 'admin'], capability: 'content_read' },
+    { href: '/admin/moderation', label: 'Moderation', roles: ['superadmin', 'admin', 'moderator'], capability: 'moderation_read' },
+    { href: '/admin/team', label: 'Admin team', roles: ['superadmin'], capability: 'admin_manage' },
+    { href: '/admin/audit', label: 'Audit log', roles: ['superadmin'], capability: 'audit_read' },
+    { href: '/admin/starknet', label: 'Starknet / Hub', roles: ['superadmin', 'admin'], capability: 'content_read' },
+    { href: '/admin/content', label: 'Content & docs', roles: ['superadmin', 'admin'], capability: 'content_read' },
+    { href: '/admin/settings', label: 'Settings', roles: ['superadmin'] }
+  ];
+
+  const roleLabel = $derived(actor?.role ?? 'unauthenticated');
+  const modeLabel = $derived(actor?.mode === 'superadmin' ? 'Root control' : 'Delegated control');
+
+  const visibleNavigation = $derived(
+    navigation.filter((item) => {
+      if (!actor) return false;
+      if (!item.roles.includes(actor.role)) return false;
+      if (!item.capability) return true;
+      return actor.capabilities.includes(item.capability);
+    })
+  );
 
   function isActive(href: string) {
     return href === '/admin' ? page.url.pathname === href : page.url.pathname.startsWith(href);
@@ -25,11 +53,14 @@
 <aside class="admin-sidebar">
   <a class="admin-brand" href="/admin">
     <img src="/assets/brand/icon-only.svg" alt="" width="38" height="38" />
-    <span><strong>Karyra Spark</strong><small>Private administration</small></span>
+    <span>
+      <strong>Karyra Spark</strong>
+      <small>{modeLabel} · {roleLabel}</small>
+    </span>
   </a>
 
   <nav aria-label="Admin navigation">
-    {#each navigation as item}
+    {#each visibleNavigation as item}
       <a href={item.href} class:active={isActive(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
         {item.label}
       </a>

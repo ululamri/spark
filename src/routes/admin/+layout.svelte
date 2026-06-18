@@ -13,7 +13,7 @@
 {#if page.url.pathname === '/admin/login' || !data.adminAuthenticated}
   {@render children()}
 {:else}
-  <AdminLayout>
+  <AdminLayout actor={data.adminActor}>
     {@render children()}
   </AdminLayout>
 {/if}
