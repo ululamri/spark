@@ -43,7 +43,7 @@ const SUPERADMIN_CAPABILITIES = [
   'audit_read'
 ];
 
-const MODERATION_PATHS = ['/admin/moderation'];
+const ENABLE_DELEGATED_ADMIN_ROUTES = false;
 
 function normalizeActor(actor: AdminActor): AdminUiActor {
   return {
@@ -66,9 +66,7 @@ function superadminActor(): AdminUiActor {
 }
 
 export async function resolveAdminAccess(event: AdminAccessEvent): Promise<AdminAccess> {
-  if (hasValidAdminSession(event.cookies)) {
-    return { actor: superadminActor(), requestContext: { mode: 'superadmin' } };
-  }
+  if (hasValidAdminSession(event.cookies)) return { actor: superadminActor(), requestContext: { mode: 'superadmin' } };
 
   const cookieHeader = event.request.headers.get('cookie');
   if (!cookieHeader) return { actor: null, requestContext: null };
@@ -86,17 +84,15 @@ export async function resolveAdminAccess(event: AdminAccessEvent): Promise<Admin
 export function defaultAdminPath(actor: AdminUiActor | null) {
   if (!actor) return '/admin/login';
   if (actor.role === 'superadmin') return '/admin';
-  return '/admin/moderation';
+  return '/admin/login';
 }
 
 export function canAccessAdminPath(actor: AdminUiActor | null, pathname: string) {
   if (!actor) return pathname === '/admin/login';
   if (pathname === '/admin/login' || pathname === '/admin/logout') return true;
   if (actor.role === 'superadmin') return pathname.startsWith('/admin');
-  if (actor.role === 'admin' || actor.role === 'moderator') {
-    return MODERATION_PATHS.some((path) => pathname === path || pathname.startsWith(path + '/'));
-  }
-  return false;
+  if (!ENABLE_DELEGATED_ADMIN_ROUTES) return false;
+  return pathname === '/admin/moderation' || pathname.startsWith('/admin/moderation/');
 }
 
 export function requireCapability(access: AdminAccess, capability: string) {
@@ -114,9 +110,7 @@ export async function guardAdminRoute(event: AdminAccessEvent & { url: URL }) {
   const access = await resolveAdminAccess(event);
   const pathname = event.url.pathname;
 
-  if (pathname === '/admin/login' && access.actor) {
-    redirect(303, defaultAdminPath(access.actor));
-  }
+  if (pathname === '/admin/login' && access.actor?.role === 'superadmin') redirect(303, '/admin');
 
   if (!canAccessAdminPath(access.actor, pathname)) {
     if (!access.actor) redirect(303, '/admin/login');
