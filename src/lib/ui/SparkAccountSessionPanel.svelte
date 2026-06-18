@@ -51,47 +51,49 @@
   }
 </script>
 
-<SparkCard class="settings-simple-card pass18b-session-card">
-  <div class="settings-section-head pass40b-section-head">
-    <span class="spark-eyebrow">Akun</span>
-    <h2>Verifikasi akun.</h2>
-  </div>
-
-  <div class="pass18b-session-status" data-ok={isBackendSession}>
-    <span><SparkIcon name={isBackendSession ? 'shield-check' : 'shield'} size={18} /></span>
-    <div>
-      <strong>{statusLabel}</strong>
-      <small>{isBackendSession ? 'Register/login sudah tersambung ke Spark API.' : 'Masuk ulang bila akun belum terhubung ke backend.'}</small>
+<SparkCard class="settings-simple-card">
+  <div class="pass18b-session-card">
+    <div class="settings-section-head pass40b-section-head">
+      <span class="spark-eyebrow">Akun</span>
+      <h2>Verifikasi akun.</h2>
     </div>
-  </div>
 
-  {#if localError || betaSession.lastError}
-    <div class="pass35-form-error" role="alert">
-      <SparkIcon name="shield" size={15} />
-      <span>{localError || betaSession.lastError}</span>
+    <div class="pass18b-session-status" data-ok={isBackendSession}>
+      <span><SparkIcon name={isBackendSession ? 'shield-check' : 'shield'} size={18} /></span>
+      <div>
+        <strong>{statusLabel}</strong>
+        <small>{isBackendSession ? 'Register/login sudah tersambung ke Spark API.' : 'Masuk ulang bila akun belum terhubung ke backend.'}</small>
+      </div>
     </div>
-  {/if}
 
-  {#if user}
-    <dl class="pass18b-account-list">
-      <div><dt>Nama</dt><dd>{user.name}</dd></div>
-      <div><dt>Email</dt><dd>{user.email || '—'}</dd></div>
-      <div><dt>Handle</dt><dd>{user.handle}</dd></div>
-      <div><dt>User ID</dt><dd>{isBackendSession ? user.id : 'Belum tersambung ke backend'}</dd></div>
-      <div><dt>Mode</dt><dd>{user.mode}</dd></div>
-      <div><dt>Status akun</dt><dd>{isBackendSession ? 'Terverifikasi backend' : 'Perlu masuk ulang'}</dd></div>
-    </dl>
-  {:else}
-    <p class="pass18b-session-copy">Belum ada akun aktif di perangkat ini. Masuk atau daftar dulu untuk membuat akun backend.</p>
-  {/if}
-
-  <div class="pass18b-session-actions">
-    <SparkButton variant="secondary" loading={refreshing} disabled={refreshing || loggingOut} onclick={refreshSession}>Cek ulang akun</SparkButton>
-    {#if user}
-      <SparkButton variant="ghost" loading={loggingOut} disabled={refreshing || loggingOut} onclick={signOut}>Keluar</SparkButton>
-    {:else}
-      <SparkButton href="/login" variant="ghost">Masuk</SparkButton>
+    {#if localError || betaSession.lastError}
+      <div class="pass35-form-error" role="alert">
+        <SparkIcon name="shield" size={15} />
+        <span>{localError || betaSession.lastError}</span>
+      </div>
     {/if}
+
+    {#if user}
+      <dl class="pass18b-account-list">
+        <div><dt>Nama</dt><dd>{user.name}</dd></div>
+        <div><dt>Email</dt><dd>{user.email || '—'}</dd></div>
+        <div><dt>Handle</dt><dd>{user.handle}</dd></div>
+        <div><dt>User ID</dt><dd>{isBackendSession ? user.id : 'Belum tersambung ke backend'}</dd></div>
+        <div><dt>Mode</dt><dd>{user.mode}</dd></div>
+        <div><dt>Status akun</dt><dd>{isBackendSession ? 'Terverifikasi backend' : 'Perlu masuk ulang'}</dd></div>
+      </dl>
+    {:else}
+      <p class="pass18b-session-copy">Belum ada akun aktif di perangkat ini. Masuk atau daftar dulu untuk membuat akun backend.</p>
+    {/if}
+
+    <div class="pass18b-session-actions">
+      <SparkButton variant="secondary" loading={refreshing} disabled={refreshing || loggingOut} onclick={refreshSession}>Cek ulang akun</SparkButton>
+      {#if user}
+        <SparkButton variant="ghost" loading={loggingOut} disabled={refreshing || loggingOut} onclick={signOut}>Keluar</SparkButton>
+      {:else}
+        <SparkButton href="/login" variant="ghost">Masuk</SparkButton>
+      {/if}
+    </div>
   </div>
 </SparkCard>
 
