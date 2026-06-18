@@ -1,6 +1,13 @@
 import { env as privateEnv } from '$env/dynamic/private';
 import { env as publicEnv } from '$env/dynamic/public';
 
+export type AdminRequestMode = 'superadmin' | 'delegated';
+
+export type AdminRequestContext = {
+  mode?: AdminRequestMode;
+  cookieHeader?: string | null;
+};
+
 export type AdminDataSource = 'database' | 'progress_records' | 'community_workshop_registrations' | 'not_available' | string;
 
 export type AdminSuccessEnvelope<T> = {
@@ -359,7 +366,7 @@ function trimSlash(value: string) {
   return value.replace(/\/+$/, '');
 }
 
-function adminBaseUrl() {
+export function adminBaseUrl() {
   const configured =
     privateEnv.KARYRA_ADMIN_API_BASE_URL?.trim() ||
     privateEnv.API_BASE_URL?.trim() ||
@@ -379,7 +386,22 @@ function adminToken() {
   return token;
 }
 
-async function parseAdminResponse<T>(response: Response): Promise<AdminSuccessEnvelope<T>> {
+export function adminHeaders(context: AdminRequestContext = {}, json = false): Record<string, string> {
+  const headers: Record<string, string> = { accept: 'application/json' };
+  if (json) headers['content-type'] = 'application/json';
+
+  if (context.mode === 'delegated') {
+    const cookieHeader = context.cookieHeader?.trim();
+    if (!cookieHeader) throw new AdminApiError(401, 'admin_session_missing', 'Delegated admin session cookie is not available.');
+    headers.cookie = cookieHeader;
+    return headers;
+  }
+
+  headers['x-karyra-admin-token'] = adminToken();
+  return headers;
+}
+
+export async function parseAdminResponse<T>(response: Response): Promise<AdminSuccessEnvelope<T>> {
   const body = (await response.json().catch(() => null)) as AdminSuccessEnvelope<T> | AdminErrorEnvelope | null;
   if (!response.ok || !body || !body.ok) {
     const error = body && !body.ok ? body.error : null;
@@ -388,27 +410,20 @@ async function parseAdminResponse<T>(response: Response): Promise<AdminSuccessEn
   return body;
 }
 
-async function requestAdmin<T>(fetcher: typeof fetch, path: string): Promise<AdminSuccessEnvelope<T>> {
+export async function requestAdmin<T>(fetcher: typeof fetch, path: string, context: AdminRequestContext = {}): Promise<AdminSuccessEnvelope<T>> {
   const response = await fetcher(adminBaseUrl() + path, {
     cache: 'no-store',
-    headers: {
-      accept: 'application/json',
-      'x-karyra-admin-token': adminToken()
-    },
+    headers: adminHeaders(context),
     signal: AbortSignal.timeout(8000)
   });
   return parseAdminResponse<T>(response);
 }
 
-async function requestAdminJson<T>(fetcher: typeof fetch, path: string, payload: unknown): Promise<AdminSuccessEnvelope<T>> {
+export async function requestAdminJson<T>(fetcher: typeof fetch, path: string, payload: unknown, context: AdminRequestContext = {}): Promise<AdminSuccessEnvelope<T>> {
   const response = await fetcher(adminBaseUrl() + path, {
     method: 'POST',
     cache: 'no-store',
-    headers: {
-      accept: 'application/json',
-      'content-type': 'application/json',
-      'x-karyra-admin-token': adminToken()
-    },
+    headers: adminHeaders(context, true),
     body: JSON.stringify(payload),
     signal: AbortSignal.timeout(15000)
   });
@@ -429,31 +444,31 @@ export function adminErrorMessage(error: unknown) {
 }
 
 export const adminApi = {
-  overview: (fetcher: typeof fetch) => requestAdmin<AdminOverview>(fetcher, '/overview'),
-  learners: (fetcher: typeof fetch, input: { limit?: number; offset?: number } = {}) => {
+  overview: (fetcher: typeof fetch, context?: AdminRequestContext) => requestAdmin<AdminOverview>(fetcher, '/overview', context),
+  learners: (fetcher: typeof fetch, input: { limit?: number; offset?: number } = {}, context?: AdminRequestContext) => {
     const query = new URLSearchParams({ limit: String(input.limit ?? 100), offset: String(input.offset ?? 0) });
-    return requestAdmin<AdminLearners>(fetcher, '/learners?' + query);
+    return requestAdmin<AdminLearners>(fetcher, '/learners?' + query, context);
   },
-  learner: (fetcher: typeof fetch, id: string) => requestAdmin<AdminLearnerDetail>(fetcher, '/learners/' + encodeURIComponent(id)),
-  lessons: (fetcher: typeof fetch) => requestAdmin<AdminLessons>(fetcher, '/lessons'),
-  lab: (fetcher: typeof fetch) => requestAdmin<AdminLab>(fetcher, '/lab'),
-  passports: (fetcher: typeof fetch) => requestAdmin<AdminPassports>(fetcher, '/passports'),
-  proofLedger: (fetcher: typeof fetch) => requestAdmin<AdminProofLedger>(fetcher, '/proof-ledger'),
-  communityPilot: (fetcher: typeof fetch) => requestAdmin<AdminCommunityPilot>(fetcher, '/community-pilot'),
-  starknet: (fetcher: typeof fetch) => requestAdmin<AdminStarknet>(fetcher, '/starknet'),
-  system: (fetcher: typeof fetch) => requestAdmin<AdminSystem>(fetcher, '/system'),
-  socialReports: (fetcher: typeof fetch, input: { limit?: number; offset?: number; status?: string; target_type?: string } = {}) =>
-    requestAdmin<AdminList<AdminSocialReport>>(fetcher, '/social/reports?' + listQuery(input)),
-  socialPosts: (fetcher: typeof fetch, input: { limit?: number; offset?: number; status?: string } = {}) =>
-    requestAdmin<AdminList<AdminSocialPost>>(fetcher, '/social/posts?' + listQuery(input)),
-  socialComments: (fetcher: typeof fetch, input: { limit?: number; offset?: number; status?: string } = {}) =>
-    requestAdmin<AdminList<AdminSocialComment>>(fetcher, '/social/comments?' + listQuery(input)),
-  mlSignals: (fetcher: typeof fetch, input: { limit?: number; offset?: number; status?: string; target_type?: string } = {}) =>
-    requestAdmin<AdminMlSignals>(fetcher, '/social/ml/signals?' + listQuery(input)),
-  mlScan: (fetcher: typeof fetch, input: { target_type: string; target_id: string; use_local_ai?: boolean; use_external_fallback?: boolean; note?: string }) =>
-    requestAdminJson<AdminMlScan>(fetcher, '/social/ml/scan', input),
-  markMlSignalReviewed: (fetcher: typeof fetch, signalId: string, input: { note?: string }) =>
-    requestAdminJson<AdminMlSignal>(fetcher, '/social/ml/signals/' + encodeURIComponent(signalId) + '/mark-reviewed', input),
-  bulkModeration: (fetcher: typeof fetch, input: AdminBulkModerationRequest) =>
-    requestAdminJson<AdminBulkJob>(fetcher, '/social/bulk/moderation-actions', input)
+  learner: (fetcher: typeof fetch, id: string, context?: AdminRequestContext) => requestAdmin<AdminLearnerDetail>(fetcher, '/learners/' + encodeURIComponent(id), context),
+  lessons: (fetcher: typeof fetch, context?: AdminRequestContext) => requestAdmin<AdminLessons>(fetcher, '/lessons', context),
+  lab: (fetcher: typeof fetch, context?: AdminRequestContext) => requestAdmin<AdminLab>(fetcher, '/lab', context),
+  passports: (fetcher: typeof fetch, context?: AdminRequestContext) => requestAdmin<AdminPassports>(fetcher, '/passports', context),
+  proofLedger: (fetcher: typeof fetch, context?: AdminRequestContext) => requestAdmin<AdminProofLedger>(fetcher, '/proof-ledger', context),
+  communityPilot: (fetcher: typeof fetch, context?: AdminRequestContext) => requestAdmin<AdminCommunityPilot>(fetcher, '/community-pilot', context),
+  starknet: (fetcher: typeof fetch, context?: AdminRequestContext) => requestAdmin<AdminStarknet>(fetcher, '/starknet', context),
+  system: (fetcher: typeof fetch, context?: AdminRequestContext) => requestAdmin<AdminSystem>(fetcher, '/system', context),
+  socialReports: (fetcher: typeof fetch, input: { limit?: number; offset?: number; status?: string; target_type?: string } = {}, context?: AdminRequestContext) =>
+    requestAdmin<AdminList<AdminSocialReport>>(fetcher, '/social/reports?' + listQuery(input), context),
+  socialPosts: (fetcher: typeof fetch, input: { limit?: number; offset?: number; status?: string } = {}, context?: AdminRequestContext) =>
+    requestAdmin<AdminList<AdminSocialPost>>(fetcher, '/social/posts?' + listQuery(input), context),
+  socialComments: (fetcher: typeof fetch, input: { limit?: number; offset?: number; status?: string } = {}, context?: AdminRequestContext) =>
+    requestAdmin<AdminList<AdminSocialComment>>(fetcher, '/social/comments?' + listQuery(input), context),
+  mlSignals: (fetcher: typeof fetch, input: { limit?: number; offset?: number; status?: string; target_type?: string } = {}, context?: AdminRequestContext) =>
+    requestAdmin<AdminMlSignals>(fetcher, '/social/ml/signals?' + listQuery(input), context),
+  mlScan: (fetcher: typeof fetch, input: { target_type: string; target_id: string; use_local_ai?: boolean; use_external_fallback?: boolean; note?: string }, context?: AdminRequestContext) =>
+    requestAdminJson<AdminMlScan>(fetcher, '/social/ml/scan', input, context),
+  markMlSignalReviewed: (fetcher: typeof fetch, signalId: string, input: { note?: string }, context?: AdminRequestContext) =>
+    requestAdminJson<AdminMlSignal>(fetcher, '/social/ml/signals/' + encodeURIComponent(signalId) + '/mark-reviewed', input, context),
+  bulkModeration: (fetcher: typeof fetch, input: AdminBulkModerationRequest, context?: AdminRequestContext) =>
+    requestAdminJson<AdminBulkJob>(fetcher, '/social/bulk/moderation-actions', input, context)
 } as const;
