@@ -2,17 +2,11 @@ import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { adminErrorMessage } from '$lib/admin/admin-api';
 import { adminTeamApi } from '$lib/admin/admin-team-api';
+import { guardAdminRoute } from '$lib/server/admin-access';
 
 function textFromForm(formData: FormData, key: string) {
   const value = String(formData.get(key) || '').trim();
   return value.length ? value : undefined;
-}
-
-function listFromForm(formData: FormData, key: string) {
-  return formData
-    .getAll(key)
-    .map((value) => String(value).trim())
-    .filter(Boolean);
 }
 
 function pick(searchParams: URLSearchParams, key: string, allowed: string[], fallback = 'active') {
@@ -20,15 +14,19 @@ function pick(searchParams: URLSearchParams, key: string, allowed: string[], fal
   return allowed.includes(value) ? value : fallback;
 }
 
-export const load: PageServerLoad = async ({ fetch, url }) => {
+export const load: PageServerLoad = async (event) => {
+  const { fetch, url } = event;
+  const access = await guardAdminRoute(event);
+  if (!access.requestContext) return fail(401, { error: 'Admin access is required.' });
+
   const filters = {
     role: pick(url.searchParams, 'role', ['all', 'admin', 'moderator'], 'all'),
     status: pick(url.searchParams, 'status', ['active', 'revoked', 'expired'], 'active')
   };
 
   const [membersResult, capabilitiesResult] = await Promise.allSettled([
-    adminTeamApi.members(fetch, { limit: 50, role: filters.role, status: filters.status }),
-    adminTeamApi.capabilities(fetch)
+    adminTeamApi.members(fetch, { limit: 50, role: filters.role, status: filters.status }, access.requestContext),
+    adminTeamApi.capabilities(fetch, access.requestContext)
   ]);
 
   return {
@@ -43,7 +41,11 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 };
 
 export const actions: Actions = {
-  upsertMember: async ({ request, fetch }) => {
+  upsertMember: async (event) => {
+    const { request, fetch } = event;
+    const access = await guardAdminRoute(event);
+    if (!access.requestContext) return fail(401, { error: 'Admin access is required.' });
+
     const formData = await request.formData();
     const role = textFromForm(formData, 'role');
     const email = textFromForm(formData, 'email');
@@ -51,31 +53,44 @@ export const actions: Actions = {
     if (!role || (!email && !userId)) return fail(400, { error: 'Role and target email/user ID are required.' });
 
     try {
-      const response = await adminTeamApi.upsertMember(fetch, {
-        email,
-        user_id: userId,
-        role,
-        capabilities: listFromForm(formData, 'capabilities'),
-        reason: textFromForm(formData, 'reason'),
-        expires_at: textFromForm(formData, 'expires_at') ?? null
-      });
+      const response = await adminTeamApi.upsertMember(
+        fetch,
+        {
+          email,
+          user_id: userId,
+          role,
+          capabilities: [],
+          reason: textFromForm(formData, 'reason'),
+          expires_at: textFromForm(formData, 'expires_at') ?? null
+        },
+        access.requestContext
+      );
       return { success: `${response.data.assignment.display_name} is now ${response.data.assignment.role}.` };
     } catch (error) {
       return fail(400, { error: adminErrorMessage(error) });
     }
   },
 
-  revokeMember: async ({ request, fetch }) => {
+  revokeMember: async (event) => {
+    const { request, fetch } = event;
+    const access = await guardAdminRoute(event);
+    if (!access.requestContext) return fail(401, { error: 'Admin access is required.' });
+
     const formData = await request.formData();
     const role = textFromForm(formData, 'role');
     const userId = textFromForm(formData, 'user_id');
     if (!role || !userId) return fail(400, { error: 'Role and user ID are required.' });
 
     try {
-      await adminTeamApi.revokeMember(fetch, userId, {
-        role,
-        reason: textFromForm(formData, 'reason')
-      });
+      await adminTeamApi.revokeMember(
+        fetch,
+        userId,
+        {
+          role,
+          reason: textFromForm(formData, 'reason')
+        },
+        access.requestContext
+      );
       return { success: 'Delegated admin role was revoked.' };
     } catch (error) {
       return fail(400, { error: adminErrorMessage(error) });
