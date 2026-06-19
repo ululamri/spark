@@ -65,6 +65,10 @@ function superadminActor(): AdminUiActor {
   };
 }
 
+function hasCapability(actor: AdminUiActor, capability: string) {
+  return actor.capabilities.includes(capability);
+}
+
 export async function resolveAdminAccess(event: AdminAccessEvent): Promise<AdminAccess> {
   if (hasValidAdminSession(event.cookies)) return { actor: superadminActor(), requestContext: { mode: 'superadmin' } };
 
@@ -84,7 +88,10 @@ export async function resolveAdminAccess(event: AdminAccessEvent): Promise<Admin
 export function defaultAdminPath(actor: AdminUiActor | null) {
   if (!actor) return '/admin/login';
   if (actor.role === 'superadmin') return '/admin';
-  return '/admin/moderation';
+  if (hasCapability(actor, 'moderation_read')) return '/admin/moderation';
+  if (hasCapability(actor, 'audit_read')) return '/admin/audit';
+  if (hasCapability(actor, 'content_read')) return '/admin/content';
+  return '/admin/settings';
 }
 
 export function canAccessAdminPath(actor: AdminUiActor | null, pathname: string) {
@@ -92,7 +99,14 @@ export function canAccessAdminPath(actor: AdminUiActor | null, pathname: string)
   if (pathname === '/admin/login' || pathname === '/admin/logout') return true;
   if (actor.role === 'superadmin') return pathname.startsWith('/admin');
   if (!ENABLE_DELEGATED_ADMIN_ROUTES) return false;
-  return pathname === '/admin/moderation' || pathname.startsWith('/admin/moderation/');
+
+  if (pathname === '/admin/settings') return true;
+  if (pathname === '/admin/moderation' || pathname.startsWith('/admin/moderation/')) return hasCapability(actor, 'moderation_read');
+  if (pathname === '/admin/audit' || pathname.startsWith('/admin/audit/')) return hasCapability(actor, 'audit_read');
+  if (pathname === '/admin/team' || pathname.startsWith('/admin/team/')) return hasCapability(actor, 'audit_read');
+  if (pathname === '/admin/content' || pathname.startsWith('/admin/content/')) return hasCapability(actor, 'content_read');
+
+  return false;
 }
 
 export function requireCapability(access: AdminAccess, capability: string) {
