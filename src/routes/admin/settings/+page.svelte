@@ -4,6 +4,15 @@
   import AdminSectionCard from '$lib/admin/ui/AdminSectionCard.svelte';
   import AdminStatusBadge from '$lib/admin/ui/AdminStatusBadge.svelte';
 
+  type Operation = {
+    id: string;
+    title: string;
+    href: string;
+    capability: string;
+    fallback?: string;
+    detail: string;
+  };
+
   let { data, form } = $props();
 
   const actor = $derived(data.actor);
@@ -21,13 +30,15 @@
     return capabilities.includes(capability);
   }
 
-  const operations = $derived([
+  const operationItems: Operation[] = [
     { id: 'team', title: 'Admin team', href: '/admin/team', capability: 'admin_manage', fallback: 'audit_read', detail: 'Manage or inspect delegated admin and moderator assignments.' },
     { id: 'audit', title: 'Audit log', href: '/admin/audit', capability: 'audit_read', detail: 'Read append-only admin audit events.' },
     { id: 'moderation', title: 'Moderation', href: '/admin/moderation', capability: 'moderation_read', detail: 'Review reports, posts, comments, ML signals, and bulk moderation jobs.' },
     { id: 'content', title: 'Learn & Lab CMS', href: '/admin/content', capability: 'content_read', detail: 'Read and operate learning/lab content workspace.' },
     { id: 'publish', title: 'Publish controls', href: '/admin/content', capability: 'content_publish', detail: 'Publish or archive CMS content when CMS editing is enabled.' }
-  ]);
+  ];
+
+  const operations = $derived(operationItems);
 </script>
 
 <svelte:head><title>Operations - Karyra Spark Admin</title></svelte:head>
@@ -65,6 +76,12 @@
       </ul>
       <form method="POST" action="?/runDiagnostics">
         <button class="admin-button" type="submit">Run live diagnostics</button>
+      </form>
+    </AdminSectionCard>
+  {:else if data.systemRestricted}
+    <AdminSectionCard eyebrow="System" title="Root-only diagnostics hidden" description="Delegated roles can verify their own role context here. Full system diagnostics remain superadmin-only until the core admin backend is fully capability-based.">
+      <form method="POST" action="?/runDiagnostics">
+        <button class="admin-button" type="submit">Run role diagnostics</button>
       </form>
     </AdminSectionCard>
   {/if}
