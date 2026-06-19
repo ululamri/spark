@@ -9,6 +9,13 @@ function textFromForm(formData: FormData, key: string) {
   return value.length ? value : undefined;
 }
 
+function listFromForm(formData: FormData, key: string) {
+  return formData
+    .getAll(key)
+    .map((value) => String(value).trim())
+    .filter(Boolean);
+}
+
 function pick(searchParams: URLSearchParams, key: string, allowed: string[], fallback = 'active') {
   const value = searchParams.get(key)?.trim() || fallback;
   return allowed.includes(value) ? value : fallback;
@@ -17,7 +24,7 @@ function pick(searchParams: URLSearchParams, key: string, allowed: string[], fal
 export const load: PageServerLoad = async (event) => {
   const { fetch, url } = event;
   const access = await guardAdminRoute(event);
-  if (!access.requestContext) return fail(401, { error: 'Admin access is required.' });
+  if (!access.requestContext || !access.actor) return fail(401, { error: 'Admin access is required.' });
 
   const filters = {
     role: pick(url.searchParams, 'role', ['all', 'admin', 'moderator'], 'all'),
@@ -31,6 +38,7 @@ export const load: PageServerLoad = async (event) => {
 
   return {
     filters,
+    canManageTeam: access.actor.capabilities.includes('admin_manage'),
     members: membersResult.status === 'fulfilled' ? membersResult.value.data : null,
     roles: capabilitiesResult.status === 'fulfilled' ? capabilitiesResult.value.data : [],
     apiError: [membersResult, capabilitiesResult]
@@ -44,7 +52,8 @@ export const actions: Actions = {
   upsertMember: async (event) => {
     const { request, fetch } = event;
     const access = await guardAdminRoute(event);
-    if (!access.requestContext) return fail(401, { error: 'Admin access is required.' });
+    if (!access.requestContext || !access.actor) return fail(401, { error: 'Admin access is required.' });
+    if (!access.actor.capabilities.includes('admin_manage')) return fail(403, { error: 'This admin role cannot manage delegated roles.' });
 
     const formData = await request.formData();
     const role = textFromForm(formData, 'role');
@@ -59,7 +68,7 @@ export const actions: Actions = {
           email,
           user_id: userId,
           role,
-          capabilities: [],
+          capabilities: listFromForm(formData, 'capabilities'),
           reason: textFromForm(formData, 'reason'),
           expires_at: textFromForm(formData, 'expires_at') ?? null
         },
@@ -74,7 +83,8 @@ export const actions: Actions = {
   revokeMember: async (event) => {
     const { request, fetch } = event;
     const access = await guardAdminRoute(event);
-    if (!access.requestContext) return fail(401, { error: 'Admin access is required.' });
+    if (!access.requestContext || !access.actor) return fail(401, { error: 'Admin access is required.' });
+    if (!access.actor.capabilities.includes('admin_manage')) return fail(403, { error: 'This admin role cannot revoke delegated roles.' });
 
     const formData = await request.formData();
     const role = textFromForm(formData, 'role');
