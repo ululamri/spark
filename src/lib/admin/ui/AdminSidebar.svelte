@@ -19,18 +19,18 @@
 
   const navigation: AdminNavItem[] = [
     { href: '/admin', label: 'Root overview', roles: ['superadmin'] },
-    { href: '/admin/learners', label: 'Learners', roles: ['superadmin', 'admin'], capability: 'content_read' },
-    { href: '/admin/lessons', label: 'Core lessons', roles: ['superadmin', 'admin'], capability: 'content_read' },
-    { href: '/admin/lab', label: 'Practice Lab', roles: ['superadmin', 'admin'], capability: 'content_read' },
-    { href: '/admin/passport', label: 'Passport', roles: ['superadmin', 'admin'], capability: 'content_read' },
-    { href: '/admin/proofs', label: 'Proof Ledger', roles: ['superadmin'], capability: 'audit_read' },
-    { href: '/admin/pilots', label: 'Community pilot', roles: ['superadmin', 'admin'], capability: 'content_read' },
+    { href: '/admin/learners', label: 'Learners', roles: ['superadmin'] },
+    { href: '/admin/lessons', label: 'Core lessons', roles: ['superadmin'] },
+    { href: '/admin/lab', label: 'Practice Lab', roles: ['superadmin'] },
+    { href: '/admin/passport', label: 'Passport', roles: ['superadmin'] },
+    { href: '/admin/proofs', label: 'Proof Ledger', roles: ['superadmin'] },
+    { href: '/admin/pilots', label: 'Community pilot', roles: ['superadmin'] },
     { href: '/admin/moderation', label: 'Moderation', roles: ['superadmin', 'admin', 'moderator'], capability: 'moderation_read' },
-    { href: '/admin/team', label: 'Admin team', roles: ['superadmin'], capability: 'admin_manage' },
-    { href: '/admin/audit', label: 'Audit log', roles: ['superadmin'], capability: 'audit_read' },
-    { href: '/admin/starknet', label: 'Starknet / Hub', roles: ['superadmin', 'admin'], capability: 'content_read' },
-    { href: '/admin/content', label: 'Content & docs', roles: ['superadmin', 'admin'], capability: 'content_read' },
-    { href: '/admin/settings', label: 'Settings', roles: ['superadmin'] }
+    { href: '/admin/team', label: 'Admin team', roles: ['superadmin', 'admin'], capability: 'audit_read' },
+    { href: '/admin/audit', label: 'Audit log', roles: ['superadmin', 'admin'], capability: 'audit_read' },
+    { href: '/admin/starknet', label: 'Starknet / Hub', roles: ['superadmin'] },
+    { href: '/admin/content', label: 'Learn & Lab CMS', roles: ['superadmin', 'admin'], capability: 'content_read' },
+    { href: '/admin/settings', label: 'Operations', roles: ['superadmin', 'admin', 'moderator'] }
   ];
 
   const roleLabel = $derived(actor?.role ?? 'unauthenticated');
