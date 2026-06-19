@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 
 const files = {
   layoutServer: readFileSync('src/routes/admin/+layout.server.ts', 'utf8'),
+  access: readFileSync('src/lib/server/admin-access.ts', 'utf8'),
   layout: readFileSync('src/routes/admin/+layout.svelte', 'utf8'),
   adminLayout: readFileSync('src/lib/admin/ui/AdminLayout.svelte', 'utf8'),
   sidebar: readFileSync('src/lib/admin/ui/AdminSidebar.svelte', 'utf8')
@@ -10,7 +11,10 @@ const files = {
 
 const checks = [
   [files.layoutServer, 'adminActor'],
-  [files.layoutServer, 'mode: \'superadmin\''],
+  [files.layoutServer, 'guardAdminRoute(event)'],
+  [files.access, "mode: 'superadmin'"],
+  [files.access, "requestContext: { mode: 'superadmin' }"],
+  [files.access, "mode: 'delegated'"],
   [files.layout, '<AdminLayout actor={data.adminActor}>'],
   [files.adminLayout, '<AdminSidebar {actor} />'],
   [files.sidebar, "roles: ['superadmin']"],
