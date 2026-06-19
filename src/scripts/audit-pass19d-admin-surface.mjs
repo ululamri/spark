@@ -12,11 +12,12 @@ const scripts = [
   'src/scripts/audit-pass19d-admin-team-root-boundary.mjs',
   'src/scripts/audit-pass19d-admin-audit-context.mjs',
   'src/scripts/audit-pass19d-admin-context-sweep.mjs',
-  'src/scripts/audit-pass20e-admin-moderation-ui-consistency.mjs'
+  'src/scripts/audit-pass20e-admin-moderation-ui-consistency.mjs',
+  'src/scripts/audit-pass21c-admin-audit-ui-consistency.mjs'
 ];
 
 let failed = false;
-console.log('PASS 19D admin surface aggregate audit');
+console.log('Admin frontend production surface aggregate audit');
 for (const script of scripts) {
   console.log(`\n> node ${script}`);
   const result = spawnSync(process.execPath, [script], { stdio: 'inherit' });
@@ -24,4 +25,4 @@ for (const script of scripts) {
 }
 
 if (failed) process.exit(1);
-console.log('\nNo PASS 19D admin surface blockers found.');
+console.log('\nNo admin frontend production surface blockers found.');
