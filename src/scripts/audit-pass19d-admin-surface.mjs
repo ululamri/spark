@@ -11,7 +11,8 @@ const scripts = [
   'src/scripts/audit-pass19d-admin-role-ux.mjs',
   'src/scripts/audit-pass19d-admin-team-root-boundary.mjs',
   'src/scripts/audit-pass19d-admin-audit-context.mjs',
-  'src/scripts/audit-pass19d-admin-context-sweep.mjs'
+  'src/scripts/audit-pass19d-admin-context-sweep.mjs',
+  'src/scripts/audit-pass20e-admin-moderation-ui-consistency.mjs'
 ];
 
 let failed = false;
