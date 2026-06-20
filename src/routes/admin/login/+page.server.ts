@@ -26,7 +26,7 @@ function delegatedSessionToken(setCookie: string | null) {
   return match?.[1] ?? null;
 }
 
-async function delegatedLogin(fetcher: typeof fetch, email: string, password: string) {
+async function delegatedLogin(fetcher: typeof fetch, email: string, password: string, totpCode: string) {
   return fetcher(adminBaseUrl() + '/auth/login', {
     method: 'POST',
     cache: 'no-store',
@@ -34,7 +34,7 @@ async function delegatedLogin(fetcher: typeof fetch, email: string, password: st
       accept: 'application/json',
       'content-type': 'application/json'
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, totp_code: totpCode || undefined }),
     signal: AbortSignal.timeout(10_000)
   });
 }
@@ -73,11 +73,15 @@ export const actions: Actions = {
     const formData = await request.formData();
     const email = String(formData.get('email') ?? '').trim();
     const password = String(formData.get('password') ?? '');
+    const totpCode = String(formData.get('totp_code') ?? '').trim();
     if (!email || !password) return fail(400, { delegatedMessage: 'Email and password are required.' });
 
-    const response = await delegatedLogin(fetch, email, password).catch(() => null);
+    const response = await delegatedLogin(fetch, email, password, totpCode).catch(() => null);
     if (!response) return fail(503, { delegatedMessage: 'Delegated admin API could not be reached.' });
-    if (!response.ok) return fail(response.status, { delegatedMessage: 'Delegated admin credential was not accepted.' });
+    if (!response.ok) {
+      const body = (await response.json().catch(() => null)) as { error?: string } | null;
+      return fail(response.status, { delegatedMessage: body?.error || 'Delegated admin credential was not accepted.' });
+    }
 
     const token = delegatedSessionToken(response.headers.get('set-cookie'));
     if (!token) return fail(502, { delegatedMessage: 'Delegated admin session cookie was not returned by the API.' });
