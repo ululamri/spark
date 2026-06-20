@@ -34,7 +34,7 @@ function packageJson() {
 const pkg = packageJson();
 const deps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
 
-for (const dep of ['bits-ui', '@tanstack/svelte-query', '@tanstack/svelte-virtual', 'zod', '@lucide/svelte']) {
+for (const dep of ['bits-ui', '@tanstack/svelte-query', '@tanstack/svelte-virtual', 'zod', '@lucide/svelte', 'sveltekit-superforms', 'formsnap']) {
   if (!deps[dep]) failures.push(`Admin baseline dependency missing: ${dep}`);
 }
 
@@ -62,6 +62,12 @@ assertIncludes('admin cms api', cmsApi, "kind: 'core_lesson' | 'lab'");
 assertIncludes('admin cms api', cmsApi, "requestAdmin<AdminCmsItems>");
 assertIncludes('admin cms api', cmsApi, "requestAdminJson<AdminCmsWriteResult>");
 
+const cmsSchemas = read('src/lib/admin/cms/admin-cms-schemas.ts');
+assertIncludes('admin cms schemas', cmsSchemas, "adminCmsDraftSchema");
+assertIncludes('admin cms schemas', cmsSchemas, "parseAdminCmsDraftForm");
+assertIncludes('admin cms schemas', cmsSchemas, "buildAdminCmsDraftPayload");
+assertIncludes('admin cms schemas', cmsSchemas, "schema_version: 1");
+
 const contentServer = read('src/routes/admin/content/+page.server.ts');
 assertIncludes('admin content server', contentServer, "guardAdminRoute(event)");
 assertIncludes('admin content server', contentServer, "content_create");
@@ -69,6 +75,8 @@ assertIncludes('admin content server', contentServer, "content_edit");
 assertIncludes('admin content server', contentServer, "content_publish");
 assertIncludes('admin content server', contentServer, "content_archive");
 assertIncludes('admin content server', contentServer, "adminCmsApi.createItem");
+assertIncludes('admin content server', contentServer, "parseAdminCmsDraftForm");
+assertIncludes('admin content server', contentServer, "buildAdminCmsDraftPayload");
 
 const contentPage = read('src/routes/admin/content/+page.svelte');
 assertIncludes('admin content page', contentPage, "Learn & Lab CMS");
@@ -91,6 +99,7 @@ const frontendFiles = [
   'src/lib/server/admin-access.ts',
   'src/lib/admin/ui/AdminSidebar.svelte',
   'src/lib/admin/admin-cms-api.ts',
+  'src/lib/admin/cms/admin-cms-schemas.ts',
   'src/routes/admin/content/+page.server.ts',
   'src/routes/admin/content/+page.svelte'
 ].map(read).join('\n');
