@@ -11,12 +11,13 @@
   const requests = $derived(data.requests?.items ?? []);
   const filters = $derived(data.filters ?? { status: 'pending', requestType: 'all' });
   const viewForm = $derived((form ?? {}) as Record<string, any>);
+  const reviewerRole = $derived(data.reviewerRole ?? 'admin');
   const pendingCount = $derived(requests.filter((item) => item.status === 'pending').length);
   const approvedCount = $derived(requests.filter((item) => item.status === 'approved').length);
   const rejectedCount = $derived(requests.filter((item) => item.status === 'rejected').length);
 
   const metrics = $derived([
-    { id: 'requests', label: 'Loaded requests', value: requests.length, detail: 'Reset requests loaded in this window.', state: 'available' as const },
+    { id: 'requests', label: 'Loaded requests', value: requests.length, detail: reviewerRole === 'superadmin' ? 'All visible reset requests.' : 'Moderator reset requests visible to admin.', state: 'available' as const },
     { id: 'pending', label: 'Pending', value: pendingCount, detail: 'Requests waiting for review.', state: 'available' as const },
     { id: 'approved', label: 'Approved', value: approvedCount, detail: 'Approved in current filter.', state: 'available' as const },
     { id: 'rejected', label: 'Rejected', value: rejectedCount, detail: 'Rejected in current filter.', state: 'available' as const }
@@ -26,6 +27,12 @@
     if (status === 'approved' || status === 'completed') return 'success' as const;
     if (status === 'pending') return 'warning' as const;
     if (status === 'rejected' || status === 'expired') return 'danger' as const;
+    return 'neutral' as const;
+  }
+
+  function roleTone(role: string | null | undefined) {
+    if (role === 'admin') return 'warning' as const;
+    if (role === 'moderator') return 'success' as const;
     return 'neutral' as const;
   }
 
@@ -46,7 +53,7 @@
 
 <AdminHeader
   title="Reset requests"
-  description="Review request-only password, email, and 2FA recovery records. Approval does not automatically change credentials."
+  description="Hierarchical recovery review: superadmin controls all reset approvals; admin can only review moderator reset requests."
 >
   {#snippet actions()}
     <a class="admin-button--secondary" href="/admin/audit?action=admin_reset_request_review">Review audit</a>
@@ -69,7 +76,16 @@
   {/each}
 </div>
 
-<AdminSectionCard eyebrow="Filters" title="Recovery request queue" description="Requests stay request-only. Reviewing a request records approval/rejection and audit evidence only.">
+<AdminSectionCard eyebrow="Policy" title="Reset approval boundary" description="Approval records review evidence only; it does not automatically change password, email, or 2FA.">
+  <ul class="admin-checklist">
+    <li>Superadmin can review admin and moderator reset requests.</li>
+    <li>Admin can review moderator reset requests only.</li>
+    <li>Admin reset requests go upward to superadmin.</li>
+    <li>Moderator cannot review reset requests.</li>
+  </ul>
+</AdminSectionCard>
+
+<AdminSectionCard eyebrow="Filters" title="Recovery request queue" description="The backend scopes this queue by reviewer role. Admin users will only see moderator reset requests.">
   <form class="admin-moderation-form" method="GET" action="/admin/reset/requests">
     <div class="admin-filter-row">
       <label>
@@ -98,15 +114,18 @@
   </form>
 </AdminSectionCard>
 
-<AdminSectionCard eyebrow="Review" title="Pending recovery requests" description="Approve only after validating the person through the approved internal channel. Reject suspicious or incomplete requests.">
+<AdminSectionCard eyebrow="Review" title="Recovery requests" description="Approve only after validating the person through the approved internal channel. Reject suspicious or incomplete requests.">
   {#if requests.length}
-    <AdminTable caption="Admin reset requests" columns={['Request', 'Status', 'Context', 'Review']}>
+    <AdminTable caption="Admin reset requests" columns={['Request', 'Target', 'Status', 'Context', 'Review']}>
       {#each requests as item}
         <tr>
           <td>
             <strong>{item.email}</strong><br />
             <span class="admin-muted">{typeLabel(item.request_type)} · requested {item.requested_at}</span><br />
             <span class="admin-muted">expires {item.expires_at}</span>
+          </td>
+          <td>
+            <AdminStatusBadge label={item.target_role ?? 'unknown'} tone={roleTone(item.target_role)} />
           </td>
           <td>
             <AdminStatusBadge label={item.status} tone={tone(item.status)} />
@@ -133,6 +152,6 @@
       {/each}
     </AdminTable>
   {:else}
-    <AdminEmptyState title="No reset requests in this filter" detail="Submitted recovery requests from /admin/reset will appear here." />
+    <AdminEmptyState title="No reset requests in this filter" detail="Submitted recovery requests from /admin/reset will appear here when visible to your reviewer role." />
   {/if}
 </AdminSectionCard>
