@@ -33,6 +33,7 @@
         placeholder="123456"
       />
       <p class="admin-login__hint">Email must be verified and authenticator 2FA must be enabled before delegated login can create a session.</p>
+      <a class="admin-login__back" href="/admin/setup">Set up email verification and 2FA</a>
 
       {#if form?.delegatedMessage}<p class="admin-form-error" role="alert">{form.delegatedMessage}</p>{/if}
       <button type="submit">Enter as admin/moderator</button>
