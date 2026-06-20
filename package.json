@@ -12,6 +12,7 @@
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
     "audit:public-copy": "node src/scripts/audit-public-copy-contract.mjs",
+    "audit:pass25a": "node src/scripts/audit-pass25a-admin-spark-baseline.mjs",
     "audit:pass68b": "node src/scripts/audit-pass68b-public-microcopy.mjs",
     "audit:pass68c": "node src/scripts/audit-pass68c-main-journey-copy.mjs",
     "audit:pass68d": "node src/scripts/audit-pass68d-core-lab-flow.mjs",
