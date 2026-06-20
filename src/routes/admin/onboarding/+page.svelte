@@ -161,12 +161,10 @@
         <input type="hidden" name="email" value={form?.email ?? ''} />
         <div class="admin-login__notice" role="status">
           <strong>Final activation</strong>
-          <p>Use a fresh authenticator code for the final invite acceptance.</p>
+          <p>Your authenticator factor is already verified. Confirm your password to activate the role.</p>
         </div>
         <label for="accept-password">Password</label>
         <input id="accept-password" name="password" type="password" autocomplete="current-password" required />
-        <label for="accept-totp">Fresh 2FA code</label>
-        <input id="accept-totp" name="totp_code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required />
         {#if form?.acceptError}<p class="admin-form-error" role="alert">{form.acceptError}</p>{/if}
         <button type="submit">Activate admin role</button>
       </form>

@@ -181,16 +181,14 @@ export const actions: Actions = {
     const formData = await request.formData();
     const ctx = context(formData);
     const password = String(formData.get('password') ?? '');
-    const totpCode = value(formData.get('totp_code'));
-    if (!ctx.token || !ctx.email || !ctx.emailProofToken || !password || !totpCode) {
-      return fail(400, { ...ctx, acceptError: 'Invite token, email, email proof token, password, and 2FA code are required.' });
+    if (!ctx.token || !ctx.email || !ctx.emailProofToken || !password) {
+      return fail(400, { ...ctx, acceptError: 'Invite token, email, email proof token, and password are required.' });
     }
     const result = await call<InviteAcceptData>(fetch, '/invite/accept', {
       token: ctx.token,
       email: ctx.email,
       email_proof_token: ctx.emailProofToken,
-      password,
-      totp_code: totpCode
+      password
     });
     if (!result.ok) return fail(result.status, { ...ctx, acceptError: result.message });
     return { ...ctx, accepted: result.data, onboardingMessage: 'Invitation accepted. You can now log in from the admin panel.' };
