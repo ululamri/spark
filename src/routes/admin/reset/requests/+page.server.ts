@@ -14,11 +14,15 @@ function pick(searchParams: URLSearchParams, key: string, allowed: string[], fal
   return allowed.includes(value) ? value : fallback;
 }
 
+function canReviewResetRequests(role: string) {
+  return role === 'superadmin' || role === 'admin';
+}
+
 export const load: PageServerLoad = async (event) => {
   const { fetch, url } = event;
   const access = await guardAdminRoute(event);
   if (!access.requestContext || !access.actor) return fail(401, { error: 'Admin access is required.' });
-  if (!access.actor.capabilities.includes('admin_manage')) return fail(403, { error: 'Admin manage capability is required.' });
+  if (!canReviewResetRequests(access.actor.role)) return fail(403, { error: 'This admin role cannot review reset requests.' });
 
   const filters = {
     status: pick(url.searchParams, 'status', ['pending', 'approved', 'rejected', 'completed', 'expired', 'all'], 'pending'),
@@ -32,6 +36,7 @@ export const load: PageServerLoad = async (event) => {
   const resetRequests = requestsResult[0];
   return {
     filters,
+    reviewerRole: access.actor.role,
     requests: resetRequests.status === 'fulfilled' ? resetRequests.value.data : null,
     apiError: resetRequests.status === 'rejected' ? adminErrorMessage(resetRequests.reason) : null
   };
@@ -42,7 +47,7 @@ export const actions: Actions = {
     const { request, fetch } = event;
     const access = await guardAdminRoute(event);
     if (!access.requestContext || !access.actor) return fail(401, { error: 'Admin access is required.' });
-    if (!access.actor.capabilities.includes('admin_manage')) return fail(403, { error: 'Admin manage capability is required.' });
+    if (!canReviewResetRequests(access.actor.role)) return fail(403, { error: 'This admin role cannot review reset requests.' });
 
     const formData = await request.formData();
     const requestId = textFromForm(formData, 'request_id');
