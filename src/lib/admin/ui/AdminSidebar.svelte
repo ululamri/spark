@@ -27,6 +27,7 @@
     { href: '/admin/pilots', label: 'Community pilot', roles: ['superadmin'] },
     { href: '/admin/moderation', label: 'Moderation', roles: ['superadmin', 'admin', 'moderator'], capability: 'moderation_read' },
     { href: '/admin/team', label: 'Admin team', roles: ['superadmin', 'admin'], capability: 'audit_read' },
+    { href: '/admin/reset/requests', label: 'Reset requests', roles: ['superadmin', 'admin'] },
     { href: '/admin/audit', label: 'Audit log', roles: ['superadmin', 'admin'], capability: 'audit_read' },
     { href: '/admin/starknet', label: 'Starknet / Hub', roles: ['superadmin'] },
     { href: '/admin/content', label: 'Learn & Lab CMS', roles: ['superadmin', 'admin'], capability: 'content_read' },
