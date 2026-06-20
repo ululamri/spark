@@ -64,6 +64,26 @@ assertIncludes('admin login page', loginPage, 'action="?/delegated"');
 assertIncludes('admin login page', loginPage, 'action="?/superadmin"');
 assertIncludes('admin login page', loginPage, 'name="totp_code"');
 assertIncludes('admin login page', loginPage, 'email verification and 2FA');
+assertIncludes('admin login page', loginPage, 'href="/admin/setup"');
+
+const setupServer = read('src/routes/admin/setup/+page.server.ts');
+assertIncludes('admin setup server', setupServer, "'/auth/email/request'");
+assertIncludes('admin setup server', setupServer, "'/auth/email/confirm'");
+assertIncludes('admin setup server', setupServer, "'/auth/totp/setup'");
+assertIncludes('admin setup server', setupServer, "'/auth/totp/confirm'");
+assertIncludes('admin setup server', setupServer, 'requestEmail');
+assertIncludes('admin setup server', setupServer, 'confirmEmail');
+assertIncludes('admin setup server', setupServer, 'setupTotp');
+assertIncludes('admin setup server', setupServer, 'confirmTotp');
+
+const setupPage = read('src/routes/admin/setup/+page.svelte');
+assertIncludes('admin setup page', setupPage, 'Email verification & 2FA');
+assertIncludes('admin setup page', setupPage, 'action="?/requestEmail"');
+assertIncludes('admin setup page', setupPage, 'action="?/confirmEmail"');
+assertIncludes('admin setup page', setupPage, 'action="?/setupTotp"');
+assertIncludes('admin setup page', setupPage, 'action="?/confirmTotp"');
+assertIncludes('admin setup page', setupPage, 'manual_secret');
+assertIncludes('admin setup page', setupPage, 'otpauth_uri');
 
 const logout = read('src/routes/admin/logout/+server.ts');
 assertIncludes('admin logout', logout, "adminBaseUrl() + '/auth/logout'");
@@ -131,6 +151,8 @@ const frontendFiles = [
   'src/lib/admin/cms/admin-cms-schemas.ts',
   'src/routes/admin/login/+page.server.ts',
   'src/routes/admin/login/+page.svelte',
+  'src/routes/admin/setup/+page.server.ts',
+  'src/routes/admin/setup/+page.svelte',
   'src/routes/admin/logout/+server.ts',
   'src/routes/admin/content/+page.server.ts',
   'src/routes/admin/content/+page.svelte'
