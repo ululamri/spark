@@ -55,8 +55,12 @@ assertIncludes('reset review page', page, 'action="?/reviewRequest"');
 assertIncludes('reset review page', page, 'value="approved"');
 assertIncludes('reset review page', page, 'value="rejected"');
 assertIncludes('reset review page', page, '/admin/audit?action=admin_reset_request_review');
-assertNotIncludes('reset review page', page, 'change password');
-assertNotIncludes('reset review page', page, 'disable 2FA');
+assertNotIncludes('reset review page', page, 'name="new_password"');
+assertNotIncludes('reset review page', page, 'name="password" type="password"');
+assertNotIncludes('reset review page', page, 'reset_password');
+assertNotIncludes('reset review page', page, 'disable_totp');
+assertNotIncludes('reset review page', page, 'revoke_totp');
+assertNotIncludes('reset review page', page, 'change_email');
 
 console.log('PASS 25E-I admin reset hierarchical review UI audit');
 if (failures.length) {
