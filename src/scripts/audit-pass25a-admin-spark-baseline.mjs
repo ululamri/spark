@@ -54,6 +54,7 @@ const loginServer = read('src/routes/admin/login/+page.server.ts');
 assertIncludes('admin login server', loginServer, 'superadmin: async');
 assertIncludes('admin login server', loginServer, 'delegated: async');
 assertIncludes('admin login server', loginServer, "adminBaseUrl() + '/auth/login'");
+assertIncludes('admin login server', loginServer, 'totp_code');
 assertIncludes('admin login server', loginServer, 'setDelegatedAdminSession');
 
 const loginPage = read('src/routes/admin/login/+page.svelte');
@@ -61,6 +62,8 @@ assertIncludes('admin login page', loginPage, 'Admin / Moderator');
 assertIncludes('admin login page', loginPage, 'Superadmin');
 assertIncludes('admin login page', loginPage, 'action="?/delegated"');
 assertIncludes('admin login page', loginPage, 'action="?/superadmin"');
+assertIncludes('admin login page', loginPage, 'name="totp_code"');
+assertIncludes('admin login page', loginPage, 'email verification and 2FA');
 
 const logout = read('src/routes/admin/logout/+server.ts');
 assertIncludes('admin logout', logout, "adminBaseUrl() + '/auth/logout'");
