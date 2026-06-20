@@ -3,6 +3,7 @@ import { env } from '$env/dynamic/private';
 import type { Cookies } from '@sveltejs/kit';
 
 export const ADMIN_COOKIE_NAME = 'karyra_admin_session';
+export const DELEGATED_ADMIN_COOKIE_NAME = 'spark_admin_session';
 
 const DEFAULT_SESSION_HOURS = 8;
 const MAX_LOGIN_ATTEMPTS = 5;
@@ -104,8 +105,22 @@ export function setAdminSession(cookies: Cookies, secure: boolean) {
   });
 }
 
+export function setDelegatedAdminSession(cookies: Cookies, token: string, secure: boolean, maxAgeSeconds = DEFAULT_SESSION_HOURS * 60 * 60) {
+  cookies.set(DELEGATED_ADMIN_COOKIE_NAME, token, {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'lax',
+    secure,
+    maxAge: maxAgeSeconds
+  });
+}
+
 export function clearAdminSession(cookies: Cookies) {
   cookies.delete(ADMIN_COOKIE_NAME, { path: '/admin' });
+}
+
+export function clearDelegatedAdminSession(cookies: Cookies) {
+  cookies.delete(DELEGATED_ADMIN_COOKIE_NAME, { path: '/' });
 }
 
 export function checkAdminLoginRateLimit(key: string) {
@@ -127,6 +142,3 @@ export function checkAdminLoginRateLimit(key: string) {
 export function resetAdminLoginRateLimit(key: string) {
   loginAttempts.delete(key);
 }
-
-// TODO: Replace the single environment credential with identity-provider RBAC,
-// revocable sessions, audit logging, and per-action authorization before writes.
