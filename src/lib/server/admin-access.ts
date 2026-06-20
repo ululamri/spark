@@ -70,6 +70,10 @@ function hasCapability(actor: AdminUiActor, capability: string) {
   return actor.capabilities.includes(capability);
 }
 
+function canReviewResetRequests(actor: AdminUiActor) {
+  return actor.role === 'superadmin' || actor.role === 'admin';
+}
+
 export async function resolveAdminAccess(event: AdminAccessEvent): Promise<AdminAccess> {
   if (hasValidAdminSession(event.cookies)) return { actor: superadminActor(), requestContext: { mode: 'superadmin' } };
 
@@ -105,7 +109,7 @@ export function canAccessAdminPath(actor: AdminUiActor | null, pathname: string)
   if (pathname === '/admin/moderation' || pathname.startsWith('/admin/moderation/')) return hasCapability(actor, 'moderation_read');
   if (pathname === '/admin/audit' || pathname.startsWith('/admin/audit/')) return hasCapability(actor, 'audit_read');
   if (pathname === '/admin/team' || pathname.startsWith('/admin/team/')) return hasCapability(actor, 'audit_read');
-  if (pathname === '/admin/reset/requests' || pathname.startsWith('/admin/reset/requests/')) return hasCapability(actor, 'admin_manage');
+  if (pathname === '/admin/reset/requests' || pathname.startsWith('/admin/reset/requests/')) return canReviewResetRequests(actor);
   if (pathname === '/admin/content' || pathname.startsWith('/admin/content/')) return hasCapability(actor, 'content_read');
 
   return false;
