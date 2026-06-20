@@ -42,6 +42,31 @@ for (const forbidden of ['directus', '@directus/sdk']) {
   if (deps[forbidden]) failures.push(`Directus dependency must not exist after rollback: ${forbidden}`);
 }
 
+const auth = read('src/lib/server/admin-auth.ts');
+assertIncludes('server admin auth', auth, 'ADMIN_COOKIE_NAME');
+assertIncludes('server admin auth', auth, 'DELEGATED_ADMIN_COOKIE_NAME');
+assertIncludes('server admin auth', auth, 'karyra_admin_session');
+assertIncludes('server admin auth', auth, 'spark_admin_session');
+assertIncludes('server admin auth', auth, 'setDelegatedAdminSession');
+assertIncludes('server admin auth', auth, 'clearDelegatedAdminSession');
+
+const loginServer = read('src/routes/admin/login/+page.server.ts');
+assertIncludes('admin login server', loginServer, 'superadmin: async');
+assertIncludes('admin login server', loginServer, 'delegated: async');
+assertIncludes('admin login server', loginServer, "adminBaseUrl() + '/auth/login'");
+assertIncludes('admin login server', loginServer, 'setDelegatedAdminSession');
+
+const loginPage = read('src/routes/admin/login/+page.svelte');
+assertIncludes('admin login page', loginPage, 'Admin / Moderator');
+assertIncludes('admin login page', loginPage, 'Superadmin');
+assertIncludes('admin login page', loginPage, 'action="?/delegated"');
+assertIncludes('admin login page', loginPage, 'action="?/superadmin"');
+
+const logout = read('src/routes/admin/logout/+server.ts');
+assertIncludes('admin logout', logout, "adminBaseUrl() + '/auth/logout'");
+assertIncludes('admin logout', logout, 'clearAdminSession');
+assertIncludes('admin logout', logout, 'clearDelegatedAdminSession');
+
 const access = read('src/lib/server/admin-access.ts');
 assertIncludes('admin access', access, "mode: 'superadmin' | 'delegated'");
 assertIncludes('admin access', access, "'content_read'");
@@ -96,10 +121,14 @@ for (const rel of [
 }
 
 const frontendFiles = [
+  'src/lib/server/admin-auth.ts',
   'src/lib/server/admin-access.ts',
   'src/lib/admin/ui/AdminSidebar.svelte',
   'src/lib/admin/admin-cms-api.ts',
   'src/lib/admin/cms/admin-cms-schemas.ts',
+  'src/routes/admin/login/+page.server.ts',
+  'src/routes/admin/login/+page.svelte',
+  'src/routes/admin/logout/+server.ts',
   'src/routes/admin/content/+page.server.ts',
   'src/routes/admin/content/+page.svelte'
 ].map(read).join('\n');
