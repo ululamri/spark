@@ -105,6 +105,7 @@ export function canAccessAdminPath(actor: AdminUiActor | null, pathname: string)
   if (pathname === '/admin/moderation' || pathname.startsWith('/admin/moderation/')) return hasCapability(actor, 'moderation_read');
   if (pathname === '/admin/audit' || pathname.startsWith('/admin/audit/')) return hasCapability(actor, 'audit_read');
   if (pathname === '/admin/team' || pathname.startsWith('/admin/team/')) return hasCapability(actor, 'audit_read');
+  if (pathname === '/admin/reset/requests' || pathname.startsWith('/admin/reset/requests/')) return hasCapability(actor, 'admin_manage');
   if (pathname === '/admin/content' || pathname.startsWith('/admin/content/')) return hasCapability(actor, 'content_read');
 
   return false;
