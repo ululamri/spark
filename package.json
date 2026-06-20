@@ -31,9 +31,11 @@
     "@tanstack/svelte-virtual": "latest",
     "bits-ui": "latest",
     "clsx": "latest",
+    "formsnap": "latest",
     "gsap": "^3.6.0",
     "mode-watcher": "latest",
     "svelte-sonner": "latest",
+    "sveltekit-superforms": "latest",
     "tailwind-merge": "latest",
     "zod": "latest"
   },
