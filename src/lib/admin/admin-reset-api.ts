@@ -11,6 +11,7 @@ export type AdminResetRequest = {
   reviewed_at: string | null;
   expires_at: string;
   metadata: Record<string, unknown>;
+  target_role: 'admin' | 'moderator' | string | null;
 };
 
 export type AdminResetRequests = {
