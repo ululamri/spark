@@ -2,12 +2,8 @@ import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { adminErrorMessage } from '$lib/admin/admin-api';
 import { adminCmsApi } from '$lib/admin/admin-cms-api';
+import { adminCmsDraftError, buildAdminCmsDraftPayload, parseAdminCmsDraftForm } from '$lib/admin/cms/admin-cms-schemas';
 import { guardAdminRoute } from '$lib/server/admin-access';
-
-function textFromForm(formData: FormData, key: string) {
-  const value = String(formData.get(key) || '').trim();
-  return value.length ? value : undefined;
-}
 
 function pick(searchParams: URLSearchParams, key: string, allowed: string[], fallback = 'all') {
   const value = searchParams.get(key)?.trim() || fallback;
@@ -61,25 +57,21 @@ export const actions: Actions = {
     if (!access.actor.capabilities.includes('content_create')) return fail(403, { error: 'This admin role cannot create CMS drafts.' });
 
     const formData = await event.request.formData();
-    const kind = textFromForm(formData, 'kind');
-    const slug = textFromForm(formData, 'slug');
-    const title = textFromForm(formData, 'title');
-    if (!kind || !slug || !title) return fail(400, { error: 'Kind, slug, and title are required.' });
+    const parsed = parseAdminCmsDraftForm(formData);
+    if (!parsed.success) return fail(400, { error: adminCmsDraftError(parsed) });
+
+    const input = parsed.data;
 
     try {
       const response = await adminCmsApi.createItem(
         event.fetch,
         {
-          kind,
-          slug,
-          title,
-          status: 'draft',
-          summary: textFromForm(formData, 'summary') ?? 'Initial CMS draft created from admin UI.',
-          payload: {
-            title,
-            body: textFromForm(formData, 'body') ?? '',
-            source: 'admin_ui'
-          }
+          kind: input.kind,
+          slug: input.slug,
+          title: input.title,
+          status: input.status,
+          summary: input.summary ?? 'Initial CMS draft created from admin UI.',
+          payload: buildAdminCmsDraftPayload(input)
         },
         access.requestContext
       );
