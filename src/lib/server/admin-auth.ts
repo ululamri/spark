@@ -75,7 +75,7 @@ function createSessionToken() {
   return encoded + '.' + signPayload(encoded, config.sessionSecret);
 }
 
-export function hasValidAdminSession(cookies: Cookies) {
+export function hasValidAdminSession(cookies: Pick<Cookies, 'get'>) {
   const config = getAdminAuthConfig();
   const token = cookies.get(ADMIN_COOKIE_NAME);
   if (!config.configured || !token) return false;

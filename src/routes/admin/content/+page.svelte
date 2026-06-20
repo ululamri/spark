@@ -9,7 +9,7 @@
   let { data, form } = $props();
 
   const items = $derived(data.cms?.items ?? []);
-  const filters = $derived(data.filters);
+  const filters = $derived(data.filters ?? { kind: 'all', status: 'all', q: '' });
   const draftCount = $derived(items.filter((item) => item.status === 'draft').length);
   const reviewCount = $derived(items.filter((item) => item.status === 'review').length);
   const publishedCount = $derived(items.filter((item) => item.status === 'published').length);

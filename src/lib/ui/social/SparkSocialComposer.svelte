@@ -200,7 +200,7 @@
         {policy.normalized.length}/640 · {selectedFiles.length > 0 ? `${selectedFiles.length} media siap diunggah` : 'siap dibagikan'}
       </small>
       <div>
-        <button type="button" class="composer-cancel" disabled={submitting} onclick={resetComposer}>Batal</button>
+        <button type="button" class="composer-cancel" disabled={submitting} onclick={() => resetComposer()}>Batal</button>
         <button type="button" class="spark-btn primary" disabled={!policy.canKirim || submitting} onclick={submit}>
           <SparkIcon name={submitting ? 'clock' : 'send'} size={15} /> {submitLabel}
         </button>

@@ -50,7 +50,7 @@ export function parseAdminCmsDraftForm(formData: FormData) {
   });
 }
 
-export function adminCmsDraftError(result: z.SafeParseError<unknown>) {
+export function adminCmsDraftError(result: { error: { issues: Array<{ message: string }> } }) {
   return result.error.issues.map((issue) => issue.message).join(' ');
 }
 

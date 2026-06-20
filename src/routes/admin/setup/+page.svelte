@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { form } = $props();
+  let { form }: { form?: any } = $props();
 </script>
 
 <svelte:head>

@@ -10,7 +10,7 @@
 
   const members = $derived(data.members?.items ?? []);
   const roles = $derived(data.roles ?? []);
-  const filters = $derived(data.filters);
+  const filters = $derived(data.filters ?? { role: 'all', status: 'active' });
   const adminCount = $derived(members.filter((member) => member.role === 'admin').length);
   const moderatorCount = $derived(members.filter((member) => member.role === 'moderator').length);
   const expiringCount = $derived(members.filter((member) => member.expires_at).length);
