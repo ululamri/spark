@@ -44,6 +44,7 @@ const SUPERADMIN_CAPABILITIES = [
 ];
 
 const ENABLE_DELEGATED_ADMIN_ROUTES = true;
+const ADMIN_AUTH_SURFACE_PATHS = new Set(['/admin/login', '/admin/superadmin/login', '/admin/onboarding', '/admin/reset']);
 
 function normalizeActor(actor: AdminActor): AdminUiActor {
   return {
@@ -95,8 +96,8 @@ export function defaultAdminPath(actor: AdminUiActor | null) {
 }
 
 export function canAccessAdminPath(actor: AdminUiActor | null, pathname: string) {
-  if (!actor) return pathname === '/admin/login';
-  if (pathname === '/admin/login' || pathname === '/admin/logout') return true;
+  if (!actor) return ADMIN_AUTH_SURFACE_PATHS.has(pathname);
+  if (ADMIN_AUTH_SURFACE_PATHS.has(pathname) || pathname === '/admin/logout') return true;
   if (actor.role === 'superadmin') return pathname.startsWith('/admin');
   if (!ENABLE_DELEGATED_ADMIN_ROUTES) return false;
 
@@ -124,7 +125,7 @@ export async function guardAdminRoute(event: AdminAccessEvent & { url: URL }) {
   const access = await resolveAdminAccess(event);
   const pathname = event.url.pathname;
 
-  if (pathname === '/admin/login' && access.actor) redirect(303, defaultAdminPath(access.actor));
+  if (ADMIN_AUTH_SURFACE_PATHS.has(pathname) && access.actor) redirect(303, defaultAdminPath(access.actor));
 
   if (!canAccessAdminPath(access.actor, pathname)) {
     if (!access.actor) redirect(303, '/admin/login');

@@ -4,11 +4,8 @@ import { adminBaseUrl } from '$lib/admin/admin-api';
 import {
   DELEGATED_ADMIN_COOKIE_NAME,
   checkAdminLoginRateLimit,
-  getAdminAuthConfig,
   resetAdminLoginRateLimit,
-  setAdminSession,
-  setDelegatedAdminSession,
-  verifyAdminPassword
+  setDelegatedAdminSession
 } from '$lib/server/admin-auth';
 
 function clientKey(getClientAddress: () => string, suffix: string) {
@@ -40,29 +37,6 @@ async function delegatedLogin(fetcher: typeof fetch, email: string, password: st
 }
 
 export const actions: Actions = {
-  superadmin: async ({ request, cookies, url, getClientAddress }) => {
-    const config = getAdminAuthConfig();
-    if (!config.configured) {
-      return fail(503, { superadminMessage: 'Superadmin access is not configured for this deployment.' });
-    }
-
-    const key = clientKey(getClientAddress, 'superadmin');
-    const rateLimit = checkAdminLoginRateLimit(key);
-    if (!rateLimit.allowed) {
-      return fail(429, { superadminMessage: 'Too many attempts. Try again in ' + rateLimit.retryAfterSeconds + ' seconds.' });
-    }
-
-    const formData = await request.formData();
-    const password = String(formData.get('password') ?? '');
-    if (!verifyAdminPassword(password)) {
-      return fail(401, { superadminMessage: 'Superadmin credential was not accepted.' });
-    }
-
-    resetAdminLoginRateLimit(key);
-    setAdminSession(cookies, url.protocol === 'https:');
-    redirect(303, '/admin');
-  },
-
   delegated: async ({ request, cookies, url, fetch, getClientAddress }) => {
     const key = clientKey(getClientAddress, 'delegated');
     const rateLimit = checkAdminLoginRateLimit(key);
@@ -74,7 +48,7 @@ export const actions: Actions = {
     const email = String(formData.get('email') ?? '').trim();
     const password = String(formData.get('password') ?? '');
     const totpCode = String(formData.get('totp_code') ?? '').trim();
-    if (!email || !password) return fail(400, { delegatedMessage: 'Email and password are required.' });
+    if (!email || !password || !totpCode) return fail(400, { delegatedMessage: 'Email, password, and 2FA code are required.' });
 
     const response = await delegatedLogin(fetch, email, password, totpCode).catch(() => null);
     if (!response) return fail(503, { delegatedMessage: 'Delegated admin API could not be reached.' });

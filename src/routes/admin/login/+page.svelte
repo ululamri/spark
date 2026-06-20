@@ -1,20 +1,19 @@
 <script lang="ts">
-  let { data, form } = $props();
+  let { form } = $props();
 </script>
 
 <svelte:head>
-  <title>Admin access - Karyra Spark</title>
+  <title>Karyra Spark Admin Panel</title>
 </svelte:head>
 
 <div class="admin-login">
   <section class="admin-login__card">
     <img src="/assets/brand/icon-only.svg" alt="" width="48" height="48" />
-    <span class="admin-eyebrow">Private administration</span>
-    <h1>Karyra Spark Admin</h1>
-    <p>Superadmin, admin, and moderator access are intentionally separated. Superadmin remains root-controlled; admin and moderator use delegated login with email verification and 2FA.</p>
+    <span class="admin-eyebrow">Delegated administration</span>
+    <h1>Karyra Spark Admin Panel</h1>
+    <p>Admin and moderator access is invite-only. Use the email, password, and authenticator code attached to your delegated admin account.</p>
 
     <form method="POST" action="?/delegated" class="admin-login__form">
-      <span class="admin-eyebrow">Admin / Moderator</span>
       <label for="delegated-email">Email</label>
       <input id="delegated-email" name="email" type="email" autocomplete="email" required />
 
@@ -31,41 +30,20 @@
         maxlength="6"
         pattern="[0-9]{6}"
         placeholder="123456"
+        required
       />
-      <p class="admin-login__hint">Email must be verified and authenticator 2FA must be enabled before delegated login can create a session.</p>
-      <a class="admin-login__back" href="/admin/setup">Set up email verification and 2FA</a>
 
       {#if form?.delegatedMessage}<p class="admin-form-error" role="alert">{form.delegatedMessage}</p>{/if}
-      <button type="submit">Enter as admin/moderator</button>
+      <button type="submit">Login</button>
     </form>
 
     <div class="admin-login__notice" role="status">
-      <strong>Root boundary</strong>
-      <p>Superadmin uses the private root credential and is not mixed with delegated admin or moderator sessions.</p>
+      <strong>Invite-only boundary</strong>
+      <p>New admin/moderator access must start from an approved invitation. Free setup from this login screen is disabled.</p>
     </div>
 
-    {#if !data.adminConfigured}
-      <div class="admin-login__notice" role="status">
-        <strong>Superadmin access is disabled.</strong>
-        <p>Configure the private superadmin environment values on the server. Delegated login can still be used after backend admin auth is active.</p>
-      </div>
-    {:else}
-      <form method="POST" action="?/superadmin" class="admin-login__form">
-        <span class="admin-eyebrow">Superadmin</span>
-        <label for="admin-password">Root credential</label>
-        <input
-          id="admin-password"
-          name="password"
-          type="password"
-          autocomplete="current-password"
-          minlength="12"
-          required
-        />
-        {#if form?.superadminMessage}<p class="admin-form-error" role="alert">{form.superadminMessage}</p>{/if}
-        <button type="submit">Enter root console</button>
-      </form>
-    {/if}
-
+    <a class="admin-login__back" href="/admin/onboarding">Use invite token</a>
+    <a class="admin-login__back" href="/admin/reset">Request access reset</a>
     <a class="admin-login__back" href="/">Return to public Spark</a>
   </section>
 </div>
