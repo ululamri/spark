@@ -11,16 +11,34 @@
     <img src="/assets/brand/icon-only.svg" alt="" width="48" height="48" />
     <span class="admin-eyebrow">Private administration</span>
     <h1>Karyra Spark Admin</h1>
-    <p>This area is separated from learner routes and requires a server-issued admin session.</p>
+    <p>Superadmin, admin, and moderator access are intentionally separated. Superadmin remains root-controlled; admin and moderator use delegated login.</p>
+
+    <form method="POST" action="?/delegated" class="admin-login__form">
+      <span class="admin-eyebrow">Admin / Moderator</span>
+      <label for="delegated-email">Email</label>
+      <input id="delegated-email" name="email" type="email" autocomplete="email" required />
+
+      <label for="delegated-password">Password</label>
+      <input id="delegated-password" name="password" type="password" autocomplete="current-password" minlength="8" required />
+
+      {#if form?.delegatedMessage}<p class="admin-form-error" role="alert">{form.delegatedMessage}</p>{/if}
+      <button type="submit">Enter as admin/moderator</button>
+    </form>
+
+    <div class="admin-login__notice" role="status">
+      <strong>Root boundary</strong>
+      <p>Superadmin uses the private root credential and is not mixed with delegated admin or moderator sessions.</p>
+    </div>
 
     {#if !data.adminConfigured}
       <div class="admin-login__notice" role="status">
-        <strong>Admin access is disabled.</strong>
-        <p>Configure the private admin environment values on the server. No public fallback is available.</p>
+        <strong>Superadmin access is disabled.</strong>
+        <p>Configure the private superadmin environment values on the server. Delegated login can still be used after backend admin auth is active.</p>
       </div>
     {:else}
-      <form method="POST" class="admin-login__form">
-        <label for="admin-password">Admin credential</label>
+      <form method="POST" action="?/superadmin" class="admin-login__form">
+        <span class="admin-eyebrow">Superadmin</span>
+        <label for="admin-password">Root credential</label>
         <input
           id="admin-password"
           name="password"
@@ -29,8 +47,8 @@
           minlength="12"
           required
         />
-        {#if form?.message}<p class="admin-form-error" role="alert">{form.message}</p>{/if}
-        <button type="submit">Enter admin dashboard</button>
+        {#if form?.superadminMessage}<p class="admin-form-error" role="alert">{form.superadminMessage}</p>{/if}
+        <button type="submit">Enter root console</button>
       </form>
     {/if}
 
