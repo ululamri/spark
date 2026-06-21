@@ -70,5 +70,32 @@ export const actions: Actions = {
     } catch (error) {
       return fail(400, { error: adminErrorMessage(error) });
     }
+  },
+
+  issueRecoveryArtifact: async (event) => {
+    const { request, fetch } = event;
+    const access = await guardAdminRoute(event);
+    if (!access.requestContext || !access.actor) return fail(401, { error: 'Admin access is required.' });
+    if (!canReviewResetRequests(access.actor.role)) return fail(403, { error: 'This admin role cannot issue recovery artifacts.' });
+
+    const formData = await request.formData();
+    const requestId = textFromForm(formData, 'request_id');
+    if (!requestId) return fail(400, { error: 'Reset request ID is required.' });
+
+    try {
+      const response = await adminResetApi.issueRecoveryArtifact(
+        fetch,
+        requestId,
+        { reason: textFromForm(formData, 'reason') },
+        access.requestContext
+      );
+      const artifact = response.data.artifact;
+      return {
+        success: `Recovery artifact issued for ${artifact.email}. Delivery mode: ${response.data.delivery_mode}.`,
+        recoveryArtifact: response.data
+      };
+    } catch (error) {
+      return fail(400, { error: adminErrorMessage(error) });
+    }
   }
 };
