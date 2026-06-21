@@ -11,7 +11,7 @@
     <img src="/assets/brand/icon-only.svg" alt="" width="48" height="48" />
     <span class="admin-eyebrow">Delegated administration</span>
     <h1>Karyra Spark Admin Panel</h1>
-    <p>Admin and moderator access is invite-only. Use the email, password, and authenticator code attached to your delegated admin account.</p>
+    <p>Masuk dengan email admin, sandi, dan kode 2FA yang sudah diaktifkan saat onboarding.</p>
 
     <form method="POST" action="?/delegated" class="admin-login__form">
       <label for="delegated-email">Email</label>
@@ -27,14 +27,13 @@
         type="text"
         inputmode="numeric"
         autocomplete="one-time-code"
-        maxlength="6"
-        pattern="[0-9]{6}"
-        placeholder="123456"
+        maxlength="16"
+        placeholder="Masukkan 6 digit kode 2FA"
         required
       />
 
       {#if form?.delegatedMessage}<p class="admin-form-error" role="alert">{form.delegatedMessage}</p>{/if}
-      <button type="submit">Login</button>
+      <button type="submit">Masuk ke Admin Panel</button>
     </form>
 
     <div class="admin-login__notice" role="status">
@@ -42,7 +41,7 @@
       <p>New admin/moderator access must start from an approved invitation. Free setup from this login screen is disabled.</p>
     </div>
 
-    <a class="admin-login__back" href="/admin/onboarding">Use invite token</a>
+    <a class="admin-login__back" href="/admin/onboarding">Gunakan invite code</a>
     <a class="admin-login__back" href="/admin/reset">Request access reset</a>
     <a class="admin-login__back" href="/">Return to public Spark</a>
   </section>

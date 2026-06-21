@@ -38,7 +38,8 @@
     "svelte-sonner": "latest",
     "sveltekit-superforms": "latest",
     "tailwind-merge": "latest",
-    "zod": "latest"
+    "zod": "latest",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.4",

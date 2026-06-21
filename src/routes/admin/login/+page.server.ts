@@ -23,6 +23,10 @@ function delegatedSessionToken(setCookie: string | null) {
   return match?.[1] ?? null;
 }
 
+function otpValue(input: FormDataEntryValue | null) {
+  return String(input ?? '').replace(/\D/g, '').slice(0, 6);
+}
+
 async function delegatedLogin(fetcher: typeof fetch, email: string, password: string, totpCode: string) {
   return fetcher(adminBaseUrl() + '/auth/login', {
     method: 'POST',
@@ -47,7 +51,7 @@ export const actions: Actions = {
     const formData = await request.formData();
     const email = String(formData.get('email') ?? '').trim();
     const password = String(formData.get('password') ?? '');
-    const totpCode = String(formData.get('totp_code') ?? '').trim();
+    const totpCode = otpValue(formData.get('totp_code'));
     if (!email || !password || !totpCode) return fail(400, { delegatedMessage: 'Email, password, and 2FA code are required.' });
 
     const response = await delegatedLogin(fetch, email, password, totpCode).catch(() => null);
