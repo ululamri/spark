@@ -69,6 +69,17 @@ type EmailRecoveryProofData = {
   credential_mutation: false;
 };
 
+type EmailRecoveryCompleteData = {
+  artifact_id: string;
+  reset_request_id: string;
+  old_email: string;
+  new_email: string;
+  target_role: 'admin' | 'moderator' | string | null;
+  email_changed_at: string;
+  reset_request_completed: boolean;
+  sessions_revoked: boolean;
+};
+
 function value(input: FormDataEntryValue | null) {
   return String(input ?? '').trim();
 }
@@ -243,7 +254,32 @@ export const actions: Actions = {
       token,
       email,
       emailProof: result.data,
-      success: 'New-email proof confirmed. Final account email change is still locked for the next pass.'
+      success: 'New-email proof confirmed. Complete the final email recovery step.'
+    };
+  },
+
+  completeEmailRecovery: async ({ request, fetch }) => {
+    const formData = await request.formData();
+    const token = value(formData.get('token'));
+    const email = value(formData.get('email'));
+    const newEmail = value(formData.get('new_email'));
+    const proofToken = value(formData.get('email_proof_token'));
+    if (!token || !email || !newEmail || !proofToken) {
+      return fail(400, { token, email, error: 'Recovery token, current email, new email, and proof token are required.' });
+    }
+
+    const result = await call<EmailRecoveryCompleteData>(
+      fetch,
+      '/recovery/email/complete',
+      { token, email, new_email: newEmail, email_proof_token: proofToken },
+      'Email recovery finalization failed. The proof may be invalid, expired, or the new email may no longer be available.'
+    );
+    if (!result.ok) return fail(result.status, { token, email, error: result.message });
+
+    return {
+      email: result.data.new_email,
+      emailRecovered: result.data,
+      success: 'Email recovered. Existing admin sessions were revoked. Continue to admin login with the new email.'
     };
   }
 };

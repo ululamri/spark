@@ -46,6 +46,11 @@
           <p>New email proof confirmed for: {form.emailProof.new_email}</p>
           <p>Proof expires: {form.emailProof.proof_expires_at}</p>
           <p>Credential mutation: {form.emailProof.credential_mutation ? 'yes' : 'no'}</p>
+        {:else if form.emailRecovered}
+          <p>Email changed at: {form.emailRecovered.email_changed_at}</p>
+          <p>Old email: {form.emailRecovered.old_email}</p>
+          <p>New email: {form.emailRecovered.new_email}</p>
+          <p>Sessions revoked: {form.emailRecovered.sessions_revoked ? 'yes' : 'no'}</p>
         {/if}
       </div>
     {:else if form?.error}
@@ -145,9 +150,20 @@
       </form>
     {/if}
 
+    {#if form?.emailProof}
+      <form method="POST" action="?/completeEmailRecovery" class="admin-login__form">
+        <input type="hidden" name="email" value={form.email ?? form.emailProof.old_email} />
+        <input type="hidden" name="token" value={form.token ?? ''} />
+        <input type="hidden" name="new_email" value={form.emailProof.new_email} />
+        <input type="hidden" name="email_proof_token" value={form.emailProof.email_proof_token} />
+
+        <button type="submit">Complete email recovery</button>
+      </form>
+    {/if}
+
     <div class="admin-login__notice" role="status">
       <strong>Recovery boundary</strong>
-      <p>Password and 2FA recovery consume the artifact once. Email recovery currently proves the new email only; final account email mutation is still locked for the next pass.</p>
+      <p>Password and 2FA recovery consume the artifact once. Email recovery changes the account email only after the new-email proof token is confirmed. Existing admin sessions are revoked after finalization.</p>
     </div>
 
     <a class="admin-login__back" href="/admin/login">Return to admin login</a>

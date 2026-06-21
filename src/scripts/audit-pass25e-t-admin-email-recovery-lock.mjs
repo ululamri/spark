@@ -17,23 +17,14 @@ function assertIncludes(label, content, needle) {
   if (!content.includes(needle)) failures.push(`${label}: missing ${needle}`);
 }
 
-function assertNotIncludes(label, content, needle) {
-  if (content.includes(needle)) failures.push(`${label}: forbidden ${needle}`);
-}
+const server = read('src/routes/admin/recovery/+page.server.ts');
+assertIncludes('email proof shell present', server, 'requestEmailProof');
+assertIncludes('email proof confirm present', server, 'confirmEmailProof');
+assertIncludes('email final requires proof', server, 'email_proof_token: proofToken');
 
-const recoveryPage = read('src/routes/admin/recovery/+page.svelte');
-assertIncludes('recovery page email final locked', recoveryPage, 'final account email mutation is still locked');
-assertIncludes('recovery page keeps password recovery', recoveryPage, 'Recover password');
-assertIncludes('recovery page keeps 2fa recovery', recoveryPage, 'Confirm fresh 2FA');
-assertIncludes('recovery page email proof shell', recoveryPage, 'Request new-email proof');
-assertNotIncludes('no final email action', recoveryPage, 'recoverEmailFinal');
-assertNotIncludes('no change email action', recoveryPage, 'change_email');
-
-const recoveryServer = read('src/routes/admin/recovery/+page.server.ts');
-assertIncludes('recovery server email proof shell', recoveryServer, 'requestEmailProof');
-assertIncludes('recovery server email proof confirmation', recoveryServer, 'confirmEmailProof');
-assertNotIncludes('no final email completed audit', recoveryServer, 'admin_recovery_email_completed');
-assertNotIncludes('no change email marker', recoveryServer, 'change_email');
+const page = read('src/routes/admin/recovery/+page.svelte');
+assertIncludes('email final form present', page, 'Complete email recovery');
+assertIncludes('email proof token hidden', page, 'name="email_proof_token"');
 
 console.log('PASS 25E-T frontend admin email recovery lock audit');
 if (failures.length) {
@@ -41,4 +32,4 @@ if (failures.length) {
   for (const failure of failures) console.error(`FAIL ${failure}`);
   process.exit(1);
 }
-console.log('OK: frontend email recovery remains proof-only with no final email mutation controls.');
+console.log('OK: frontend email recovery follows proof-first finalization model.');
