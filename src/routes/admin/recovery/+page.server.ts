@@ -48,6 +48,27 @@ type TotpRecoveryConfirmData = {
   sessions_revoked: boolean;
 };
 
+type EmailRecoveryOtpData = {
+  artifact_id: string;
+  reset_request_id: string;
+  old_email: string;
+  new_email: string;
+  expires_at: string;
+  delivery_mode: string;
+  manual_otp: string | null;
+  credential_mutation: false;
+};
+
+type EmailRecoveryProofData = {
+  artifact_id: string;
+  reset_request_id: string;
+  old_email: string;
+  new_email: string;
+  email_proof_token: string;
+  proof_expires_at: string;
+  credential_mutation: false;
+};
+
 function value(input: FormDataEntryValue | null) {
   return String(input ?? '').trim();
 }
@@ -91,7 +112,9 @@ export const actions: Actions = {
         ? 'Recovery artifact verified. Continue with a fresh password and current 2FA code.'
         : result.data.request_type === 'totp'
           ? '2FA recovery artifact verified. Continue by setting up a fresh authenticator.'
-          : 'Recovery artifact verified. Execution for this recovery type is not enabled yet.'
+          : result.data.request_type === 'email'
+            ? 'Email recovery artifact verified. Continue by proving access to the new email.'
+            : 'Recovery artifact verified. Execution for this recovery type is not enabled yet.'
     };
   },
 
@@ -168,6 +191,59 @@ export const actions: Actions = {
       email,
       totpRecovered: result.data,
       success: '2FA recovered. Old authenticators and existing admin sessions were revoked. Continue to admin login with the new 2FA code.'
+    };
+  },
+
+  requestEmailProof: async ({ request, fetch }) => {
+    const formData = await request.formData();
+    const token = value(formData.get('token'));
+    const email = value(formData.get('email'));
+    const password = String(formData.get('password') ?? '');
+    const totpCode = value(formData.get('totp_code'));
+    const newEmail = value(formData.get('new_email'));
+    if (!token || !email || !password || !totpCode || !newEmail) {
+      return fail(400, { token, email, error: 'Recovery token, current email, password, 2FA code, and new email are required.' });
+    }
+
+    const result = await call<EmailRecoveryOtpData>(
+      fetch,
+      '/recovery/email/request',
+      { token, email, password, totp_code: totpCode, new_email: newEmail },
+      'Email recovery proof request failed. The artifact may be invalid, expired, used, or the credentials may be incorrect.'
+    );
+    if (!result.ok) return fail(result.status, { token, email, error: result.message });
+
+    return {
+      token,
+      email,
+      emailOtp: result.data,
+      success: 'New-email proof requested. Confirm the OTP sent to the new email. Account email is not changed yet.'
+    };
+  },
+
+  confirmEmailProof: async ({ request, fetch }) => {
+    const formData = await request.formData();
+    const token = value(formData.get('token'));
+    const email = value(formData.get('email'));
+    const newEmail = value(formData.get('new_email'));
+    const otp = value(formData.get('otp'));
+    if (!token || !email || !newEmail || !otp) {
+      return fail(400, { token, email, error: 'Recovery token, current email, new email, and OTP are required.' });
+    }
+
+    const result = await call<EmailRecoveryProofData>(
+      fetch,
+      '/recovery/email/confirm',
+      { token, email, new_email: newEmail, otp },
+      'Email recovery proof confirmation failed. The OTP may be invalid or expired.'
+    );
+    if (!result.ok) return fail(result.status, { token, email, error: result.message });
+
+    return {
+      token,
+      email,
+      emailProof: result.data,
+      success: 'New-email proof confirmed. Final account email change is still locked for the next pass.'
     };
   }
 };

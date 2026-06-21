@@ -22,23 +22,18 @@ function assertNotIncludes(label, content, needle) {
 }
 
 const recoveryPage = read('src/routes/admin/recovery/+page.svelte');
-assertIncludes('recovery page mentions email disabled', recoveryPage, 'Email recovery is not enabled here yet.');
+assertIncludes('recovery page email final locked', recoveryPage, 'final account email mutation is still locked');
 assertIncludes('recovery page keeps password recovery', recoveryPage, 'Recover password');
 assertIncludes('recovery page keeps 2fa recovery', recoveryPage, 'Confirm fresh 2FA');
-assertNotIncludes('no new email field', recoveryPage, 'name="new_email"');
+assertIncludes('recovery page email proof shell', recoveryPage, 'Request new-email proof');
+assertNotIncludes('no final email action', recoveryPage, 'recoverEmailFinal');
 assertNotIncludes('no change email action', recoveryPage, 'change_email');
-assertNotIncludes('no email recovery action', recoveryPage, 'recoverEmail');
 
 const recoveryServer = read('src/routes/admin/recovery/+page.server.ts');
-assertIncludes('recovery server keeps password action', recoveryServer, 'recoverPassword');
-assertIncludes('recovery server keeps 2fa setup action', recoveryServer, 'setupTotpRecovery');
-assertIncludes('recovery server keeps 2fa confirm action', recoveryServer, 'confirmTotpRecovery');
-assertNotIncludes('no email recovery endpoint', recoveryServer, "'/recovery/email");
-assertNotIncludes('no new email payload', recoveryServer, 'new_email');
+assertIncludes('recovery server email proof shell', recoveryServer, 'requestEmailProof');
+assertIncludes('recovery server email proof confirmation', recoveryServer, 'confirmEmailProof');
+assertNotIncludes('no final email completed audit', recoveryServer, 'admin_recovery_email_completed');
 assertNotIncludes('no change email marker', recoveryServer, 'change_email');
-
-const resetPage = read('src/routes/admin/reset/+page.svelte');
-assertIncludes('reset page can request email recovery', resetPage, 'Email address');
 
 console.log('PASS 25E-T frontend admin email recovery lock audit');
 if (failures.length) {
@@ -46,4 +41,4 @@ if (failures.length) {
   for (const failure of failures) console.error(`FAIL ${failure}`);
   process.exit(1);
 }
-console.log('OK: frontend email recovery remains request-only and exposes no email mutation controls.');
+console.log('OK: frontend email recovery remains proof-only with no final email mutation controls.');

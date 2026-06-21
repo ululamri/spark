@@ -18,7 +18,7 @@
     <img src="/assets/brand/icon-only.svg" alt="" width="48" height="48" />
     <span class="admin-eyebrow">Recovery artifact</span>
     <h1>Admin recovery</h1>
-    <p>Enter the recovery artifact token and admin email. Password recovery requires current 2FA. 2FA recovery rotates to a fresh authenticator after password verification.</p>
+    <p>Enter the recovery artifact token and admin email. Password and 2FA recovery can execute here; email recovery only creates proof and does not change the account email yet.</p>
 
     {#if form?.success}
       <div class="admin-login__notice" role="status">
@@ -30,12 +30,22 @@
           <p>Credential mutation: {form.artifact.credential_mutation ? 'enabled' : 'disabled until submitted'}</p>
         {:else if form.passwordRecovered}
           <p>Changed at: {form.passwordRecovered.password_changed_at}</p>
-          <p>Reset request completed: {form.passwordRecovered.reset_request_completed ? 'yes' : 'yes'}</p>
           <p>Sessions revoked: {form.passwordRecovered.sessions_revoked ? 'yes' : 'no'}</p>
         {:else if form.totpRecovered}
           <p>Enabled at: {form.totpRecovered.enabled_at}</p>
           <p>Old authenticators revoked: {form.totpRecovered.old_factors_revoked ? 'yes' : 'no'}</p>
           <p>Sessions revoked: {form.totpRecovered.sessions_revoked ? 'yes' : 'no'}</p>
+        {:else if form.emailOtp}
+          <p>New email: {form.emailOtp.new_email}</p>
+          <p>Delivery mode: {form.emailOtp.delivery_mode}</p>
+          <p>Expires: {form.emailOtp.expires_at}</p>
+          {#if form.emailOtp.manual_otp}
+            <p>Manual OTP: <code>{form.emailOtp.manual_otp}</code></p>
+          {/if}
+        {:else if form.emailProof}
+          <p>New email proof confirmed for: {form.emailProof.new_email}</p>
+          <p>Proof expires: {form.emailProof.proof_expires_at}</p>
+          <p>Credential mutation: {form.emailProof.credential_mutation ? 'yes' : 'no'}</p>
         {/if}
       </div>
     {:else if form?.error}
@@ -104,9 +114,40 @@
       </form>
     {/if}
 
+    {#if form?.artifact?.request_type === 'email'}
+      <form method="POST" action="?/requestEmailProof" class="admin-login__form">
+        <input type="hidden" name="email" value={form.email ?? form.artifact.email} />
+        <input type="hidden" name="token" value={form.token ?? ''} />
+
+        <label for="email-password">Account password</label>
+        <input id="email-password" name="password" type="password" autocomplete="current-password" required />
+
+        <label for="email-totp">Current 2FA code</label>
+        <input id="email-totp" name="totp_code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required />
+
+        <label for="new-email">New email</label>
+        <input id="new-email" name="new_email" type="email" autocomplete="email" required />
+
+        <button type="submit">Request new-email proof</button>
+      </form>
+    {/if}
+
+    {#if form?.emailOtp}
+      <form method="POST" action="?/confirmEmailProof" class="admin-login__form">
+        <input type="hidden" name="email" value={form.email ?? form.emailOtp.old_email} />
+        <input type="hidden" name="token" value={form.token ?? ''} />
+        <input type="hidden" name="new_email" value={form.emailOtp.new_email} />
+
+        <label for="email-otp">New-email OTP</label>
+        <input id="email-otp" name="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="8" required />
+
+        <button type="submit">Confirm new-email proof</button>
+      </form>
+    {/if}
+
     <div class="admin-login__notice" role="status">
       <strong>Recovery boundary</strong>
-      <p>Password recovery consumes the artifact once and revokes existing admin sessions. 2FA recovery only revokes old authenticators after the new authenticator is confirmed. Email recovery is not enabled here yet.</p>
+      <p>Password and 2FA recovery consume the artifact once. Email recovery currently proves the new email only; final account email mutation is still locked for the next pass.</p>
     </div>
 
     <a class="admin-login__back" href="/admin/login">Return to admin login</a>
