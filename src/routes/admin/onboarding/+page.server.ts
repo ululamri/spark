@@ -148,7 +148,29 @@ export const actions: Actions = {
       display_name: displayName || undefined
     });
     if (!result.ok) return fail(result.status, { ...ctx, passwordError: result.message });
-    return { ...ctx, passwordSet: result.data, onboardingMessage: 'Password set. Continue to authenticator setup.' };
+
+    const setup = await call<InviteTotpSetupData>(fetch, '/invite/totp/setup', {
+      token: ctx.token,
+      email: ctx.email,
+      email_proof_token: ctx.emailProofToken,
+      password
+    });
+    if (!setup.ok) {
+      return fail(setup.status, {
+        ...ctx,
+        passwordSet: result.data,
+        totpSetupError: setup.message,
+        onboardingMessage: 'Password saved. 2FA setup could not be created yet.'
+      });
+    }
+
+    return {
+      ...ctx,
+      passwordSet: result.data,
+      factorId: setup.data.factor_id,
+      totpSetup: setup.data,
+      onboardingMessage: 'Password saved. Scan the QR code, then confirm the 2FA code.'
+    };
   },
 
   setupTotp: async ({ request, fetch }) => {
@@ -185,7 +207,28 @@ export const actions: Actions = {
       code
     });
     if (!result.ok) return fail(result.status, { ...ctx, totpConfirmError: result.message });
-    return { ...ctx, totpConfirmed: result.data, onboardingMessage: '2FA enabled. Accept the invitation to activate the role.' };
+
+    const accepted = await call<InviteAcceptData>(fetch, '/invite/accept', {
+      token: ctx.token,
+      email: ctx.email,
+      email_proof_token: ctx.emailProofToken,
+      password
+    });
+    if (!accepted.ok) {
+      return fail(accepted.status, {
+        ...ctx,
+        totpConfirmed: result.data,
+        acceptError: accepted.message,
+        onboardingMessage: '2FA enabled. Final activation could not be completed yet.'
+      });
+    }
+
+    return {
+      ...ctx,
+      totpConfirmed: result.data,
+      accepted: accepted.data,
+      onboardingMessage: 'Admin access activated. You can now log in from the admin panel.'
+    };
   },
 
   accept: async ({ request, fetch }) => {

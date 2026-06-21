@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state';
+  import { Toaster } from 'svelte-sonner';
   import '../app.css';
   import '$lib/styles/pass-2-integration-theme-assets.css';
   import '$lib/styles/pass-3-learning-experience.css';
@@ -43,6 +44,8 @@
 
   let { children } = $props();
 </script>
+
+<Toaster richColors position="top-right" closeButton />
 
 {#if page.url.pathname.startsWith('/admin')}
   {@render children()}

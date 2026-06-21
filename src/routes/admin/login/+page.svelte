@@ -1,5 +1,24 @@
 <script lang="ts">
+  import { toast } from 'svelte-sonner';
   let { form } = $props();
+
+  let visibleSecret = $state('');
+  let toastKey = $state('');
+  let hideSecretTimer: ReturnType<typeof setTimeout> | undefined;
+
+  function revealSecret(name: string) {
+    visibleSecret = visibleSecret === name ? '' : name;
+    if (hideSecretTimer) clearTimeout(hideSecretTimer);
+    if (visibleSecret) hideSecretTimer = setTimeout(() => (visibleSecret = ''), 5000);
+  }
+
+  $effect(() => {
+    const message = form?.delegatedMessage;
+    if (message && message !== toastKey) {
+      toastKey = message;
+      toast.error(message);
+    }
+  });
 </script>
 
 <svelte:head>
@@ -18,7 +37,8 @@
       <input id="delegated-email" name="email" type="email" autocomplete="email" required />
 
       <label for="delegated-password">Password</label>
-      <input id="delegated-password" name="password" type="password" autocomplete="current-password" minlength="8" required />
+      <input id="delegated-password" name="password" type={visibleSecret === 'delegated-password' ? 'text' : 'password'} autocomplete="current-password" minlength="8" required />
+      <button type="button" class="admin-inline-action" onclick={() => revealSecret('delegated-password')}>{visibleSecret === 'delegated-password' ? 'Sembunyikan sandi' : 'Lihat sandi'}</button>
 
       <label for="delegated-totp">2FA code</label>
       <input

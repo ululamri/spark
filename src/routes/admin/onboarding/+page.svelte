@@ -1,10 +1,14 @@
 <script lang="ts">
   import { browser } from '$app/environment';
+  import { toast } from 'svelte-sonner';
 
   let { data, form }: { data?: any; form?: any } = $props();
 
   let qrDataUrl = $state('');
   let copyNotice = $state('');
+  let visibleSecret = $state('');
+  let toastKey = $state('');
+  let hideSecretTimer: ReturnType<typeof setTimeout> | undefined;
 
   const steps = [
     { id: 'inspect', label: 'Invite', description: 'Masukkan invite code untuk memulai aktivasi akses.' },
@@ -67,7 +71,25 @@
     if (!browser || !text) return;
     await navigator.clipboard.writeText(text);
     copyNotice = `${label} berhasil disalin.`;
+    toast.success(copyNotice);
   }
+
+  function revealSecret(name: string) {
+    visibleSecret = visibleSecret === name ? '' : name;
+    if (hideSecretTimer) clearTimeout(hideSecretTimer);
+    if (visibleSecret) hideSecretTimer = setTimeout(() => (visibleSecret = ''), 5000);
+  }
+
+  $effect(() => {
+    const success = form?.onboardingMessage;
+    const error = form?.onboardingError || form?.emailRequestError || form?.emailConfirmError || form?.passwordError || form?.totpSetupError || form?.totpConfirmError || form?.acceptError;
+    const key = `${success ?? ''}|${error ?? ''}`;
+    if (key && key !== toastKey) {
+      toastKey = key;
+      if (error) toast.error(error);
+      else if (success) toast.success(success);
+    }
+  });
 </script>
 
 <svelte:head>
@@ -110,7 +132,7 @@
       </form>
     {:else if currentStep === 'requestEmail'}
       <form method="POST" action="?/requestEmail" class="admin-login__form">
-        <input type="hidden" name="token" value={form?.token ?? ''} />
+        <input type="hidden" name="token" value={form?.token ?? data?.inviteCode ?? ''} />
         {#if form?.invite}
           <div class="admin-login__notice" role="status">
             <strong>Undangan {form.invite.role}</strong>
@@ -153,7 +175,8 @@
         <label for="display-name">Nama tampilan</label>
         <input id="display-name" name="display_name" type="text" autocomplete="name" placeholder="Nama yang terlihat di Admin Panel" />
         <label for="password-value">Sandi admin</label>
-        <input id="password-value" name="password" type="password" autocomplete="new-password" minlength="8" required />
+        <input id="password-value" name="password" type={visibleSecret === 'password-value' ? 'text' : 'password'} autocomplete="new-password" minlength="8" required />
+        <button type="button" class="admin-inline-action" onclick={() => revealSecret('password-value')}>{visibleSecret === 'password-value' ? 'Sembunyikan sandi' : 'Lihat sandi'}</button>
         <p class="admin-help">Gunakan sandi unik, minimal 8 karakter, dan jangan gunakan ulang dari layanan lain.</p>
         {#if form?.passwordError}<p class="admin-form-error" role="alert">{form.passwordError}</p>{/if}
         <button type="submit">Simpan sandi</button>
@@ -195,7 +218,8 @@
           </div>
         {/if}
         <label for="enable-password">Konfirmasi sandi</label>
-        <input id="enable-password" name="password" type="password" autocomplete="current-password" required />
+        <input id="enable-password" name="password" type={visibleSecret === 'enable-password' ? 'text' : 'password'} autocomplete="current-password" required />
+        <button type="button" class="admin-inline-action" onclick={() => revealSecret('enable-password')}>{visibleSecret === 'enable-password' ? 'Sembunyikan sandi' : 'Lihat sandi'}</button>
         <label for="enable-code">Kode 2FA</label>
         <input id="enable-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="16" placeholder="Masukkan 6 digit kode 2FA" required />
         <p class="admin-help">Masukkan kode 6 digit dari aplikasi authenticator untuk mengaktifkan 2FA.</p>
@@ -212,7 +236,8 @@
           <p>2FA sudah aktif. Konfirmasi sandi sekali lagi untuk mengaktifkan role dari undangan ini.</p>
         </div>
         <label for="accept-password">Sandi admin</label>
-        <input id="accept-password" name="password" type="password" autocomplete="current-password" required />
+        <input id="accept-password" name="password" type={visibleSecret === 'accept-password' ? 'text' : 'password'} autocomplete="current-password" required />
+        <button type="button" class="admin-inline-action" onclick={() => revealSecret('accept-password')}>{visibleSecret === 'accept-password' ? 'Sembunyikan sandi' : 'Lihat sandi'}</button>
         {#if form?.acceptError}<p class="admin-form-error" role="alert">{form.acceptError}</p>{/if}
         <button type="submit">Aktifkan akses admin</button>
       </form>
