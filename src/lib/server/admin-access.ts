@@ -44,7 +44,7 @@ const SUPERADMIN_CAPABILITIES = [
 ];
 
 const ENABLE_DELEGATED_ADMIN_ROUTES = true;
-const ADMIN_AUTH_SURFACE_PATHS = new Set(['/admin/login', '/admin/superadmin/login', '/admin/onboarding', '/admin/reset']);
+const ADMIN_AUTH_SURFACE_PATHS = new Set(['/admin/login', '/admin/superadmin/login', '/admin/onboarding', '/admin/reset', '/admin/recovery']);
 
 function normalizeActor(actor: AdminActor): AdminUiActor {
   return {
