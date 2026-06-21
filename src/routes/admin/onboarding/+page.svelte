@@ -1,8 +1,8 @@
 <script lang="ts">
-  let { form }: { form?: any } = $props();
+  let { data, form }: { data?: any; form?: any } = $props();
 
   const steps = [
-    { id: 'inspect', label: 'Invite', description: 'Validate the invitation token.' },
+    { id: 'inspect', label: 'Invite', description: 'Validate the invite code.' },
     { id: 'requestEmail', label: 'Email', description: 'Send OTP to the invited email.' },
     { id: 'confirmEmail', label: 'Verify', description: 'Confirm email ownership.' },
     { id: 'password', label: 'Password', description: 'Set account password.' },
@@ -51,7 +51,7 @@
     <img src="/assets/brand/icon-only.svg" alt="" width="48" height="48" />
     <span class="admin-eyebrow">Invite-only onboarding</span>
     <h1>Admin onboarding</h1>
-    <p>Complete one secure step at a time. The system still verifies invite, email, password, and 2FA gates in order.</p>
+    <p>Complete one secure step at a time. The system verifies invite code, email, password, and 2FA gates in order.</p>
 
 
     <div class="admin-login__notice" role="status">
@@ -68,10 +68,10 @@
 
     {#if currentStep === 'inspect'}
       <form method="POST" action="?/inspect" class="admin-login__form">
-        <label for="inspect-token">Invite token</label>
-        <input id="inspect-token" name="token" type="text" autocomplete="off" value={form?.token ?? ''} required />
+        <label for="inspect-token">Invite code</label>
+        <input id="inspect-token" name="token" type="text" autocomplete="off" value={form?.token ?? data?.inviteCode ?? ''} required />
         {#if form?.onboardingError}<p class="admin-form-error" role="alert">{form.onboardingError}</p>{/if}
-        <button type="submit">Validate invite</button>
+        <button type="submit">Validate invite code</button>
       </form>
     {:else if currentStep === 'requestEmail'}
       <form method="POST" action="?/requestEmail" class="admin-login__form">

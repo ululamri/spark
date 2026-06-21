@@ -78,6 +78,13 @@ async function call<T>(fetcher: typeof fetch, path: string, payload: Record<stri
   return { ok: true as const, data: body.data };
 }
 
+
+export const load = async ({ url }) => {
+  return {
+    inviteCode: url.searchParams.get('token')?.trim() ?? ''
+  };
+};
+
 function context(formData: FormData) {
   return {
     token: value(formData.get('token')),
@@ -91,16 +98,16 @@ export const actions: Actions = {
   inspect: async ({ request, fetch }) => {
     const formData = await request.formData();
     const token = value(formData.get('token'));
-    if (!token) return fail(400, { token, onboardingError: 'Invite token is required.' });
+    if (!token) return fail(400, { token, onboardingError: 'Invite code is required.' });
     const result = await call<InviteInspectData>(fetch, '/invite/inspect', { token });
     if (!result.ok) return fail(result.status, { token, onboardingError: result.message });
-    return { token, email: result.data.email, invite: result.data, onboardingMessage: 'Invite token accepted. Continue with the invited email.' };
+    return { token, email: result.data.email, invite: result.data, onboardingMessage: 'Invite code accepted. Continue with the invited email.' };
   },
 
   requestEmail: async ({ request, fetch }) => {
     const formData = await request.formData();
     const ctx = context(formData);
-    if (!ctx.token || !ctx.email) return fail(400, { ...ctx, emailRequestError: 'Invite token and email are required.' });
+    if (!ctx.token || !ctx.email) return fail(400, { ...ctx, emailRequestError: 'Invite code and email are required.' });
     const result = await call<InviteEmailOtpData>(fetch, '/invite/email/request', { token: ctx.token, email: ctx.email });
     if (!result.ok) return fail(result.status, { ...ctx, emailRequestError: result.message });
     return { ...ctx, emailOtp: result.data, onboardingMessage: 'Email OTP was requested.' };
@@ -110,7 +117,7 @@ export const actions: Actions = {
     const formData = await request.formData();
     const ctx = context(formData);
     const otp = value(formData.get('otp'));
-    if (!ctx.token || !ctx.email || !otp) return fail(400, { ...ctx, emailConfirmError: 'Invite token, email, and OTP are required.' });
+    if (!ctx.token || !ctx.email || !otp) return fail(400, { ...ctx, emailConfirmError: 'Invite code, email, and OTP are required.' });
     const result = await call<InviteEmailProofData>(fetch, '/invite/email/confirm', { token: ctx.token, email: ctx.email, otp });
     if (!result.ok) return fail(result.status, { ...ctx, emailConfirmError: result.message });
     return {
@@ -127,7 +134,7 @@ export const actions: Actions = {
     const password = String(formData.get('password') ?? '');
     const displayName = value(formData.get('display_name'));
     if (!ctx.token || !ctx.email || !ctx.emailProofToken || !password) {
-      return fail(400, { ...ctx, passwordError: 'Invite token, email, email proof token, and password are required.' });
+      return fail(400, { ...ctx, passwordError: 'Invite code, email, email proof token, and password are required.' });
     }
     const result = await call<InvitePasswordData>(fetch, '/invite/password', {
       token: ctx.token,
@@ -145,7 +152,7 @@ export const actions: Actions = {
     const ctx = context(formData);
     const password = String(formData.get('password') ?? '');
     if (!ctx.token || !ctx.email || !ctx.emailProofToken || !password) {
-      return fail(400, { ...ctx, totpSetupError: 'Invite token, email, email proof token, and password are required.' });
+      return fail(400, { ...ctx, totpSetupError: 'Invite code, email, email proof token, and password are required.' });
     }
     const result = await call<InviteTotpSetupData>(fetch, '/invite/totp/setup', {
       token: ctx.token,
@@ -163,7 +170,7 @@ export const actions: Actions = {
     const password = String(formData.get('password') ?? '');
     const code = value(formData.get('code'));
     if (!ctx.token || !ctx.email || !ctx.emailProofToken || !password || !ctx.factorId || !code) {
-      return fail(400, { ...ctx, totpConfirmError: 'Invite token, email, email proof token, password, factor ID, and 2FA code are required.' });
+      return fail(400, { ...ctx, totpConfirmError: 'Invite code, email, email proof token, password, factor ID, and 2FA code are required.' });
     }
     const result = await call<InviteTotpConfirmData>(fetch, '/invite/totp/confirm', {
       token: ctx.token,
@@ -182,7 +189,7 @@ export const actions: Actions = {
     const ctx = context(formData);
     const password = String(formData.get('password') ?? '');
     if (!ctx.token || !ctx.email || !ctx.emailProofToken || !password) {
-      return fail(400, { ...ctx, acceptError: 'Invite token, email, email proof token, and password are required.' });
+      return fail(400, { ...ctx, acceptError: 'Invite code, email, email proof token, and password are required.' });
     }
     const result = await call<InviteAcceptData>(fetch, '/invite/accept', {
       token: ctx.token,
