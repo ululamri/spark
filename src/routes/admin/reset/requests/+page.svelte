@@ -66,6 +66,18 @@
   <div class="admin-note admin-note--danger">{viewForm.error}</div>
 {/if}
 
+{#if viewForm.recoveryArtifact}
+  <div class="admin-note admin-note--success">
+    <strong>Recovery artifact issued.</strong>
+    <p>Artifact ID: {viewForm.recoveryArtifact.artifact.id}</p>
+    <p>Expires: {viewForm.recoveryArtifact.artifact.expires_at}</p>
+    <p>Delivery mode: {viewForm.recoveryArtifact.delivery_mode}</p>
+    {#if viewForm.recoveryArtifact.manual_token}
+      <p><strong>Manual bootstrap token:</strong> {viewForm.recoveryArtifact.manual_token}</p>
+    {/if}
+  </div>
+{/if}
+
 {#if data.apiError}
   <AdminEmptyState state="error" title="Reset request API unavailable" detail={data.apiError} />
 {/if}
@@ -82,6 +94,7 @@
     <li>Admin can review moderator reset requests only.</li>
     <li>Admin reset requests go upward to superadmin.</li>
     <li>Moderator cannot review reset requests.</li>
+    <li>Approved requests may issue a short-lived recovery artifact; credential changes remain a separate recovery flow.</li>
   </ul>
 </AdminSectionCard>
 
@@ -143,6 +156,12 @@
                 <input name="reason" placeholder="Review reason" />
                 <button class="admin-button" name="decision" value="approved" type="submit">Approve</button>
                 <button class="admin-button admin-button--secondary" name="decision" value="rejected" type="submit">Reject</button>
+              </form>
+            {:else if item.status === 'approved'}
+              <form class="admin-inline-form" method="POST" action="?/issueRecoveryArtifact">
+                <input type="hidden" name="request_id" value={item.id} />
+                <input name="reason" placeholder="Artifact reason" />
+                <button class="admin-button" type="submit">Issue artifact</button>
               </form>
             {:else}
               <span class="admin-muted">No action</span>
