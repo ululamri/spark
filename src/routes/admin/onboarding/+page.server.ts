@@ -57,6 +57,10 @@ function value(input: FormDataEntryValue | null) {
   return String(input ?? '').trim();
 }
 
+function otpValue(input: FormDataEntryValue | null) {
+  return String(input ?? '').replace(/\D/g, '').slice(0, 6);
+}
+
 function errorMessage(body: Envelope<unknown> | null, fallback: string) {
   if (!body || !('error' in body) || !body.error) return fallback;
   if (typeof body.error === 'string') return body.error;
@@ -116,7 +120,7 @@ export const actions: Actions = {
   confirmEmail: async ({ request, fetch }) => {
     const formData = await request.formData();
     const ctx = context(formData);
-    const otp = value(formData.get('otp'));
+    const otp = otpValue(formData.get('otp'));
     if (!ctx.token || !ctx.email || !otp) return fail(400, { ...ctx, emailConfirmError: 'Invite code, email, and OTP are required.' });
     const result = await call<InviteEmailProofData>(fetch, '/invite/email/confirm', { token: ctx.token, email: ctx.email, otp });
     if (!result.ok) return fail(result.status, { ...ctx, emailConfirmError: result.message });
@@ -168,7 +172,7 @@ export const actions: Actions = {
     const formData = await request.formData();
     const ctx = context(formData);
     const password = String(formData.get('password') ?? '');
-    const code = value(formData.get('code'));
+    const code = otpValue(formData.get('code'));
     if (!ctx.token || !ctx.email || !ctx.emailProofToken || !password || !ctx.factorId || !code) {
       return fail(400, { ...ctx, totpConfirmError: 'Invite code, email, email proof token, password, factor ID, and 2FA code are required.' });
     }

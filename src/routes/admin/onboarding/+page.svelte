@@ -104,7 +104,7 @@
           </div>
         {/if}
         <label for="confirm-otp">Email OTP</label>
-        <input id="confirm-otp" name="otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required />
+        <input id="confirm-otp" name="otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="16" placeholder="Masukkan 6 digit kode OTP" required />
         {#if form?.emailConfirmError}<p class="admin-form-error" role="alert">{form.emailConfirmError}</p>{/if}
         <button type="submit">Verify email</button>
       </form>
@@ -150,7 +150,7 @@
         <label for="enable-password">Password</label>
         <input id="enable-password" name="password" type="password" autocomplete="current-password" required />
         <label for="enable-code">2FA code</label>
-        <input id="enable-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required />
+        <input id="enable-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="16" placeholder="Masukkan 6 digit kode 2FA" required />
         {#if form?.totpConfirmError}<p class="admin-form-error" role="alert">{form.totpConfirmError}</p>{/if}
         <button type="submit">Enable 2FA</button>
       </form>
