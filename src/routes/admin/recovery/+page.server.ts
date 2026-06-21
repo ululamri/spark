@@ -21,6 +21,30 @@ type PasswordRecoveryData = {
   email: string;
   target_role: 'admin' | 'moderator' | string | null;
   password_changed_at: string;
+  reset_request_completed?: boolean;
+  sessions_revoked: boolean;
+};
+
+type TotpRecoverySetupData = {
+  artifact_id: string;
+  reset_request_id: string;
+  factor_id: string;
+  issuer: string;
+  account_name: string;
+  otpauth_uri: string;
+  manual_secret: string;
+  old_factor_revoked: boolean;
+};
+
+type TotpRecoveryConfirmData = {
+  artifact_id: string;
+  reset_request_id: string;
+  factor_id: string;
+  email: string;
+  target_role: 'admin' | 'moderator' | string | null;
+  enabled_at: string;
+  old_factors_revoked: boolean;
+  reset_request_completed: boolean;
   sessions_revoked: boolean;
 };
 
@@ -65,7 +89,9 @@ export const actions: Actions = {
       artifact: result.data,
       success: result.data.request_type === 'password'
         ? 'Recovery artifact verified. Continue with a fresh password and current 2FA code.'
-        : 'Recovery artifact verified. Execution for this recovery type is not enabled yet.'
+        : result.data.request_type === 'totp'
+          ? '2FA recovery artifact verified. Continue by setting up a fresh authenticator.'
+          : 'Recovery artifact verified. Execution for this recovery type is not enabled yet.'
     };
   },
 
@@ -91,6 +117,57 @@ export const actions: Actions = {
       email,
       passwordRecovered: result.data,
       success: 'Password recovered. Existing admin sessions were revoked. Continue to admin login with the new password.'
+    };
+  },
+
+  setupTotpRecovery: async ({ request, fetch }) => {
+    const formData = await request.formData();
+    const token = value(formData.get('token'));
+    const email = value(formData.get('email'));
+    const password = String(formData.get('password') ?? '');
+    if (!token || !email || !password) {
+      return fail(400, { token, email, error: 'Recovery token, email, and account password are required.' });
+    }
+
+    const result = await call<TotpRecoverySetupData>(
+      fetch,
+      '/recovery/totp/setup',
+      { token, email, password },
+      '2FA recovery setup failed. The artifact may be invalid, expired, used, or the password may be incorrect.'
+    );
+    if (!result.ok) return fail(result.status, { token, email, error: result.message });
+
+    return {
+      token,
+      email,
+      totpSetup: result.data,
+      success: 'Fresh 2FA setup started. Add the secret to your authenticator, then confirm the new 6-digit code.'
+    };
+  },
+
+  confirmTotpRecovery: async ({ request, fetch }) => {
+    const formData = await request.formData();
+    const token = value(formData.get('token'));
+    const email = value(formData.get('email'));
+    const password = String(formData.get('password') ?? '');
+    const factorId = value(formData.get('factor_id'));
+    const code = value(formData.get('code'));
+    if (!token || !email || !password || !factorId || !code) {
+      return fail(400, { token, email, error: 'Recovery token, email, account password, factor ID, and new 2FA code are required.' });
+    }
+
+    const result = await call<TotpRecoveryConfirmData>(
+      fetch,
+      '/recovery/totp/confirm',
+      { token, email, password, factor_id: factorId, code },
+      '2FA recovery confirmation failed. The artifact may be invalid, expired, used, or the new 2FA code may be incorrect.'
+    );
+    if (!result.ok) return fail(result.status, { token, email, error: result.message });
+
+    return {
+      email,
+      totpRecovered: result.data,
+      success: '2FA recovered. Old authenticators and existing admin sessions were revoked. Continue to admin login with the new 2FA code.'
     };
   }
 };
