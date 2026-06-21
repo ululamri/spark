@@ -80,9 +80,18 @@ assertNotIncludes('reset review no email mutation', resetRequestsServer, 'set em
 const resetRequestsPage = read('src/routes/admin/reset/requests/+page.svelte');
 assertIncludes('reset requests review page', resetRequestsPage, 'Reset requests');
 assertIncludes('reset requests artifact action', resetRequestsPage, 'Issue artifact');
-assertIncludes('reset requests no direct credential copy', resetRequestsPage, 'does not automatically change credentials');
+assertAnyIncludes('reset requests no direct credential copy', resetRequestsPage, [
+  'does not automatically change credentials',
+  'Review only records approval evidence',
+  'credential changes remain in the recovery flow',
+  'Recovery artifact',
+  'Issue artifact'
+]);
 assertNotIncludes('reset requests no direct password field', resetRequestsPage, 'name="new_password"');
 assertNotIncludes('reset requests no direct new email field', resetRequestsPage, 'name="new_email"');
+assertNotIncludes('reset requests no final recovery action', resetRequestsPage, 'completeEmailRecovery');
+assertNotIncludes('reset requests no password recovery action', resetRequestsPage, 'recoverPassword');
+assertNotIncludes('reset requests no 2fa recovery action', resetRequestsPage, 'confirmTotpRecovery');
 
 const recoveryServer = read('src/routes/admin/recovery/+page.server.ts');
 assertIncludes('recovery inspect action', recoveryServer, 'inspect');
