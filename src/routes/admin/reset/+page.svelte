@@ -44,6 +44,7 @@
       <button type="submit">Submit reset request</button>
     </form>
 
+    <a class="admin-login__back" href="/admin/recovery">I already have a recovery artifact</a>
     <a class="admin-login__back" href="/admin/login">Return to admin login</a>
   </section>
 </div>
