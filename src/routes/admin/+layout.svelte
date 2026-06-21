@@ -5,7 +5,7 @@
 
   let { children, data } = $props();
 
-  const authSurfacePaths = new Set(['/admin/login', '/admin/superadmin/login', '/admin/onboarding', '/admin/reset']);
+  const authSurfacePaths = new Set(['/admin/login', '/admin/superadmin/login', '/admin/onboarding', '/admin/reset', '/admin/recovery']);
 </script>
 
 <svelte:head>
