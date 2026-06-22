@@ -6,6 +6,7 @@
 
   let qrDataUrl = $state('');
   let copyNotice = $state('');
+  let lastOnboardingToastMarker = $state('');
   let visibleSecret = $state('');
   let toastKey = $state('');
   let hideSecretTimer: ReturnType<typeof setTimeout> | undefined;
@@ -71,6 +72,7 @@
     if (!browser || !text) return;
     await navigator.clipboard.writeText(text);
     copyNotice = `${label} berhasil disalin.`;
+    toast.success('Berhasil disalin', { description: copyNotice });
     toast.success(copyNotice);
   }
 
@@ -89,6 +91,23 @@
       if (error) toast.error(error);
       else if (success) toast.success(success);
     }
+  });
+
+  $effect(() => {
+    const success = form?.onboardingMessage;
+    const error =
+      form?.onboardingError ||
+      form?.emailRequestError ||
+      form?.emailConfirmError ||
+      form?.passwordError ||
+      form?.totpSetupError ||
+      form?.totpConfirmError ||
+      form?.acceptError;
+    const marker = success || error || '';
+    if (!marker || marker === lastOnboardingToastMarker) return;
+    lastOnboardingToastMarker = marker;
+    if (error) toast.error('Onboarding belum berhasil', { description: error });
+    else toast.success('Onboarding diperbarui', { description: success });
   });
 </script>
 

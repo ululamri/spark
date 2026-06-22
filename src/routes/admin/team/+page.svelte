@@ -5,6 +5,8 @@
   import AdminStatCard from '$lib/admin/ui/AdminStatCard.svelte';
   import AdminStatusBadge from '$lib/admin/ui/AdminStatusBadge.svelte';
   import AdminTable from '$lib/admin/ui/AdminTable.svelte';
+  import { toast } from 'svelte-sonner';
+  import { toastFormResult } from '$lib/admin/admin-toast';
 
   let { data, form } = $props();
 
@@ -13,10 +15,13 @@
   const roles = $derived(data.roles ?? []);
   const filters = $derived(data.filters ?? { role: 'all', status: 'active', invitationStatus: 'pending' });
   const viewForm = $derived((form ?? {}) as Record<string, any>);
+  let lastAdminTeamToastMarker = $state('');
+  let lastManualInviteToastMarker = $state('');
   const adminCount = $derived(members.filter((member) => member.role === 'admin').length);
   const moderatorCount = $derived(members.filter((member) => member.role === 'moderator').length);
   const pendingInviteCount = $derived(invitations.filter((invite) => invite.status === 'pending').length);
   const assignableRoles = $derived(roles.filter((role) => role.role !== 'superadmin' && (data.canInviteAdmin || role.role !== 'admin')));
+  let lastToastMarker = $state('');
 
   const metrics = $derived([
     { id: 'members', label: 'Loaded members', value: members.length, detail: 'Delegated assignments loaded in this window.', state: 'available' as const },
@@ -41,6 +46,23 @@
   function shortId(value: string | null | undefined) {
     return value ? value.slice(0, 8) : '—';
   }
+
+  $effect(() => {
+    const marker = toastFormResult(viewForm, {
+      id: 'admin-team',
+      successLabel: 'Admin team updated',
+      errorLabel: 'Admin team action failed'
+    });
+    if (marker && marker !== lastToastMarker) lastToastMarker = marker;
+  });
+
+  $effect(() => {
+    if (viewForm.invitation?.manual_token) {
+      toast.info('Manual invite code available', {
+        description: 'Share this token only through an approved private channel.'
+      });
+    }
+  });
 </script>
 
 <svelte:head><title>Admin team - Karyra Spark Admin</title></svelte:head>
@@ -62,8 +84,8 @@
 
 {#if viewForm.invitation?.manual_token}
   <div class="admin-note admin-note--success">
-    <strong>Manual invite token</strong><br />
-    Share this token only through an approved private channel. The invited user opens <code>/admin/onboarding</code> and uses this token.
+    <strong>Manual invite code</strong><br />
+    Share this token only through an approved private channel. The invited user opens <code>/admin/onboarding</code> and uses this invite code.
     <code>{viewForm.invitation.manual_token}</code>
   </div>
 {/if}
@@ -109,7 +131,7 @@
             {/each}
           {/each}
         </div>
-        <button class="admin-button" type="submit">Create invitation</button>
+        <button class="admin-button" type="submit">Kirim undangan</button>
       </form>
     {:else}
       <div class="admin-note">This role cannot create invitations. Moderator accounts are review-only in the admin team boundary.</div>
@@ -168,7 +190,7 @@
               <form class="admin-inline-form" method="POST" action="?/revokeInvitation">
                 <input type="hidden" name="invitation_id" value={invitation.id} />
                 <input name="reason" placeholder="Revoke reason" />
-                <button class="admin-button admin-button--secondary" type="submit">Revoke invite</button>
+                <button class="admin-button admin-button--secondary" type="submit">Cabut undangan</button>
               </form>
             {:else}
               <span class="admin-muted">No action</span>
@@ -231,7 +253,7 @@
                 <input type="hidden" name="user_id" value={member.user_id} />
                 <input type="hidden" name="role" value={member.role} />
                 <input name="reason" placeholder="Revoke reason" />
-                <button class="admin-button admin-button--secondary" type="submit">Revoke role</button>
+                <button class="admin-button admin-button--secondary" type="submit">Cabut role</button>
               </form>
             {:else}
               <span class="admin-muted">No action</span>

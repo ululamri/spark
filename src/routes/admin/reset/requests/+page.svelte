@@ -5,16 +5,22 @@
   import AdminStatCard from '$lib/admin/ui/AdminStatCard.svelte';
   import AdminStatusBadge from '$lib/admin/ui/AdminStatusBadge.svelte';
   import AdminTable from '$lib/admin/ui/AdminTable.svelte';
+  import { toast } from 'svelte-sonner';
+  import { toastFormResult } from '$lib/admin/admin-toast';
 
   let { data, form } = $props();
 
   const requests = $derived(data.requests?.items ?? []);
   const filters = $derived(data.filters ?? { status: 'pending', requestType: 'all' });
   const viewForm = $derived((form ?? {}) as Record<string, any>);
+  let lastResetRequestToastMarker = $state('');
+  let lastRecoveryArtifactToastMarker = $state('');
   const reviewerRole = $derived(data.reviewerRole ?? 'admin');
   const pendingCount = $derived(requests.filter((item) => item.status === 'pending').length);
   const approvedCount = $derived(requests.filter((item) => item.status === 'approved').length);
   const rejectedCount = $derived(requests.filter((item) => item.status === 'rejected').length);
+  let lastToastMarker = $state('');
+  let lastArtifactMarker = $state('');
 
   const metrics = $derived([
     { id: 'requests', label: 'Loaded requests', value: requests.length, detail: reviewerRole === 'superadmin' ? 'All visible reset requests.' : 'Moderator reset requests visible to admin.', state: 'available' as const },
@@ -47,6 +53,25 @@
     const note = metadata?.note;
     return typeof note === 'string' && note.length ? note : '—';
   }
+
+  $effect(() => {
+    const marker = toastFormResult(viewForm, {
+      id: 'admin-reset-requests',
+      successLabel: 'Reset review updated',
+      errorLabel: 'Reset review action failed'
+    });
+    if (marker && marker !== lastToastMarker) lastToastMarker = marker;
+  });
+
+  $effect(() => {
+    const artifactId = viewForm.recoveryArtifact?.artifact?.id;
+    if (artifactId && artifactId !== lastArtifactMarker) {
+      lastArtifactMarker = artifactId;
+      toast.success('Recovery artifact issued', {
+        description: 'Artifact is ready for the separate recovery flow.'
+      });
+    }
+  });
 </script>
 
 <svelte:head><title>Reset requests - Karyra Spark Admin</title></svelte:head>
@@ -154,14 +179,14 @@
               <form class="admin-inline-form" method="POST" action="?/reviewRequest">
                 <input type="hidden" name="request_id" value={item.id} />
                 <input name="reason" placeholder="Review reason" />
-                <button class="admin-button" name="decision" value="approved" type="submit">Approve</button>
-                <button class="admin-button admin-button--secondary" name="decision" value="rejected" type="submit">Reject</button>
+                <button class="admin-button" name="decision" value="approved" type="submit">Setujui</button>
+                <button class="admin-button admin-button--secondary" name="decision" value="rejected" type="submit">Tolak</button>
               </form>
             {:else if item.status === 'approved'}
               <form class="admin-inline-form" method="POST" action="?/issueRecoveryArtifact">
                 <input type="hidden" name="request_id" value={item.id} />
                 <input name="reason" placeholder="Artifact reason" />
-                <button class="admin-button" type="submit">Issue artifact</button>
+                <button class="admin-button" type="submit">Terbitkan artifact</button>
               </form>
             {:else}
               <span class="admin-muted">No action</span>

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { toast } from 'svelte-sonner';
   let { form } = $props();
+  let lastAdminLoginToastMarker = $state('');
 
   let visibleSecret = $state('');
   let toastKey = $state('');
@@ -17,6 +18,14 @@
     if (message && message !== toastKey) {
       toastKey = message;
       toast.error(message);
+    }
+  });
+
+  $effect(() => {
+    const message = form?.delegatedMessage;
+    if (message && message !== lastAdminLoginToastMarker) {
+      lastAdminLoginToastMarker = message;
+      toast.error('Login admin gagal', { description: message });
     }
   });
 </script>
